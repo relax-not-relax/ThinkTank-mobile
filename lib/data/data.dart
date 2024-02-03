@@ -43,3 +43,8 @@ const games = [
     color: Color.fromARGB(255, 45, 64, 89),
   ),
 ];
+
+const contest = [
+  "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/0%2Fcontest_1.png?alt=media&token=56159759-0357-4f10-b276-cd39bb333006",
+  "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/0%2Fcontest_2.png?alt=media&token=ade1f3b9-2b52-4bad-a84d-2e80bc6e577b",
+];

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/data/data.dart';
@@ -10,7 +12,55 @@ class OptionScreen extends StatefulWidget {
   State<OptionScreen> createState() => _OptionScreenState();
 }
 
+late List<Widget> _pages;
+int _activePage = 0;
+final PageController _pageController = PageController(initialPage: 0);
+Timer? _timer;
+
 class _OptionScreenState extends State<OptionScreen> {
+  void startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 3), (timer) {
+      if (_pageController.page == contest.length - 1) {
+        _pageController.animateToPage(
+          0,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      } else {
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = List.generate(
+      contest.length,
+      (index) {
+        // return Image.network(
+        //   contest[index],
+        //   fit: BoxFit.cover,
+
+        // );
+        return Container(
+          height: 210,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(contest[index]),
+              fit: BoxFit.cover,
+            ),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+          ),
+        );
+      },
+    );
+    startTimer();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -126,7 +176,7 @@ class _OptionScreenState extends State<OptionScreen> {
           ],
         ),
         SizedBox(
-          height: 400,
+          height: 370,
           child: Padding(
             padding: const EdgeInsets.only(left: 8.0),
             child: ListView.builder(
@@ -136,6 +186,101 @@ class _OptionScreenState extends State<OptionScreen> {
                 return GameItem(game: games[index]);
               },
             ),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  margin: const EdgeInsets.fromLTRB(14, 20, 14, 0),
+                  child: Text(
+                    "Memory Contest",
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10.0,
+                ),
+                Container(
+                  margin: const EdgeInsets.fromLTRB(14, 0, 14, 30),
+                  child: SizedBox(
+                    width: 383.0,
+                    child: Text(
+                      "Exciting competitions to challenge yourself against opponents in memory recall. This is an engaging arena to accelerate on the journey to becoming a “Memory master”.",
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w300,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        Container(
+          margin: const EdgeInsets.fromLTRB(14, 0, 14, 20),
+          child: Stack(
+            children: [
+              SizedBox(
+                height: 210,
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: contest.length,
+                  onPageChanged: (value) {
+                    setState(() {
+                      _activePage = value;
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    return _pages[index];
+                  },
+                ),
+              ),
+              Positioned(
+                bottom: 10,
+                left: 0,
+                right: 0,
+                child: Container(
+                  color: Colors.transparent,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List<Widget>.generate(
+                      _pages.length,
+                      (index) => Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 3,
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            _pageController.animateToPage(
+                              index,
+                              duration: const Duration(microseconds: 300),
+                              curve: Curves.easeIn,
+                            );
+                          },
+                          child: CircleAvatar(
+                            radius: 4,
+                            backgroundColor: _activePage == index
+                                ? Colors.black
+                                : const Color.fromARGB(255, 217, 217, 217),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
