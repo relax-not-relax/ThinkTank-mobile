@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/appbar/appbar.dart';
 import 'package:iconly/iconly.dart';
 
@@ -14,8 +15,21 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: const TAppBar(),
-      body: const SingleChildScrollView(),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/pics/main_bg.png"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Container(
+          child: const OptionScreen(),
+        ),
+      ),
       bottomNavigationBar: SizedBox(
         height: 70,
         child: BottomNavigationBar(
