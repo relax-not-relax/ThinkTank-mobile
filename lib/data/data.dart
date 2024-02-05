@@ -3,6 +3,7 @@ import 'package:thinktank_mobile/models/game.dart';
 
 const games = [
   Game(
+    id: 1,
     imageUrl: "assets/pics/game_1.png",
     name: "Flip Card Challenge",
     description:
@@ -11,6 +12,7 @@ const games = [
     color: Color.fromARGB(255, 252, 144, 42),
   ),
   Game(
+    id: 2,
     imageUrl: "assets/pics/game_2.png",
     name: "Music Password",
     description:
@@ -19,6 +21,7 @@ const games = [
     color: Color.fromARGB(255, 245, 171, 43),
   ),
   Game(
+    id: 3,
     imageUrl: "assets/pics/game_3.png",
     name: "Find The Anonymous",
     description:
@@ -27,6 +30,7 @@ const games = [
     color: Color.fromARGB(255, 234, 84, 85),
   ),
   Game(
+    id: 4,
     imageUrl: "assets/pics/game_4.png",
     name: "Images Walkthrough",
     description:
@@ -35,6 +39,7 @@ const games = [
     color: Color.fromARGB(255, 85, 125, 176),
   ),
   Game(
+    id: 5,
     imageUrl: "assets/pics/game_5.png",
     name: "Storyteller",
     description:
