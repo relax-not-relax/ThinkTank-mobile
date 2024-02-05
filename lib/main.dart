@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/screens/authentication/forgotpassscreen.dart';
+import 'package:thinktank_mobile/screens/authentication/loginscreen.dart';
+import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
 import 'package:thinktank_mobile/screens/home.dart';
+import 'package:thinktank_mobile/screens/introscreen.dart';
+import 'package:thinktank_mobile/screens/startscreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,8 +12,6 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,7 +23,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const HomeScreen(),
+      home: const NewPassScreen(),
     );
   }
 }
