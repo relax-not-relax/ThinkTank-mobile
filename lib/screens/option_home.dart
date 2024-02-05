@@ -3,7 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/data/data.dart';
+import 'package:thinktank_mobile/models/game.dart';
+import 'package:thinktank_mobile/screens/game/game_menu.dart';
 import 'package:thinktank_mobile/widgets/game/game_item.dart';
+
+late List<Widget> _pages;
+int _activePage = 0;
+final PageController _pageController = PageController(initialPage: 0);
+Timer? timer;
 
 class OptionScreen extends StatefulWidget {
   const OptionScreen({super.key});
@@ -12,14 +19,9 @@ class OptionScreen extends StatefulWidget {
   State<OptionScreen> createState() => _OptionScreenState();
 }
 
-late List<Widget> _pages;
-int _activePage = 0;
-final PageController _pageController = PageController(initialPage: 0);
-Timer? _timer;
-
 class _OptionScreenState extends State<OptionScreen> {
   void startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 3), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (_pageController.page == contest.length - 1) {
         _pageController.animateToPage(
           0,
@@ -33,6 +35,17 @@ class _OptionScreenState extends State<OptionScreen> {
         );
       }
     });
+  }
+
+  void selectGame(BuildContext context, Game game) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GameMenuScreen(
+          game: game,
+        ),
+      ),
+    );
   }
 
   @override
@@ -183,7 +196,12 @@ class _OptionScreenState extends State<OptionScreen> {
               scrollDirection: Axis.horizontal,
               itemCount: games.length,
               itemBuilder: (context, index) {
-                return GameItem(game: games[index]);
+                return GameItem(
+                  game: games[index],
+                  onSelectGame: (game) {
+                    selectGame(context, game);
+                  },
+                );
               },
             ),
           ),
