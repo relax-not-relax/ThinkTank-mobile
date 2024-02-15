@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
 class IntroScreen extends StatefulWidget {
@@ -61,9 +62,9 @@ class IntroScreenState extends State<IntroScreen> {
                             fontSize: 20,
                           ),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Container(
-                          margin: EdgeInsets.only(left: 5, right: 5),
+                          margin: const EdgeInsets.only(left: 5, right: 5),
                           child: Text(
                             content1,
                             textAlign: TextAlign.center,
@@ -98,9 +99,9 @@ class IntroScreenState extends State<IntroScreen> {
                             fontSize: 20,
                           ),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Container(
-                          margin: EdgeInsets.only(left: 5, right: 5),
+                          margin: const EdgeInsets.only(left: 5, right: 5),
                           child: Text(
                             content2,
                             textAlign: TextAlign.center,
@@ -135,9 +136,9 @@ class IntroScreenState extends State<IntroScreen> {
                             fontSize: 20,
                           ),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Container(
-                          margin: EdgeInsets.only(left: 5, right: 5),
+                          margin: const EdgeInsets.only(left: 5, right: 5),
                           child: Text(
                             content3,
                             textAlign: TextAlign.center,
@@ -155,13 +156,14 @@ class IntroScreenState extends State<IntroScreen> {
                 Container(
                   color: Colors.white,
                   child: Container(
-                    margin: EdgeInsets.only(top: 250),
+                    margin: const EdgeInsets.only(top: 250),
                     child: Column(
                       children: [
                         Image.asset(
                           'assets/pics/logoText.png',
-                          width: 500,
+                          width: 250,
                         ),
+                        const SizedBox(height: 20),
                         Container(
                           margin: const EdgeInsets.only(right: 70, left: 70),
                           child: const Text(
@@ -174,9 +176,16 @@ class IntroScreenState extends State<IntroScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 60),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const CreateAccountScreen()),
+                            );
+                          },
                           style: buttonPrimaryPink,
                           child: const Text(
                             'Continue',
