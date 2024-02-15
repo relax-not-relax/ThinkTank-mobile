@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/api/authentication_api.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/logininfo.dart';
 import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
@@ -12,9 +16,20 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isObscured = true;
   bool isRemember = false;
+  @override
+  void initState() async {
+    super.initState();
+    LoginInfo? loginInfo = await SharedPreferencesHelper.getAccount();
+    if (loginInfo != null) {
+      _passwordController.text = loginInfo.password;
+      _usernameController.text = loginInfo.username;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +60,21 @@ class LoginScreenState extends State<LoginScreen> {
                   ),
                   child: Center(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        String usn = _usernameController.text;
+                        String pass = _passwordController.text;
+                        Account? acc =
+                            await ApiAuthentication.postDataWithJson(usn, pass);
+                        if (acc == null) {
+                          print('loi dang nhap');
+                        } else {
+                          if (isRemember) {
+                            await SharedPreferencesHelper.saveAccount(
+                                LoginInfo(password: pass, username: usn));
+                          }
+                          print(acc.toString());
+                        }
+                      },
                       style: buttonPrimaryPink,
                       child: const Text(
                         'Sign in',
@@ -90,9 +119,10 @@ class LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ),
-                    const TextField(
-                      style: TextStyle(fontSize: 20, color: Colors.black),
-                      decoration: InputDecoration(
+                    TextField(
+                      controller: _usernameController,
+                      style: const TextStyle(fontSize: 20, color: Colors.black),
+                      decoration: const InputDecoration(
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: Colors.amber),
                         ),
@@ -174,7 +204,7 @@ class LoginScreenState extends State<LoginScreen> {
                               const SizedBox(
                                 width: 10,
                               ),
-                              const Text('Remember meee')
+                              const Text('Remember me')
                             ],
                           ),
                         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/screens/authentication/loginscreen.dart';
 import 'package:thinktank_mobile/screens/introscreen.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
@@ -110,7 +111,13 @@ class StartScreenState extends State<StartScreen>
                       children: [
                         ElevatedButton(
                           style: buttonPrimary,
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const LoginScreen()),
+                            );
+                          },
                           child: const Text(
                             'Get Started',
                             style: TextStyle(
