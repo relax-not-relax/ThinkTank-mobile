@@ -23,4 +23,9 @@ class SharedPreferencesHelper {
       return null;
     }
   }
+
+  static Future<void> removeAccount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove(loginInfoKey);
+  }
 }

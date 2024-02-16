@@ -4,6 +4,7 @@ import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/logininfo.dart';
 import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
+import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,16 +19,22 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  late Future<LoginInfo?> _loginFuture;
   bool _isObscured = true;
   bool isRemember = false;
+  bool _isIncorrect = false;
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    LoginInfo? loginInfo = await SharedPreferencesHelper.getAccount();
-    if (loginInfo != null) {
-      _passwordController.text = loginInfo.password;
-      _usernameController.text = loginInfo.username;
-    }
+    _loginFuture = SharedPreferencesHelper.getAccount();
+    _loginFuture.then((loginInfo) {
+      if (loginInfo != null) {
+        _usernameController.text = loginInfo.username;
+        _passwordController.text = loginInfo.password;
+        isRemember = true;
+      }
+      setState(() {});
+    });
   }
 
   @override
@@ -61,19 +68,24 @@ class LoginScreenState extends State<LoginScreen> {
                   child: Center(
                     child: ElevatedButton(
                       onPressed: () async {
+                        _showResizableDialog(context);
                         String usn = _usernameController.text;
                         String pass = _passwordController.text;
-                        Account? acc =
-                            await ApiAuthentication.postDataWithJson(usn, pass);
+                        Account? acc = await ApiAuthentication.login(usn, pass);
                         if (acc == null) {
-                          print('loi dang nhap');
+                          setState(() {
+                            _isIncorrect = true;
+                          });
                         } else {
                           if (isRemember) {
                             await SharedPreferencesHelper.saveAccount(
                                 LoginInfo(password: pass, username: usn));
                           }
-                          print(acc.toString());
+                          setState(() {
+                            _isIncorrect = false;
+                          });
                         }
+                        _closeDialog(context);
                       },
                       style: buttonPrimaryPink,
                       child: const Text(
@@ -97,7 +109,9 @@ class LoginScreenState extends State<LoginScreen> {
                     Align(
                       alignment: Alignment.topLeft,
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
                         icon: const Icon(Icons.arrow_back),
                       ),
                     ),
@@ -176,6 +190,13 @@ class LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
+                    Visibility(
+                      visible: _isIncorrect,
+                      child: const Text(
+                        'Incorrect username or password!',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
                     const SizedBox(
                       height: 20,
                     ),
@@ -198,6 +219,9 @@ class LoginScreenState extends State<LoginScreen> {
                                     setState(() {
                                       isRemember = value!;
                                     });
+                                    if (isRemember == false) {
+                                      SharedPreferencesHelper.removeAccount();
+                                    }
                                   },
                                 ),
                               ),
@@ -282,4 +306,58 @@ class LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+}
+
+void _closeDialog(BuildContext context) {
+  Navigator.of(context).pop(); // Sử dụng Navigator để đóng AlertDialog
+}
+
+void _showResizableDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250, // Điều chỉnh kích thước chiều rộng
+          height: 400,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(
+                  255, 249, 249, 249)), // Điều chỉnh kích thước chiều cao
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/pics/accOragne.png', // Thay thế bằng đường dẫn hình ảnh của bạn
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Please wait...',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Text(
+                'Please wait a moment, we are preparing for you...',
+                style: TextStyle(
+                    color: Color.fromRGBO(129, 140, 155, 1),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const CustomLoadingSpinner(),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

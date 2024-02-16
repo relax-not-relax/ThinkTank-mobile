@@ -3,8 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:thinktank_mobile/models/account.dart';
 
 class ApiAuthentication {
-  static Future<Account?> postDataWithJson(
-      String username, String password) async {
+  static Future<Account?> login(String username, String password) async {
     Map<String, String> loginData = {
       "userName": username,
       "password": password,
@@ -24,5 +23,24 @@ class ApiAuthentication {
     } else {
       return null;
     }
+  }
+
+  static Future<http.Response> register(
+      String fullname, String username, String email, String password) async {
+    Map<String, String?> data = {
+      "fullName": fullname,
+      "userName": username,
+      "email": email,
+      "password": password,
+      "fcm": null,
+      "googleId": null
+    };
+    String jsonBody = jsonEncode(data);
+    final response = await http.post(
+      Uri.parse('https://thinktank-sep490.azurewebsites.net/api/accounts'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonBody,
+    );
+    return response;
   }
 }
