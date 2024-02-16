@@ -4,6 +4,7 @@ import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/logininfo.dart';
 import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
+import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
@@ -85,7 +86,15 @@ class LoginScreenState extends State<LoginScreen> {
                             _isIncorrect = false;
                           });
                         }
+                        // ignore: use_build_context_synchronously
                         _closeDialog(context);
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const HomeScreen()),
+                          (route) => false,
+                        );
                       },
                       style: buttonPrimaryPink,
                       child: const Text(

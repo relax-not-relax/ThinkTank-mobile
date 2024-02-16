@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
+import 'package:thinktank_mobile/screens/startscreen.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
 class IntroScreen extends StatefulWidget {
@@ -178,12 +180,14 @@ class IntroScreenState extends State<IntroScreen> {
                         ),
                         const SizedBox(height: 60),
                         ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
+                          onPressed: () async {
+                            await SharedPreferencesHelper.saveFirstUse();
+                            // ignore: use_build_context_synchronously
+                            Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const CreateAccountScreen()),
+                                  builder: (context) => const StartScreen()),
+                              (route) => false,
                             );
                           },
                           style: buttonPrimaryPink,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/screens/authentication/forgotpassscreen.dart';
 import 'package:thinktank_mobile/screens/authentication/loginscreen.dart';
 import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
@@ -10,8 +11,31 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Widget startscreen = const CircularProgressIndicator();
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferencesHelper.getFirstUse().then((value) {
+      if (value) {
+        setState(() {
+          startscreen = const StartScreen();
+        });
+      } else {
+        setState(() {
+          startscreen = const IntroScreen();
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,7 +47,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const StartScreen(),
+      home: startscreen,
     );
   }
 }

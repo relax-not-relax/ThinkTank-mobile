@@ -1,8 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
+import 'package:thinktank_mobile/screens/game/game_menu.dart';
+import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
@@ -39,6 +43,107 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
   bool _isObscured = true;
   bool isIncorrect = true;
   String error = '';
+  bool isValidEmail(String email) {
+    RegExp regex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
+    return regex.hasMatch(email);
+  }
+
+  void singUp() async {
+    setState(() {
+      isIncorrect = false;
+    });
+    String fullname = _fullnameController.text;
+    String username = _usernamewController.text;
+    String password = _passwordController.text;
+    String email = _emailController.text;
+    if (fullname.trim().isEmpty ||
+        username.isEmpty ||
+        password.isEmpty ||
+        email.trim().isEmpty) {
+      setState(() {
+        error = "Please fill all field!";
+        isIncorrect = true;
+      });
+      return;
+    }
+    if (fullname.length > 50) {
+      setState(() {
+        error = "Fullname must not greater than 50 character!";
+        isIncorrect = true;
+      });
+      return;
+    }
+    if (username.length > 20) {
+      setState(() {
+        error = "Username must not greater than 20 character!";
+        isIncorrect = true;
+      });
+      return;
+    }
+    if (password.length < 8) {
+      setState(() {
+        error = "Password must greater than or equal 8 character!";
+        isIncorrect = true;
+      });
+      return;
+    }
+    if (email.length > 255) {
+      setState(() {
+        error = "Email must not greater than 255 character!";
+        isIncorrect = true;
+      });
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setState(() {
+        error = "Email is invalid!";
+        isIncorrect = true;
+      });
+      return;
+    }
+    if (username.contains(' ')) {
+      setState(() {
+        error = "username must not contain space character!";
+        isIncorrect = true;
+      });
+      return;
+    }
+    if (password.contains(' ')) {
+      setState(() {
+        error = "password must not contain space character!";
+        isIncorrect = true;
+      });
+      return;
+    }
+    _showResizableDialog(context);
+    Response respone =
+        await ApiAuthentication.register(fullname, username, email, password);
+    _closeDialog(context);
+    if (respone.statusCode == 200) {
+      setState(() {
+        isIncorrect = false;
+        error = '';
+      });
+      _showSuccessDialog(context);
+      Future.delayed(const Duration(seconds: 2), () {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          (route) => false,
+        );
+      });
+    } else if (respone.statusCode == 400) {
+      setState(() {
+        error = json.decode(respone.body)['error'];
+        isIncorrect = true;
+      });
+    } else {
+      setState(() {
+        error = 'Server error';
+        isIncorrect = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,31 +179,7 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                     ),
                     child: Center(
                       child: ElevatedButton(
-                        onPressed: () async {
-                          _showResizableDialog(context);
-                          Response respone = await ApiAuthentication.register(
-                              _fullnameController.text,
-                              _usernamewController.text,
-                              _emailController.text,
-                              _passwordController.text);
-                          if (respone.statusCode == 200) {
-                            setState(() {
-                              isIncorrect = false;
-                              error = '';
-                            });
-                          } else if (respone.statusCode == 400) {
-                            setState(() {
-                              error = json.decode(respone.body)['error'];
-                              isIncorrect = true;
-                            });
-                          } else {
-                            setState(() {
-                              error = 'Server error';
-                              isIncorrect = true;
-                            });
-                          }
-                          _closeDialog(context);
-                        },
+                        onPressed: singUp,
                         style: buttonPrimaryPink,
                         child: const Text(
                           'Sign up',
@@ -282,12 +363,18 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                           ),
                         ),
                       ),
-                      Visibility(
-                          visible: isIncorrect,
-                          child: Text(
-                            error,
-                            style: const TextStyle(color: Colors.red),
-                          )),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Visibility(
+                            visible: isIncorrect,
+                            child: Text(
+                              error,
+                              style: const TextStyle(color: Colors.red),
+                            )),
+                      ),
                       Container(
                         margin: const EdgeInsets.only(top: 20),
                         child: Row(
@@ -387,6 +474,54 @@ void _showResizableDialog(BuildContext context) {
               ),
               const Text(
                 'Please wait a moment, we are preparing for you...',
+                style: TextStyle(
+                    color: Color.fromRGBO(129, 140, 155, 1),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const CustomLoadingSpinner(),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _showSuccessDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 400,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/pics/accOragne.png',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Success',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Text(
+                'Welcome to ThinkTank!',
                 style: TextStyle(
                     color: Color.fromRGBO(129, 140, 155, 1),
                     fontSize: 18,
