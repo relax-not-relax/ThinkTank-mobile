@@ -6,6 +6,7 @@ import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
 import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/screens/introscreen.dart';
 import 'package:thinktank_mobile/screens/musicpassword/musicpass_mainscreen.dart';
+import 'package:thinktank_mobile/screens/musicpassword/musicpassgame.dart';
 import 'package:thinktank_mobile/screens/startscreen.dart';
 
 void main() {
@@ -48,9 +49,7 @@ class _MyAppState extends State<MyApp> {
         ),
         useMaterial3: true,
       ),
-
-      home: const MusicPasswordMainScreen(),
-
+      home: const MusicPasswordGamePlay(),
     );
   }
 }
