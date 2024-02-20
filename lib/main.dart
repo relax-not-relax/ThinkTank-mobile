@@ -48,9 +48,7 @@ class _MyAppState extends State<MyApp> {
         ),
         useMaterial3: true,
       ),
-
-      home: const MusicPasswordMainScreen(),
-
+      home: const HomeScreen(),
     );
   }
 }

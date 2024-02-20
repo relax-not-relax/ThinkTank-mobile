@@ -7,6 +7,7 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 class TAppBar extends StatelessWidget implements PreferredSizeWidget {
   const TAppBar({
     super.key,
+    required this.onSelectNotification,
     // required this.title,
     // required this.showBackArrow,
     // required this.leadingIcon,
@@ -19,6 +20,7 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
   // final IconData? leadingIcon;
   // final List<Widget> actions;
   // final VoidCallback? leadingOnPressed;
+  final void Function() onSelectNotification;
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +93,9 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 actions: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      onSelectNotification();
+                    },
                     icon: Badge(
                       backgroundColor: Color.fromARGB(255, 234, 84, 85),
                       label: Text(
