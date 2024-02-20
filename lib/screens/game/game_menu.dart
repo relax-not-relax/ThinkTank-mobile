@@ -4,6 +4,7 @@ import 'package:thinktank_mobile/models/game.dart';
 import 'package:thinktank_mobile/models/level.dart';
 import 'package:thinktank_mobile/screens/game/level_select.dart';
 import 'package:thinktank_mobile/widgets/game/memory_type.dart';
+import 'package:unicons/unicons.dart';
 
 class GameMenuScreen extends StatefulWidget {
   const GameMenuScreen({
@@ -514,7 +515,23 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
         elevation: 0,
         iconTheme: const IconThemeData(
           size: 30.0,
+          color: Colors.white,
         ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              shape: const CircleBorder(),
+              primary: const Color.fromARGB(255, 240, 122, 63),
+            ),
+            child: const Icon(
+              UniconsLine.question_circle,
+              size: 45.0,
+              color: Colors.white,
+            ),
+          ),
+        ],
+        toolbarHeight: 90.0,
       ),
       body: content,
     );
