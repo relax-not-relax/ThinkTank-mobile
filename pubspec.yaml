@@ -41,6 +41,7 @@ dependencies:
   iconly: ^1.0.1
   glass: ^1.0.2+1
   shared_preferences: ^2.2.2
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
