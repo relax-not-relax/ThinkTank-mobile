@@ -15,8 +15,6 @@ class ForgotPassScreen extends StatefulWidget {
 }
 
 class ForgotPassScreenState extends State<ForgotPassScreen> {
-  final TextEditingController _passwordController = TextEditingController();
-  bool _isObscured = true;
   bool isRemember = false;
   @override
   Widget build(BuildContext context) {

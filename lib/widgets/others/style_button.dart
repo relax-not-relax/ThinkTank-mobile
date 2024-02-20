@@ -55,3 +55,43 @@ final ButtonStyle buttonGoogle = ElevatedButton.styleFrom(
     ),
   ),
 );
+
+final ButtonStyle buttonPlay = ElevatedButton.styleFrom(
+  backgroundColor: const Color.fromRGBO(234, 67, 53, 1),
+  elevation: 0,
+  shape: const RoundedRectangleBorder(
+    side: BorderSide(
+      color: Colors.white,
+      width: 3.8,
+    ),
+    borderRadius: BorderRadius.all(
+      Radius.circular(100),
+    ),
+  ),
+);
+final ButtonStyle button1v1 = ElevatedButton.styleFrom(
+  backgroundColor: const Color.fromRGBO(240, 123, 63, 1),
+  elevation: 0,
+  shape: const RoundedRectangleBorder(
+    side: BorderSide(
+      color: Colors.white,
+      width: 3.8,
+    ),
+    borderRadius: BorderRadius.all(
+      Radius.circular(100),
+    ),
+  ),
+);
+final ButtonStyle buttonLeaderboard = ElevatedButton.styleFrom(
+  backgroundColor: Color.fromARGB(0, 255, 255, 255),
+  elevation: 0,
+  shape: const RoundedRectangleBorder(
+    side: BorderSide(
+      color: Color.fromRGBO(234, 84, 85, 1),
+      width: 3.8,
+    ),
+    borderRadius: BorderRadius.all(
+      Radius.circular(100),
+    ),
+  ),
+);
