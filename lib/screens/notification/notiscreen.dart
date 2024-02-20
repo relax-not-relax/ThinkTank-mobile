@@ -7,9 +7,14 @@ import 'package:thinktank_mobile/widgets/others/noti_element.dart';
 
 List<NotificationItem> notifications = [...notiTemp];
 
-class NotiScreen extends StatelessWidget {
+class NotiScreen extends StatefulWidget {
   const NotiScreen({super.key});
 
+  @override
+  State<NotiScreen> createState() => _NotiScreenState();
+}
+
+class _NotiScreenState extends State<NotiScreen> {
   @override
   Widget build(BuildContext context) {
     Future displayBottomSheet(BuildContext context) {
