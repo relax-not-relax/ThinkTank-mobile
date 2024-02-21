@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/data/data.dart';
+import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:thinktank_mobile/widgets/others/textstroke.dart';
 
 class MusicPasswordGamePlay extends StatefulWidget {
-  const MusicPasswordGamePlay({super.key});
+  const MusicPasswordGamePlay({super.key, required this.info});
+  final MusicPassword info;
 
   @override
   State<StatefulWidget> createState() {
@@ -15,39 +17,72 @@ class MusicPasswordGamePlay extends StatefulWidget {
   }
 }
 
-class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
-  static const maxTime = Duration(seconds: 10);
-  Duration remainingTime = maxTime;
+class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
+    with TickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _opacityAnimation;
+  List<String> listNote = [
+    'c1',
+    'd1',
+    'e1',
+    'f1',
+    'g1',
+    'a1',
+    'b1',
+    'c2',
+    'd2',
+    'e2',
+    'f2',
+    'g2'
+  ];
+  Duration maxTime = Duration(seconds: 10);
+  Duration remainingTime = Duration(seconds: 10);
+  int remainChange = 0;
   Timer? timer;
   int numScript = 1;
-  bool skipVisible = true;
-  bool scriptVisibile = true;
+  bool skipVisible = false;
+  bool scriptVisibile = false;
   bool continueVisible = false;
   bool checkVisible = false;
+  bool isListenAlready = false;
+  bool enterPassVisible = false;
+  bool roundVisible = true;
   String pass = '';
+  bool isWin = false;
+  String answer = '';
   final audioPlayer = AudioPlayer();
   String bg = 'assets/pics/musicpassbng.png';
   String script =
       "Come on, James. You can do this. What's the password?\nJames closes his eyes, attempting to remember. Suddenly, he recalls the distinctive sound the digital door makes when he enters the password. He opens his eyes, a spark of realization in them.";
 
-  void nhappass(String s) {
+  void nhappass(String s, String note) {
     setState(() {
       pass += s;
+      answer += note;
     });
   }
 
-  void playSound() {
-    final audioPlayer = AudioPlayer();
-    audioPlayer.play(
-      DeviceFileSource('assets/sound/test.mp3'),
-    );
-    // Đặt đường dẫn âm thanh của bạn
+  void delete() {
+    setState(() {
+      if (pass.isNotEmpty) {
+        pass = pass.substring(0, pass.length - 1);
+      }
+
+      if (answer.isNotEmpty) {
+        answer = answer.substring(0, answer.length - 2);
+      }
+    });
+  }
+
+  bool check() {
+    if (answer == widget.info.answer) return true;
+    return false;
   }
 
   void startTimer() {
-    timer = Timer.periodic(const Duration(milliseconds: 53), (_) {
+    timer = Timer.periodic(const Duration(milliseconds: 543), (_) {
       setState(() {
-        final newTime = remainingTime - const Duration(milliseconds: 53);
+        final newTime = remainingTime - const Duration(milliseconds: 543);
         if (newTime.isNegative) {
           timer!.cancel();
           remainingTime = maxTime;
@@ -55,6 +90,21 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
           remainingTime = newTime;
         }
       });
+    });
+  }
+
+  void win() {
+    setState(() {
+      bg = 'assets/pics/winmuisc.png';
+      checkVisible = false;
+      enterPassVisible = false;
+      script =
+          "As James enters the last part of the password, the door emits a positive beep and unlocks. James can't hide his excitement.\nGot it! Who needs to remember a password when you've got rhythm?\nJames opens the door and steps inside, feeling a sense of accomplishment.";
+      continueVisible = true;
+      scriptVisibile = true;
+      timer?.cancel();
+      print(
+          'win: ${remainingTime.inSeconds},${remainingTime.inMilliseconds % 1000}');
     });
   }
 
@@ -81,10 +131,14 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
       setState(() {
         scriptVisibile = false;
         continueVisible = false;
+        enterPassVisible = true;
+        checkVisible = true;
         bg = 'assets/pics/nhappass.png';
       });
+      numScript++;
       return;
     }
+    if (isWin) {}
   }
 
   @override
@@ -92,6 +146,43 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
     timer?.cancel();
     audioPlayer.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {
+      maxTime = Duration(seconds: widget.info.time);
+      remainingTime = maxTime;
+      remainChange = widget.info.change;
+    });
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+    _opacityAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        Future.delayed(
+          Duration(seconds: 1),
+          () {
+            setState(() {
+              roundVisible = false;
+              scriptVisibile = true;
+              skipVisible = true;
+            });
+          },
+        );
+      }
+    });
+    _controller.forward();
   }
 
   @override
@@ -208,7 +299,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                           ),
                         ),
                         const Text(
-                          ' : ',
+                          ' - ',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 28,
@@ -219,14 +310,14 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                           height: 50,
                           width: 50,
                           decoration: const BoxDecoration(
-                            color: Color.fromRGBO(255, 212, 96, 1),
+                            color: Color.fromRGBO(242, 153, 115, 1),
                             borderRadius: BorderRadius.all(
                               Radius.circular(10),
                             ),
                           ),
                           child: Center(
                             child: Text(
-                              millisecondsStr,
+                              remainChange.toString(),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 28,
@@ -261,23 +352,26 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
               ],
             ),
             Visibility(
-              visible: false,
+              visible: roundVisible,
               child: Container(
                 decoration:
                     const BoxDecoration(color: Color.fromARGB(153, 0, 0, 0)),
               ),
             ),
-            Visibility(
-              visible: false,
-              child: Center(
-                  child: TextWidget(
-                'Round 1',
-                fontFamily: 'ButtonCustomFont',
-                fontSize: 70,
-                strokeColor: const Color.fromRGBO(255, 212, 96, 1),
-                strokeWidth: 20,
-                color: const Color.fromRGBO(240, 123, 63, 1),
-              )),
+            FadeTransition(
+              opacity: _opacityAnimation,
+              child: Visibility(
+                visible: roundVisible,
+                child: Center(
+                    child: TextWidget(
+                  'Round ' + widget.info.level.toString(),
+                  fontFamily: 'ButtonCustomFont',
+                  fontSize: 70,
+                  strokeColor: const Color.fromRGBO(255, 212, 96, 1),
+                  strokeWidth: 20,
+                  color: const Color.fromRGBO(240, 123, 63, 1),
+                )),
+              ),
             ),
             Visibility(
               visible: scriptVisibile,
@@ -369,10 +463,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
               ),
             ),
             Visibility(
+              visible: enterPassVisible,
               child: Center(
                 child: Container(
                   margin: const EdgeInsets.only(top: 100),
-                  height: MediaQuery.of(context).size.height * 0.6,
+                  height: MediaQuery.of(context).size.height * 0.65,
                   width: MediaQuery.of(context).size.width - 50,
                   decoration: const BoxDecoration(
                     color: Color.fromRGBO(0, 0, 0, 0.7),
@@ -384,9 +479,13 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                     children: [
                       InkWell(
                         onTap: () {
-                          audioPlayer.play(
-                            AssetSource('sound/sos.mp3'),
-                          );
+                          if (!isListenAlready) {
+                            audioPlayer.play(UrlSource(widget.info.soundLink));
+                            audioPlayer.onPlayerComplete.listen((event) {
+                              startTimer();
+                            });
+                            isListenAlready = true;
+                          }
                         },
                         child: Container(
                           margin: const EdgeInsets.only(
@@ -446,11 +545,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  nhappass('1');
                                   final a = AudioPlayer();
                                   a.play(
-                                    AssetSource('sound/buy.mp3'),
+                                    AssetSource('sound/c1.mp3'),
                                   );
+                                  nhappass('1', listNote[0]);
                                 },
                                 style: buttonPass,
                                 child: const Center(
@@ -478,7 +577,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  nhappass('2');
+                                  final a = AudioPlayer();
+                                  a.play(
+                                    AssetSource('sound/${listNote[1]}.mp3'),
+                                  );
+                                  nhappass('2', listNote[1]);
                                 },
                                 style: buttonPass,
                                 child: const Center(
@@ -506,7 +609,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  nhappass('3');
+                                  final a = AudioPlayer();
+                                  a.play(
+                                    AssetSource('sound/${listNote[2]}.mp3'),
+                                  );
+                                  nhappass('3', listNote[2]);
                                 },
                                 style: buttonPass,
                                 child: const Center(
@@ -546,7 +653,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  nhappass('4');
+                                  final a = AudioPlayer();
+                                  a.play(
+                                    AssetSource('sound/${listNote[3]}.mp3'),
+                                  );
+                                  nhappass('4', listNote[3]);
                                 },
                                 style: buttonPass,
                                 child: const Center(
@@ -574,7 +685,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  nhappass('5');
+                                  final a = AudioPlayer();
+                                  a.play(
+                                    AssetSource('sound/${listNote[4]}.mp3'),
+                                  );
+                                  nhappass('5', listNote[4]);
                                 },
                                 style: buttonPass,
                                 child: const Center(
@@ -602,7 +717,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  nhappass('6');
+                                  final a = AudioPlayer();
+                                  a.play(
+                                    AssetSource('sound/${listNote[5]}.mp3'),
+                                  );
+                                  nhappass('6', listNote[5]);
                                 },
                                 style: buttonPass,
                                 child: const Center(
@@ -642,7 +761,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  nhappass('7');
+                                  final a = AudioPlayer();
+                                  a.play(
+                                    AssetSource('sound/${listNote[6]}.mp3'),
+                                  );
+                                  nhappass('7', listNote[6]);
                                 },
                                 style: buttonPass,
                                 child: const Center(
@@ -670,7 +793,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  nhappass('8');
+                                  final a = AudioPlayer();
+                                  a.play(
+                                    AssetSource('sound/${listNote[7]}.mp3'),
+                                  );
+                                  nhappass('8', listNote[7]);
                                 },
                                 style: buttonPass,
                                 child: const Center(
@@ -698,7 +825,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  nhappass('9');
+                                  final a = AudioPlayer();
+                                  a.play(
+                                    AssetSource('sound/${listNote[8]}.mp3'),
+                                  );
+                                  nhappass('9', listNote[8]);
                                 },
                                 style: buttonPass,
                                 child: const Center(
@@ -738,7 +869,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  nhappass('*');
+                                  final a = AudioPlayer();
+                                  a.play(
+                                    AssetSource('sound/${listNote[9]}.mp3'),
+                                  );
+                                  nhappass('*', listNote[9]);
                                 },
                                 style: buttonPass,
                                 child: const Center(
@@ -766,7 +901,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  nhappass('0');
+                                  final a = AudioPlayer();
+                                  a.play(
+                                    AssetSource('sound/${listNote[10]}.mp3'),
+                                  );
+                                  nhappass('0', listNote[10]);
                                 },
                                 style: buttonPass,
                                 child: const Center(
@@ -794,7 +933,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  nhappass('#');
+                                  final a = AudioPlayer();
+                                  a.play(
+                                    AssetSource('sound/${listNote[11]}.mp3'),
+                                  );
+                                  nhappass('#', listNote[11]);
                                 },
                                 style: buttonPass,
                                 child: const Center(
@@ -819,7 +962,36 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                             ),
                           ],
                         ),
-                      )
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 20),
+                        child: SizedBox(
+                          height: 60,
+                          width: 60,
+                          child: ElevatedButton(
+                            onPressed: delete,
+                            style: buttonPass,
+                            child: const Center(
+                              child: Text(
+                                'X',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color.fromRGBO(234, 84, 85, 1),
+                                  fontSize: 25,
+                                  shadows: [
+                                    BoxShadow(
+                                      color: Color.fromRGBO(234, 84, 85, 1),
+                                      blurRadius: 10,
+                                      spreadRadius: 10,
+                                      offset: Offset(0, 0),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -849,7 +1021,23 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay> {
                         ],
                       ),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          print(answer + ' - ' + widget.info.answer);
+                          if (remainChange >= 1) {
+                            if (check()) {
+                              win();
+                            } else {
+                              setState(() {
+                                remainChange -= 1;
+                              });
+                              if (remainChange <= 0) {
+                                setState(() {
+                                  checkVisible = false;
+                                });
+                              }
+                            }
+                          }
+                        },
                         style: button1v1,
                         child: const Text(
                           'CHECK',

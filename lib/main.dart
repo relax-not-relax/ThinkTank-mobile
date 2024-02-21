@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/screens/authentication/forgotpassscreen.dart';
 import 'package:thinktank_mobile/screens/authentication/loginscreen.dart';
 import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
@@ -49,9 +50,15 @@ class _MyAppState extends State<MyApp> {
         ),
         useMaterial3: true,
       ),
-
-      home: const MusicPasswordGamePlay(),
-
+      home: const MusicPasswordGamePlay(
+        info: MusicPassword(
+            level: 1,
+            soundLink:
+                'https://firebasestorage.googleapis.com/v0/b/lottery-4803d.appspot.com/o/as1.mp3?alt=media&token=7d5c4fd4-f626-4466-aad3-e5146402eaa7',
+            answer: 'c1e1g1c2',
+            change: 5,
+            time: 120),
+      ),
     );
   }
 }
