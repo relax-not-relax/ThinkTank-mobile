@@ -82,6 +82,21 @@ final ButtonStyle button1v1 = ElevatedButton.styleFrom(
     ),
   ),
 );
+
+final ButtonStyle buttonPass = ElevatedButton.styleFrom(
+  backgroundColor: Color.fromARGB(0, 240, 122, 63),
+  elevation: 8,
+  shape: const RoundedRectangleBorder(
+    side: BorderSide(
+      color: Color.fromRGBO(234, 84, 85, 1),
+      width: 5,
+    ),
+    borderRadius: BorderRadius.all(
+      Radius.circular(100),
+    ),
+  ),
+);
+
 final ButtonStyle buttonLeaderboard = ElevatedButton.styleFrom(
   backgroundColor: Color.fromARGB(0, 255, 255, 255),
   elevation: 0,
