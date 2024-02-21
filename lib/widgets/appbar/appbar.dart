@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
@@ -8,6 +9,7 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
   const TAppBar({
     super.key,
     required this.onSelectNotification,
+    required this.urlAvt,
     // required this.title,
     // required this.showBackArrow,
     // required this.leadingIcon,
@@ -21,6 +23,7 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
   // final List<Widget> actions;
   // final VoidCallback? leadingOnPressed;
   final void Function() onSelectNotification;
+  final String? urlAvt;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +68,7 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
                 backgroundColor: Colors.transparent,
                 leading: const CircleAvatar(
                   radius: 50,
-                  backgroundImage: AssetImage("assets/pics/ava_test.png"),
+                  backgroundImage: AssetImage('assets/pics/cup.png'),
                 ),
                 title: Padding(
                   padding: const EdgeInsets.fromLTRB(7, 0, 0, 0),
@@ -97,7 +100,7 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
                       onSelectNotification();
                     },
                     icon: Badge(
-                      backgroundColor: Color.fromARGB(255, 234, 84, 85),
+                      backgroundColor: const Color.fromARGB(255, 234, 84, 85),
                       label: Text(
                         "1",
                         style: GoogleFonts.roboto(

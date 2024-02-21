@@ -57,6 +57,26 @@ class Account {
       version: json['version'],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'code': code,
+      'fullName': fullName,
+      'userName': userName,
+      'email': email,
+      'gender': gender,
+      'dateOfBirth': dateOfBirth,
+      'avatar': avatar,
+      'coin': coin,
+      'isOnline': isOnline,
+      'refreshToken': refreshToken,
+      'fcm': fcm,
+      'status': status,
+      'googleId': googleId,
+      'accessToken': accessToken,
+      'version': version,
+    };
+  }
 
   @override
   String toString() {

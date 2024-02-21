@@ -6,6 +6,7 @@ import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:thinktank_mobile/widgets/others/textstroke.dart';
+import 'package:thinktank_mobile/widgets/others/winscreen.dart';
 
 class MusicPasswordGamePlay extends StatefulWidget {
   const MusicPasswordGamePlay({super.key, required this.info});
@@ -103,8 +104,6 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
       continueVisible = true;
       scriptVisibile = true;
       timer?.cancel();
-      print(
-          'win: ${remainingTime.inSeconds},${remainingTime.inMilliseconds % 1000}');
     });
   }
 
@@ -138,7 +137,22 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
       numScript++;
       return;
     }
-    if (isWin) {}
+    if (isWin) {
+      double points = (remainingTime.inMilliseconds / 1000);
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WinScreen(
+            haveTime: true,
+            points: (points * 100).toInt(),
+            time: (maxTime.inMilliseconds - remainingTime.inMilliseconds)
+                    .toDouble() /
+                1000,
+          ),
+        ),
+        (route) => false,
+      );
+    }
   }
 
   @override
@@ -1022,10 +1036,12 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                       ),
                       child: ElevatedButton(
                         onPressed: () {
-                          print(answer + ' - ' + widget.info.answer);
                           if (remainChange >= 1) {
                             if (check()) {
-                              win();
+                              setState(() {
+                                isWin = true;
+                                win();
+                              });
                             } else {
                               setState(() {
                                 remainChange -= 1;

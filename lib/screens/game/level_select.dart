@@ -40,6 +40,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
             return LevelItem(
               levelCompleted: widget.level.levelCompleted,
               levelNumber: widget.level.totalLevel[index],
+              game: widget.level.game.name,
             );
           },
         ),

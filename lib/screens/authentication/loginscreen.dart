@@ -85,6 +85,7 @@ class LoginScreenState extends State<LoginScreen> {
                           setState(() {
                             _isIncorrect = false;
                           });
+                          await SharedPreferencesHelper.saveInfo(acc);
                         }
                         // ignore: use_build_context_synchronously
                         _closeDialog(context);
