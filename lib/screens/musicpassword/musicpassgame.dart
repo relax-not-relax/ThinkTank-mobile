@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/models/musicpassword.dart';
@@ -50,8 +51,12 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
   bool roundVisible = true;
   String pass = '';
   bool isWin = false;
+  AssetSource incorrectSound = AssetSource('sound/incorrect.mp3');
+
   String answer = '';
+
   final audioPlayer = AudioPlayer();
+  AudioPlayer au = AudioPlayer();
   String bg = 'assets/pics/musicpassbng.png';
   String script =
       "Come on, James. You can do this. What's the password?\nJames closes his eyes, attempting to remember. Suddenly, he recalls the distinctive sound the digital door makes when he enters the password. He opens his eyes, a spark of realization in them.";
@@ -86,7 +91,9 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
         final newTime = remainingTime - const Duration(milliseconds: 543);
         if (newTime.isNegative) {
           timer!.cancel();
-          remainingTime = maxTime;
+          setState(() {
+            lose();
+          });
         } else {
           remainingTime = newTime;
         }
@@ -101,6 +108,19 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
       enterPassVisible = false;
       script =
           "As James enters the last part of the password, the door emits a positive beep and unlocks. James can't hide his excitement.\nGot it! Who needs to remember a password when you've got rhythm?\nJames opens the door and steps inside, feeling a sense of accomplishment.";
+      continueVisible = true;
+      scriptVisibile = true;
+      timer?.cancel();
+    });
+  }
+
+  void lose() {
+    setState(() {
+      isWin = false;
+      bg = 'assets/pics/winmusic.png';
+      checkVisible = false;
+      enterPassVisible = false;
+      script = "Oh no. Jame can't remember password!\nHe can't open the door!";
       continueVisible = true;
       scriptVisibile = true;
       timer?.cancel();
@@ -209,6 +229,10 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
           },
         );
       }
+    });
+    au.play(AssetSource('sound/startgame.mp3'));
+    au.onPlayerComplete.listen((event) {
+      au.dispose();
     });
     _controller.forward();
   }
@@ -577,6 +601,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                                   a.play(
                                     AssetSource('sound/c1.mp3'),
                                   );
+                                  a.onPlayerComplete.listen(
+                                    (event) {
+                                      a.dispose();
+                                    },
+                                  );
                                   nhappass('1', listNote[0]);
                                 },
                                 style: buttonPass,
@@ -609,6 +638,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                                   a.play(
                                     AssetSource('sound/${listNote[1]}.mp3'),
                                   );
+                                  a.onPlayerComplete.listen(
+                                    (event) {
+                                      a.dispose();
+                                    },
+                                  );
                                   nhappass('2', listNote[1]);
                                 },
                                 style: buttonPass,
@@ -640,6 +674,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                                   final a = AudioPlayer();
                                   a.play(
                                     AssetSource('sound/${listNote[2]}.mp3'),
+                                  );
+                                  a.onPlayerComplete.listen(
+                                    (event) {
+                                      a.dispose();
+                                    },
                                   );
                                   nhappass('3', listNote[2]);
                                 },
@@ -685,6 +724,16 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                                   a.play(
                                     AssetSource('sound/${listNote[3]}.mp3'),
                                   );
+                                  a.onPlayerComplete.listen(
+                                    (event) {
+                                      a.dispose();
+                                    },
+                                  );
+                                  a.onPlayerComplete.listen(
+                                    (event) {
+                                      a.dispose();
+                                    },
+                                  );
                                   nhappass('4', listNote[3]);
                                 },
                                 style: buttonPass,
@@ -717,6 +766,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                                   a.play(
                                     AssetSource('sound/${listNote[4]}.mp3'),
                                   );
+                                  a.onPlayerComplete.listen(
+                                    (event) {
+                                      a.dispose();
+                                    },
+                                  );
                                   nhappass('5', listNote[4]);
                                 },
                                 style: buttonPass,
@@ -748,6 +802,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                                   final a = AudioPlayer();
                                   a.play(
                                     AssetSource('sound/${listNote[5]}.mp3'),
+                                  );
+                                  a.onPlayerComplete.listen(
+                                    (event) {
+                                      a.dispose();
+                                    },
                                   );
                                   nhappass('6', listNote[5]);
                                 },
@@ -793,6 +852,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                                   a.play(
                                     AssetSource('sound/${listNote[6]}.mp3'),
                                   );
+                                  a.onPlayerComplete.listen(
+                                    (event) {
+                                      a.dispose();
+                                    },
+                                  );
                                   nhappass('7', listNote[6]);
                                 },
                                 style: buttonPass,
@@ -825,6 +889,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                                   a.play(
                                     AssetSource('sound/${listNote[7]}.mp3'),
                                   );
+                                  a.onPlayerComplete.listen(
+                                    (event) {
+                                      a.dispose();
+                                    },
+                                  );
                                   nhappass('8', listNote[7]);
                                 },
                                 style: buttonPass,
@@ -856,6 +925,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                                   final a = AudioPlayer();
                                   a.play(
                                     AssetSource('sound/${listNote[8]}.mp3'),
+                                  );
+                                  a.onPlayerComplete.listen(
+                                    (event) {
+                                      a.dispose();
+                                    },
                                   );
                                   nhappass('9', listNote[8]);
                                 },
@@ -901,6 +975,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                                   a.play(
                                     AssetSource('sound/${listNote[9]}.mp3'),
                                   );
+                                  a.onPlayerComplete.listen(
+                                    (event) {
+                                      a.dispose();
+                                    },
+                                  );
                                   nhappass('*', listNote[9]);
                                 },
                                 style: buttonPass,
@@ -933,6 +1012,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                                   a.play(
                                     AssetSource('sound/${listNote[10]}.mp3'),
                                   );
+                                  a.onPlayerComplete.listen(
+                                    (event) {
+                                      a.dispose();
+                                    },
+                                  );
                                   nhappass('0', listNote[10]);
                                 },
                                 style: buttonPass,
@@ -964,6 +1048,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                                   final a = AudioPlayer();
                                   a.play(
                                     AssetSource('sound/${listNote[11]}.mp3'),
+                                  );
+                                  a.onPlayerComplete.listen(
+                                    (event) {
+                                      a.dispose();
+                                    },
                                   );
                                   nhappass('#', listNote[11]);
                                 },
@@ -1052,17 +1141,30 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                         onPressed: () {
                           if (remainChange >= 1) {
                             if (check()) {
+                              final a = AudioPlayer();
+                              a.play(AssetSource('sound/correct.mp3'));
+
+                              a.onPlayerComplete.listen(
+                                (event) {
+                                  a.dispose();
+                                },
+                              );
                               setState(() {
                                 isWin = true;
                                 win();
                               });
                             } else {
                               setState(() {
+                                AudioPlayer incoSound = AudioPlayer();
+                                incoSound.play(incorrectSound);
+                                incoSound.onPlayerComplete.listen((event) {
+                                  incoSound.dispose();
+                                });
                                 remainChange -= 1;
                               });
                               if (remainChange <= 0) {
                                 setState(() {
-                                  checkVisible = false;
+                                  lose();
                                 });
                               }
                             }

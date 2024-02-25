@@ -1,4 +1,11 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/level.dart';
+import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
+import 'package:thinktank_mobile/screens/game/level_select.dart';
+import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
 class WinScreen extends StatefulWidget {
@@ -20,6 +27,18 @@ class WinScreen extends StatefulWidget {
 }
 
 class WinScreenState extends State<WinScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    AudioPlayer audioPlayer = AudioPlayer();
+    if (widget.isWin) {
+      audioPlayer.play(AssetSource('sound/win.mp3'));
+    } else {
+      audioPlayer.play(AssetSource('sound/lose.mp3'));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,7 +123,19 @@ class WinScreenState extends State<WinScreen> {
                       ],
                     ),
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        Account? account =
+                            await SharedPreferencesHelper.getInfo();
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomeScreen(
+                                    account: account!,
+                                  )),
+                          (route) => false,
+                        );
+                      },
                       style: widget.isWin ? buttonWin : buttonLose,
                       child: const Text(
                         'CONTINUE',
