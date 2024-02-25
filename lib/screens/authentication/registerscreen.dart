@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
+import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/screens/game/game_menu.dart';
 import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
@@ -116,25 +117,30 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
       return;
     }
     _showResizableDialog(context);
-    Response respone =
+    Response response =
         await ApiAuthentication.register(fullname, username, email, password);
     _closeDialog(context);
-    if (respone.statusCode == 200) {
+    if (response.statusCode == 200) {
       setState(() {
         isIncorrect = false;
         error = '';
       });
+      final jsonData = json.decode(response.body);
+      Account account = Account.fromJson(jsonData);
       _showSuccessDialog(context);
       Future.delayed(const Duration(seconds: 2), () {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(
+              builder: (context) => HomeScreen(
+                    account: account,
+                  )),
           (route) => false,
         );
       });
-    } else if (respone.statusCode == 400) {
+    } else if (response.statusCode == 400) {
       setState(() {
-        error = json.decode(respone.body)['error'];
+        error = json.decode(response.body)['error'];
         isIncorrect = true;
       });
     } else {

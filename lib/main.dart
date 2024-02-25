@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
           ),
           useMaterial3: true,
         ),
-        home: const IntroScreen()
+        home: const StartScreen()
         // home: const MusicPasswordGamePlay(
         //   info: MusicPassword(
         //       level: 1,

@@ -14,7 +14,6 @@ Timer? timer;
 
 class OptionScreen extends StatefulWidget {
   const OptionScreen({super.key});
-
   @override
   State<OptionScreen> createState() => _OptionScreenState();
 }

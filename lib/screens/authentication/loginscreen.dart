@@ -29,12 +29,13 @@ class LoginScreenState extends State<LoginScreen> {
     super.initState();
     _loginFuture = SharedPreferencesHelper.getAccount();
     _loginFuture.then((loginInfo) {
-      if (loginInfo != null) {
-        _usernameController.text = loginInfo.username;
-        _passwordController.text = loginInfo.password;
-        isRemember = true;
-      }
-      setState(() {});
+      setState(() {
+        if (loginInfo != null) {
+          _usernameController.text = loginInfo.username;
+          _passwordController.text = loginInfo.password;
+          isRemember = true;
+        }
+      });
     });
   }
 
@@ -74,9 +75,11 @@ class LoginScreenState extends State<LoginScreen> {
                         String pass = _passwordController.text;
                         Account? acc = await ApiAuthentication.login(usn, pass);
                         if (acc == null) {
+                          print('sai');
                           setState(() {
                             _isIncorrect = true;
                           });
+                          _closeDialog(context);
                         } else {
                           if (isRemember) {
                             await SharedPreferencesHelper.saveAccount(
@@ -86,16 +89,18 @@ class LoginScreenState extends State<LoginScreen> {
                             _isIncorrect = false;
                           });
                           await SharedPreferencesHelper.saveInfo(acc);
+                          // ignore: use_build_context_synchronously
+                          _closeDialog(context);
+                          // ignore: use_build_context_synchronously
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen(
+                                      account: acc,
+                                    )),
+                            (route) => false,
+                          );
                         }
-                        // ignore: use_build_context_synchronously
-                        _closeDialog(context);
-                        // ignore: use_build_context_synchronously
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const HomeScreen()),
-                          (route) => false,
-                        );
                       },
                       style: buttonPrimaryPink,
                       child: const Text(

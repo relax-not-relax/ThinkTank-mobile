@@ -148,6 +148,20 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
             time: (maxTime.inMilliseconds - remainingTime.inMilliseconds)
                     .toDouble() /
                 1000,
+            isWin: true,
+          ),
+        ),
+        (route) => false,
+      );
+    } else {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const WinScreen(
+            haveTime: false,
+            points: 0,
+            time: 0,
+            isWin: false,
           ),
         ),
         (route) => false,

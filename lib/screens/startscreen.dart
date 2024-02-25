@@ -115,7 +115,7 @@ class StartScreenState extends State<StartScreen>
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const LoginScreen()),
+                                  builder: (context) => const IntroScreen()),
                             );
                           },
                           child: const Text(
@@ -135,7 +135,7 @@ class StartScreenState extends State<StartScreen>
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const IntroScreen()),
+                                  builder: (context) => const LoginScreen()),
                             );
                           },
                           child: const Text(

@@ -14,7 +14,7 @@ class Account {
   final String refreshToken;
   final String? fcm;
   final bool status;
-  final String googleId;
+  final String? googleId;
   final String accessToken;
   final String version;
 

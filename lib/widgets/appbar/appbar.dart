@@ -10,6 +10,7 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.onSelectNotification,
     required this.urlAvt,
+    required this.fullname,
     // required this.title,
     // required this.showBackArrow,
     // required this.leadingIcon,
@@ -24,6 +25,7 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
   // final VoidCallback? leadingOnPressed;
   final void Function() onSelectNotification;
   final String? urlAvt;
+  final String fullname;
 
   @override
   Widget build(BuildContext context) {
@@ -63,12 +65,12 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+              padding: EdgeInsets.fromLTRB(20, 30, 20, 0),
               child: AppBar(
                 backgroundColor: Colors.transparent,
-                leading: const CircleAvatar(
+                leading: CircleAvatar(
                   radius: 50,
-                  backgroundImage: AssetImage('assets/pics/cup.png'),
+                  backgroundImage: NetworkImage(urlAvt!),
                 ),
                 title: Padding(
                   padding: const EdgeInsets.fromLTRB(7, 0, 0, 0),
@@ -84,7 +86,7 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
                         ),
                       ),
                       Text(
-                        "Bao Long Nguyen",
+                        fullname,
                         style: GoogleFonts.roboto(
                           color: Colors.white,
                           fontSize: 20.0,

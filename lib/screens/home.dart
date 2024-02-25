@@ -8,7 +8,8 @@ import 'package:thinktank_mobile/widgets/appbar/appbar.dart';
 import 'package:iconly/iconly.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, required this.account});
+  final Account account;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -30,7 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
       extendBodyBehindAppBar: true,
       appBar: TAppBar(
         onSelectNotification: () => openNotification(context),
-        urlAvt: '',
+        urlAvt: widget.account.avatar ?? '',
+        fullname: widget.account.fullName,
       ),
       body: Container(
         height: MediaQuery.of(context).size.height,

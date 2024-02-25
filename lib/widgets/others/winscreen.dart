@@ -3,10 +3,15 @@ import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
 class WinScreen extends StatefulWidget {
   const WinScreen(
-      {super.key, required this.points, required this.haveTime, this.time});
+      {super.key,
+      required this.points,
+      required this.haveTime,
+      this.time,
+      required this.isWin});
   final int points;
   final bool haveTime;
   final double? time;
+  final bool isWin;
 
   @override
   State<StatefulWidget> createState() {
@@ -22,9 +27,11 @@ class WinScreenState extends State<WinScreen> {
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/pics/winbg.png'),
+            image: AssetImage(widget.isWin
+                ? 'assets/pics/winbg.png'
+                : 'assets/pics/losebg.png'),
           ),
         ),
         child: Stack(
@@ -34,23 +41,30 @@ class WinScreenState extends State<WinScreen> {
               children: [
                 Center(
                   child: Image.asset(
-                    'assets/pics/cup.png',
+                    widget.isWin
+                        ? 'assets/pics/cup.png'
+                        : 'assets/pics/cry.png',
                     width: 400,
                   ),
                 ),
                 Center(
                   child: Image.asset(
-                    'assets/pics/wintext.png',
+                    widget.isWin
+                        ? 'assets/pics/wintext.png'
+                        : 'assets/pics/losetext.png',
                     width: 300,
                   ),
                 ),
-                Center(
-                  child: Text(
-                    '${widget.points} Points',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
+                Visibility(
+                  visible: widget.isWin,
+                  child: Center(
+                    child: Text(
+                      '${widget.points} Points',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -91,7 +105,7 @@ class WinScreenState extends State<WinScreen> {
                     ),
                     child: ElevatedButton(
                       onPressed: () {},
-                      style: buttonWin,
+                      style: widget.isWin ? buttonWin : buttonLose,
                       child: const Text(
                         'CONTINUE',
                         style: TextStyle(
