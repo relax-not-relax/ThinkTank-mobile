@@ -51,10 +51,21 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
   bool roundVisible = true;
   String pass = '';
   bool isWin = false;
-  AssetSource incorrectSound = AssetSource('sound/incorrect.mp3');
-
+  AudioPlayer correctSound = AudioPlayer();
+  AudioPlayer incorrectSound = AudioPlayer();
+  AudioPlayer sound1 = AudioPlayer();
+  AudioPlayer sound2 = AudioPlayer();
+  AudioPlayer sound3 = AudioPlayer();
+  AudioPlayer sound4 = AudioPlayer();
+  AudioPlayer sound5 = AudioPlayer();
+  AudioPlayer sound6 = AudioPlayer();
+  AudioPlayer sound7 = AudioPlayer();
+  AudioPlayer sound8 = AudioPlayer();
+  AudioPlayer sound9 = AudioPlayer();
+  AudioPlayer sound0 = AudioPlayer();
+  AudioPlayer soundSao = AudioPlayer();
+  AudioPlayer soundThang = AudioPlayer();
   String answer = '';
-
   final audioPlayer = AudioPlayer();
   AudioPlayer au = AudioPlayer();
   String bg = 'assets/pics/musicpassbng.png';
@@ -68,12 +79,28 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
     });
   }
 
+  void setSound() {
+    correctSound.setSourceAsset('sound/correct.mp3');
+    incorrectSound.setSourceAsset('sound/incorrect.mp3');
+    sound1.setSourceAsset('sound/${listNote[0]}.mp3');
+    sound2.setSourceAsset('sound/${listNote[1]}.mp3');
+    sound3.setSourceAsset('sound/${listNote[2]}.mp3');
+    sound4.setSourceAsset('sound/${listNote[3]}.mp3');
+    sound5.setSourceAsset('sound/${listNote[4]}.mp3');
+    sound6.setSourceAsset('sound/${listNote[5]}.mp3');
+    sound7.setSourceAsset('sound/${listNote[6]}.mp3');
+    sound8.setSourceAsset('sound/${listNote[7]}.mp3');
+    sound9.setSourceAsset('sound/${listNote[8]}.mp3');
+    soundSao.setSourceAsset('sound/${listNote[9]}.mp3');
+    sound0.setSourceAsset('sound/${listNote[10]}.mp3');
+    soundThang.setSourceAsset('sound/${listNote[11]}.mp3');
+  }
+
   void delete() {
     setState(() {
       if (pass.isNotEmpty) {
         pass = pass.substring(0, pass.length - 1);
       }
-
       if (answer.isNotEmpty) {
         answer = answer.substring(0, answer.length - 2);
       }
@@ -198,8 +225,12 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    au.setSourceAsset('sound/startgame.mp3');
+    au.play(AssetSource('sound/startgame.mp3'));
+    au.onPlayerComplete.listen((event) {
+      au.dispose();
+    });
     setState(() {
       maxTime = Duration(seconds: widget.info.time);
       remainingTime = maxTime;
@@ -230,11 +261,8 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
         );
       }
     });
-    au.play(AssetSource('sound/startgame.mp3'));
-    au.onPlayerComplete.listen((event) {
-      au.dispose();
-    });
     _controller.forward();
+    audioPlayer.setSourceUrl(widget.info.soundLink);
   }
 
   @override
@@ -597,15 +625,12 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  final a = AudioPlayer();
-                                  a.play(
-                                    AssetSource('sound/c1.mp3'),
-                                  );
-                                  a.onPlayerComplete.listen(
-                                    (event) {
-                                      a.dispose();
-                                    },
-                                  );
+                                  sound1.play(
+                                      AssetSource('sound/${listNote[0]}.mp3'),
+                                      volume: 1000);
+                                  sound1 = AudioPlayer();
+                                  sound1.setSourceAsset(
+                                      'sound/${listNote[0]}.mp3');
                                   nhappass('1', listNote[0]);
                                 },
                                 style: buttonPass,
@@ -634,16 +659,12 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  final a = AudioPlayer();
-                                  a.play(
-                                    AssetSource('sound/${listNote[1]}.mp3'),
-                                  );
-                                  a.onPlayerComplete.listen(
-                                    (event) {
-                                      a.dispose();
-                                    },
-                                  );
+                                  sound2.play(
+                                      AssetSource('sound/${listNote[1]}.mp3'));
                                   nhappass('2', listNote[1]);
+                                  sound2 = AudioPlayer();
+                                  sound2.setSourceAsset(
+                                      'sound/${listNote[1]}.mp3');
                                 },
                                 style: buttonPass,
                                 child: const Center(
@@ -671,15 +692,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  final a = AudioPlayer();
-                                  a.play(
-                                    AssetSource('sound/${listNote[2]}.mp3'),
-                                  );
-                                  a.onPlayerComplete.listen(
-                                    (event) {
-                                      a.dispose();
-                                    },
-                                  );
+                                  sound3.play(
+                                      AssetSource('sound/${listNote[2]}.mp3'));
+                                  sound3 = AudioPlayer();
+                                  sound3.setSourceAsset(
+                                      'sound/${listNote[2]}.mp3');
                                   nhappass('3', listNote[2]);
                                 },
                                 style: buttonPass,
@@ -720,20 +737,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  final a = AudioPlayer();
-                                  a.play(
-                                    AssetSource('sound/${listNote[3]}.mp3'),
-                                  );
-                                  a.onPlayerComplete.listen(
-                                    (event) {
-                                      a.dispose();
-                                    },
-                                  );
-                                  a.onPlayerComplete.listen(
-                                    (event) {
-                                      a.dispose();
-                                    },
-                                  );
+                                  sound4.play(
+                                      AssetSource('sound/${listNote[3]}.mp3'));
+                                  sound4 = AudioPlayer();
+                                  sound4.setSourceAsset(
+                                      'sound/${listNote[3]}.mp3');
                                   nhappass('4', listNote[3]);
                                 },
                                 style: buttonPass,
@@ -762,15 +770,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  final a = AudioPlayer();
-                                  a.play(
-                                    AssetSource('sound/${listNote[4]}.mp3'),
-                                  );
-                                  a.onPlayerComplete.listen(
-                                    (event) {
-                                      a.dispose();
-                                    },
-                                  );
+                                  sound5.play(
+                                      AssetSource('sound/${listNote[4]}.mp3'));
+                                  sound5 = AudioPlayer();
+                                  sound5.setSourceAsset(
+                                      'sound/${listNote[4]}.mp3');
                                   nhappass('5', listNote[4]);
                                 },
                                 style: buttonPass,
@@ -799,15 +803,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  final a = AudioPlayer();
-                                  a.play(
-                                    AssetSource('sound/${listNote[5]}.mp3'),
-                                  );
-                                  a.onPlayerComplete.listen(
-                                    (event) {
-                                      a.dispose();
-                                    },
-                                  );
+                                  sound6.play(
+                                      AssetSource('sound/${listNote[5]}.mp3'));
+                                  sound6 = AudioPlayer();
+                                  sound6.setSourceAsset(
+                                      'sound/${listNote[5]}.mp3');
                                   nhappass('6', listNote[5]);
                                 },
                                 style: buttonPass,
@@ -848,15 +848,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  final a = AudioPlayer();
-                                  a.play(
-                                    AssetSource('sound/${listNote[6]}.mp3'),
-                                  );
-                                  a.onPlayerComplete.listen(
-                                    (event) {
-                                      a.dispose();
-                                    },
-                                  );
+                                  sound7.play(
+                                      AssetSource('sound/${listNote[6]}.mp3'));
+                                  sound7 = AudioPlayer();
+                                  sound7.setSourceAsset(
+                                      'sound/${listNote[6]}.mp3');
                                   nhappass('7', listNote[6]);
                                 },
                                 style: buttonPass,
@@ -885,15 +881,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  final a = AudioPlayer();
-                                  a.play(
-                                    AssetSource('sound/${listNote[7]}.mp3'),
-                                  );
-                                  a.onPlayerComplete.listen(
-                                    (event) {
-                                      a.dispose();
-                                    },
-                                  );
+                                  sound8.play(
+                                      AssetSource('sound/${listNote[7]}.mp3'));
+                                  sound8 = AudioPlayer();
+                                  sound8.setSourceAsset(
+                                      'sound/${listNote[7]}.mp3');
                                   nhappass('8', listNote[7]);
                                 },
                                 style: buttonPass,
@@ -922,15 +914,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  final a = AudioPlayer();
-                                  a.play(
-                                    AssetSource('sound/${listNote[8]}.mp3'),
-                                  );
-                                  a.onPlayerComplete.listen(
-                                    (event) {
-                                      a.dispose();
-                                    },
-                                  );
+                                  sound9.play(
+                                      AssetSource('sound/${listNote[8]}.mp3'));
+                                  sound9 = AudioPlayer();
+                                  sound9.setSourceAsset(
+                                      'sound/${listNote[8]}.mp3');
                                   nhappass('9', listNote[8]);
                                 },
                                 style: buttonPass,
@@ -971,15 +959,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  final a = AudioPlayer();
-                                  a.play(
-                                    AssetSource('sound/${listNote[9]}.mp3'),
-                                  );
-                                  a.onPlayerComplete.listen(
-                                    (event) {
-                                      a.dispose();
-                                    },
-                                  );
+                                  soundSao.play(
+                                      AssetSource('sound/${listNote[9]}.mp3'));
+                                  soundSao = AudioPlayer();
+                                  soundSao.setSourceAsset(
+                                      'sound/${listNote[9]}.mp3');
                                   nhappass('*', listNote[9]);
                                 },
                                 style: buttonPass,
@@ -1008,15 +992,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  final a = AudioPlayer();
-                                  a.play(
-                                    AssetSource('sound/${listNote[10]}.mp3'),
-                                  );
-                                  a.onPlayerComplete.listen(
-                                    (event) {
-                                      a.dispose();
-                                    },
-                                  );
+                                  sound0.play(
+                                      AssetSource('sound/${listNote[10]}.mp3'));
+                                  sound0 = AudioPlayer();
+                                  sound0.setSourceAsset(
+                                      'sound/${listNote[10]}.mp3');
                                   nhappass('0', listNote[10]);
                                 },
                                 style: buttonPass,
@@ -1045,15 +1025,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               width: 60,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  final a = AudioPlayer();
-                                  a.play(
-                                    AssetSource('sound/${listNote[11]}.mp3'),
-                                  );
-                                  a.onPlayerComplete.listen(
-                                    (event) {
-                                      a.dispose();
-                                    },
-                                  );
+                                  soundThang.play(
+                                      AssetSource('sound/${listNote[11]}.mp3'));
+                                  soundThang = AudioPlayer();
+                                  soundThang.setSourceAsset(
+                                      'sound/${listNote[11]}.mp3');
                                   nhappass('#', listNote[11]);
                                 },
                                 style: buttonPass,
@@ -1141,25 +1117,21 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                         onPressed: () {
                           if (remainChange >= 1) {
                             if (check()) {
-                              final a = AudioPlayer();
-                              a.play(AssetSource('sound/correct.mp3'));
-
-                              a.onPlayerComplete.listen(
-                                (event) {
-                                  a.dispose();
-                                },
-                              );
+                              correctSound
+                                  .play(AssetSource('sound/correct.mp3'));
+                              correctSound = AudioPlayer();
+                              correctSound.setSourceAsset('sound/correct.mp3');
                               setState(() {
                                 isWin = true;
                                 win();
                               });
                             } else {
                               setState(() {
-                                AudioPlayer incoSound = AudioPlayer();
-                                incoSound.play(incorrectSound);
-                                incoSound.onPlayerComplete.listen((event) {
-                                  incoSound.dispose();
-                                });
+                                incorrectSound
+                                    .play(AssetSource('sound/incorrect.mp3'));
+                                incorrectSound = AudioPlayer();
+                                incorrectSound
+                                    .setSourceAsset('sound/incorrect.mp3');
                                 remainChange -= 1;
                               });
                               if (remainChange <= 0) {

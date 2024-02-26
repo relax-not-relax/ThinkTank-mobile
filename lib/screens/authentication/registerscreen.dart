@@ -165,52 +165,15 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
             width: MediaQuery.of(context).size.width,
             decoration:
                 const BoxDecoration(color: Color.fromRGBO(255, 255, 255, 1)),
-            child: Stack(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color.fromARGB(1, 156, 156, 156)
-                              .withOpacity(0.2),
-                          spreadRadius: 4,
-                          blurRadius: 10,
-                          offset: const Offset(0, 3),
-                        )
-                      ],
-                    ),
-                    child: Center(
-                      child: ElevatedButton(
-                        onPressed: singUp,
-                        style: buttonPrimaryPink,
-                        child: const Text(
-                          'Sign up',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
                 Container(
                   margin: const EdgeInsets.all(14),
                   child: Column(
                     children: [
                       const SizedBox(
                         height: 40,
-                      ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.arrow_back),
-                        ),
                       ),
                       const Text(
                         'Create an account',
@@ -439,6 +402,34 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                         ),
                       ),
                     ],
+                  ),
+                ),
+                Container(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color.fromARGB(1, 156, 156, 156)
+                            .withOpacity(0.2),
+                        spreadRadius: 4,
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      )
+                    ],
+                  ),
+                  child: Center(
+                    child: ElevatedButton(
+                      onPressed: singUp,
+                      style: buttonPrimaryPink,
+                      child: const Text(
+                        'Sign up',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],

@@ -1,17 +1,24 @@
-import 'package:flutter/material.dart';
-import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
-import 'package:thinktank_mobile/models/musicpassword.dart';
-import 'package:thinktank_mobile/screens/authentication/forgotpassscreen.dart';
-import 'package:thinktank_mobile/screens/authentication/loginscreen.dart';
-import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
-import 'package:thinktank_mobile/screens/home.dart';
-import 'package:thinktank_mobile/screens/introscreen.dart';
-import 'package:thinktank_mobile/screens/musicpassword/musicpass_mainscreen.dart';
-import 'package:thinktank_mobile/screens/musicpassword/musicpassgame.dart';
-import 'package:thinktank_mobile/screens/startscreen.dart';
-import 'package:thinktank_mobile/widgets/others/winscreen.dart';
+import 'dart:io';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/api/firebase_message_api.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/screens/introscreen.dart';
+import 'package:thinktank_mobile/screens/startscreen.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Platform.isAndroid
+      ? await Firebase.initializeApp(
+          options: const FirebaseOptions(
+              apiKey: 'AIzaSyCR9osDq8OhcwSmMW3_AlgD8KvqqlClHdE',
+              appId: '1:454344962783:android:3fd8550149acb08a1b6f6a',
+              messagingSenderId: '454344962783',
+              projectId: 'thinktank-ad0b3'),
+        )
+      : await Firebase.initializeApp();
+  await FirebaseMessageAPI().initNotification();
   runApp(const MyApp());
 }
 

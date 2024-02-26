@@ -27,15 +27,19 @@ class WinScreen extends StatefulWidget {
 }
 
 class WinScreenState extends State<WinScreen> {
+  final winSound = AudioPlayer();
+  final loseSound = AudioPlayer();
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    AudioPlayer audioPlayer = AudioPlayer();
+    winSound.setSourceAsset('sound/win.mp3');
+    loseSound.setSourceAsset('sound/lose.mp3');
     if (widget.isWin) {
-      audioPlayer.play(AssetSource('sound/win.mp3'));
+      winSound.play(AssetSource('sound/win.mp3'));
     } else {
-      audioPlayer.play(AssetSource('sound/lose.mp3'));
+      loseSound.play(AssetSource('sound/lose.mp3'));
     }
   }
 

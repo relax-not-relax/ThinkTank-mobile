@@ -75,39 +75,47 @@ class StartScreenState extends State<StartScreen>
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: const BoxDecoration(color: Color.fromRGBO(40, 52, 68, 1)),
-        child: Column(
+        child: Stack(
           children: [
-            const SizedBox(height: 200),
-            Image.asset(
-              'assets/pics/logo.png',
-              height: 150,
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            SlideTransition(
-              position: _offsetAnimation,
-              child: Visibility(
-                visible: true,
-                child: Image.asset(
-                  'assets/pics/logoText.png',
-                  width: 250,
-                ),
+            Center(
+              child: Column(
+                children: [
+                  const SizedBox(height: 200),
+                  Image.asset(
+                    'assets/pics/logo.png',
+                    height: 150,
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  SlideTransition(
+                    position: _offsetAnimation,
+                    child: Visibility(
+                      visible: true,
+                      child: Image.asset(
+                        'assets/pics/logoText.png',
+                        width: 250,
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: wait,
+                    child: Container(
+                        margin: const EdgeInsets.only(top: 200),
+                        child: const CustomLoadingSpinner()),
+                  ),
+                ],
               ),
-            ),
-            Visibility(
-              visible: wait,
-              child: Container(
-                  margin: const EdgeInsets.only(top: 200),
-                  child: const CustomLoadingSpinner()),
             ),
             FadeTransition(
               opacity: _opacityAnimation,
               child: Visibility(
-                  visible: visibleButton,
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 200),
+                visible: visibleButton,
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 50),
+                  child: Center(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         ElevatedButton(
                           style: buttonPrimary,
@@ -141,15 +149,17 @@ class StartScreenState extends State<StartScreen>
                           child: const Text(
                             'Already a member? Sign in',
                             style: TextStyle(
-                                color: Colors.white,
+                                color: Color.fromRGBO(240, 123, 63, 1),
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold),
                           ),
                         )
                       ],
                     ),
-                  )),
-            )
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

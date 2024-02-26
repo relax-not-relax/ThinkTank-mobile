@@ -45,6 +45,7 @@ class IntroScreenState extends State<IntroScreen> {
               controller: controller,
               children: [
                 Container(
+                  padding: const EdgeInsets.all(14),
                   color: Colors.white,
                   child: Center(
                     child: Column(
@@ -82,6 +83,7 @@ class IntroScreenState extends State<IntroScreen> {
                   ),
                 ),
                 Container(
+                  padding: const EdgeInsets.all(14),
                   color: Colors.white,
                   child: Center(
                     child: Column(
@@ -119,6 +121,7 @@ class IntroScreenState extends State<IntroScreen> {
                   ),
                 ),
                 Container(
+                  padding: const EdgeInsets.all(14),
                   color: Colors.white,
                   child: Center(
                     child: Column(
@@ -129,6 +132,9 @@ class IntroScreenState extends State<IntroScreen> {
                         Image.asset(
                           'assets/pics/intro_3.png',
                           width: 500,
+                        ),
+                        const SizedBox(
+                          height: 30,
                         ),
                         Text(
                           title3,
