@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/screens/musicpassword/musicpassgame.dart';
+import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
 class LevelItem extends StatelessWidget {
   const LevelItem({
@@ -35,14 +36,7 @@ class LevelItem extends StatelessWidget {
             ),
             child: ElevatedButton(
               onPressed: () {},
-              style: ButtonStyle(
-                fixedSize: MaterialStatePropertyAll(
-                  Size(MediaQuery.of(context).size.width - 100, 70.0),
-                ),
-                backgroundColor: const MaterialStatePropertyAll(
-                  Color.fromARGB(129, 211, 211, 211),
-                ),
-              ),
+              style: buttonLevel(context),
               child: Text(
                 "LEVEL $levelNumber",
                 style: const TextStyle(
@@ -99,20 +93,7 @@ class LevelItem extends StatelessWidget {
                       break;
                   }
                 },
-                style: ButtonStyle(
-                  fixedSize: MaterialStatePropertyAll(
-                    Size(MediaQuery.of(context).size.width - 100, 70.0),
-                  ),
-                  backgroundColor: const MaterialStatePropertyAll(
-                    Color.fromARGB(255, 255, 212, 96),
-                  ),
-                  side: const MaterialStatePropertyAll(
-                    BorderSide(
-                      color: Colors.white,
-                      width: 4,
-                    ),
-                  ),
-                ),
+                style: buttonLevelCompleted(context),
                 child: Text(
                   "LEVEL $levelNumber",
                   style: const TextStyle(
