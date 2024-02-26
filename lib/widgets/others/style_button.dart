@@ -136,3 +136,31 @@ final ButtonStyle buttonLeaderboard = ElevatedButton.styleFrom(
     ),
   ),
 );
+
+ButtonStyle buttonLevel(BuildContext context) {
+  return ElevatedButton.styleFrom(
+    fixedSize: Size(MediaQuery.of(context).size.width - 100, 70.0),
+    backgroundColor: const Color.fromARGB(129, 211, 211, 211),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(50),
+      ),
+    ),
+  );
+}
+
+ButtonStyle buttonLevelCompleted(BuildContext context) {
+  return ElevatedButton.styleFrom(
+    fixedSize: Size(MediaQuery.of(context).size.width - 100, 70.0),
+    backgroundColor: const Color.fromARGB(255, 255, 212, 96),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(50),
+      ),
+      side: BorderSide(
+        color: Colors.white,
+        width: 4,
+      ),
+    ),
+  );
+}
