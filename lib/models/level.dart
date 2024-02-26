@@ -7,7 +7,7 @@ class Level {
     required this.game,
   });
 
-  final List<int> totalLevel;
+  final int totalLevel;
   final int levelCompleted;
   final Game game;
 }

@@ -35,11 +35,11 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
           ),
         ),
         child: ListView.builder(
-          itemCount: widget.level.totalLevel.length,
+          itemCount: widget.level.totalLevel,
           itemBuilder: (context, index) {
             return LevelItem(
               levelCompleted: widget.level.levelCompleted,
-              levelNumber: widget.level.totalLevel[index],
+              levelNumber: index + 1,
               game: widget.level.game.name,
             );
           },
