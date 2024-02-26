@@ -156,7 +156,7 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                               onPlay(
                                 context,
                                 Level(
-                                  totalLevel: [1, 2, 3, 4, 5, 6],
+                                  totalLevel: 6,
                                   levelCompleted: 1,
                                   game: widget.game,
                                 ),
@@ -373,7 +373,7 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                                 onPlay(
                                   context,
                                   Level(
-                                    totalLevel: [1, 2, 3, 4, 5, 6],
+                                    totalLevel: 6,
                                     levelCompleted: 1,
                                     game: widget.game,
                                   ),
