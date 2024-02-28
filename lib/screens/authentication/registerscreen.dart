@@ -18,12 +18,12 @@ const TextStyle titleCreateAccount = TextStyle(
 );
 const TextStyle titleMini = TextStyle(
   color: Color.fromRGBO(45, 64, 89, 1),
-  fontSize: 18,
+  fontSize: 16,
   fontWeight: FontWeight.w500,
 );
 const TextStyle contentGray = TextStyle(
   color: Color.fromRGBO(45, 64, 89, 1),
-  fontSize: 15,
+  fontSize: 14,
   fontWeight: FontWeight.w400,
 );
 
