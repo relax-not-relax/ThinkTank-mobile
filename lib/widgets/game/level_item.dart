@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+
 import 'package:thinktank_mobile/models/level.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
+
+import 'package:thinktank_mobile/models/account.dart';
+
 import 'package:thinktank_mobile/models/musicpassword.dart';
+import 'package:thinktank_mobile/screens/flipcard/flipcard_game.dart';
 import 'package:thinktank_mobile/screens/musicpassword/musicpassgame.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
@@ -77,15 +82,30 @@ class LevelItem extends StatelessWidget {
               ),
               child: ElevatedButton(
                 onPressed: () async {
+                  Account? account = await SharedPreferencesHelper.getInfo();
                   switch (game) {
                     case 'Music Password':
                       var data = await getMusicPassword(levelNumber);
+
                       // ignore: use_build_context_synchronously
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
                               MusicPasswordGamePlay(info: data),
+                        ),
+                      );
+                      break;
+                    case 'Flip Card Challenge':
+                      // ignore: use_build_context_synchronously
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FlipCardGamePlay(
+                            maxTime: const Duration(seconds: 120),
+                            account: account!,
+                            gameName: game,
+                          ),
                         ),
                       );
                       break;

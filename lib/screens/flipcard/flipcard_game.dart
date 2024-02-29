@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
@@ -21,6 +23,31 @@ class FlipCardGamePlay extends StatefulWidget {
 }
 
 class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
+  Timer? timer;
+  late Duration remainingTime;
+
+  void startTimer() {
+    timer = Timer.periodic(const Duration(milliseconds: 500), (_) {
+      setState(() {
+        final newTime = remainingTime - const Duration(milliseconds: 500);
+        if (newTime.isNegative) {
+          timer!.cancel();
+        } else {
+          remainingTime = newTime;
+        }
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      remainingTime = widget.maxTime;
+    });
+    startTimer();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +55,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
       appBar: TGameAppBar(
         preferredHeight: MediaQuery.of(context).size.height * 0.19,
         userAvatar: widget.account.avatar!,
-        maxTime: widget.maxTime,
+        remainingTime: remainingTime,
         gameName: widget.gameName,
       ),
       body: Container(
