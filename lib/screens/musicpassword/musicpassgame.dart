@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
@@ -37,8 +38,8 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
     'f2',
     'g2'
   ];
-  Duration maxTime = Duration(seconds: 10);
-  Duration remainingTime = Duration(seconds: 10);
+  Duration maxTime = const Duration(seconds: 10);
+  Duration remainingTime = const Duration(seconds: 10);
   int remainChange = 0;
   Timer? timer;
   int numScript = 1;
@@ -46,7 +47,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
   bool scriptVisibile = false;
   bool continueVisible = false;
   bool checkVisible = false;
-  bool isListenAlready = false;
+  bool isListenAlready = true;
   bool enterPassVisible = false;
   bool roundVisible = true;
   String pass = '';
@@ -66,6 +67,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
   AudioPlayer soundSao = AudioPlayer();
   AudioPlayer soundThang = AudioPlayer();
   String answer = '';
+  int listenTime = 5;
   final audioPlayer = AudioPlayer();
   AudioPlayer au = AudioPlayer();
   String bg = 'assets/pics/musicpassbng.png';
@@ -79,7 +81,23 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
     });
   }
 
+  List<String> shuffleList(List<String> list) {
+    final random = Random();
+    for (int i = list.length - 1; i > 0; i--) {
+      int j = random.nextInt(i + 1);
+      // Swap phần tử tại vị trí i và j
+      String temp = list[i];
+      list[i] = list[j];
+      list[j] = temp;
+    }
+    return list;
+  }
+
   void setSound() {
+    listNote.shuffle();
+    for (var s in listNote) {
+      print(s);
+    }
     correctSound.setSourceAsset('sound/correct.mp3');
     incorrectSound.setSourceAsset('sound/incorrect.mp3');
     sound1.setSourceAsset('sound/${listNote[0]}.mp3');
@@ -181,6 +199,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
         checkVisible = true;
         bg = 'assets/pics/nhappass.png';
       });
+      startTimer();
       numScript++;
       return;
     }
@@ -226,6 +245,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
   @override
   void initState() {
     super.initState();
+    setSound();
     au.setSourceAsset('sound/startgame.mp3');
     au.play(AssetSource('sound/startgame.mp3'));
     au.onPlayerComplete.listen((event) {
@@ -250,7 +270,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         Future.delayed(
-          Duration(seconds: 1),
+          const Duration(seconds: 1),
           () {
             setState(() {
               roundVisible = false;
@@ -316,9 +336,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                         Align(
                           alignment: Alignment.centerRight,
                           child: IconButton(
-                            onPressed: () {
-                              startTimer();
-                            },
+                            onPressed: () {},
                             icon: const Icon(
                               Icons.arrow_back,
                               size: 40,
@@ -559,12 +577,15 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                     children: [
                       InkWell(
                         onTap: () {
-                          if (!isListenAlready) {
+                          isListenAlready = false;
+                          if (audioPlayer.state != PlayerState.playing &&
+                              listenTime > 0 &&
+                              isListenAlready) {
                             audioPlayer.play(UrlSource(widget.info.soundLink));
                             audioPlayer.onPlayerComplete.listen((event) {
-                              startTimer();
+                              listenTime -= 1;
+                              isListenAlready = true;
                             });
-                            isListenAlready = true;
                           }
                         },
                         child: Container(
@@ -577,11 +598,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                             color: Color.fromRGBO(122, 122, 122, 0.63),
                           ),
                           padding: const EdgeInsets.all(10),
-                          child: const Center(
+                          child: Center(
                             child: Text(
-                              'Tap here to listen the sound',
+                              'Tap here to listen the sound ($listenTime)',
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold),

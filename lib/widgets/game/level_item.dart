@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/level.dart';
+import 'package:thinktank_mobile/models/musicpasssource.dart';
 import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/screens/musicpassword/musicpassgame.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
@@ -73,21 +76,16 @@ class LevelItem extends StatelessWidget {
                 ],
               ),
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   switch (game) {
                     case 'Music Password':
+                      var data = await getMusicPassword(levelNumber);
+                      // ignore: use_build_context_synchronously
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MusicPasswordGamePlay(
-                            info: MusicPassword(
-                                level: levelNumber,
-                                soundLink:
-                                    'https://firebasestorage.googleapis.com/v0/b/lottery-4803d.appspot.com/o/as1.mp3?alt=media&token=7d5c4fd4-f626-4466-aad3-e5146402eaa7',
-                                answer: 'c1e1g1c2',
-                                change: 5,
-                                time: 120),
-                          ),
+                          builder: (context) =>
+                              MusicPasswordGamePlay(info: data),
                         ),
                       );
                       break;
@@ -114,4 +112,21 @@ class LevelItem extends StatelessWidget {
 
     return content;
   }
+}
+
+Future<MusicPassword> getMusicPassword(int level) async {
+  List<MusicPasswordSource> listSource =
+      await SharedPreferencesHelper.getMusicPasswordSources();
+  List<MusicPasswordSource> listSource2 = listSource
+      .where((element) => element.answer.length == ((level / 10) + 3) * 2)
+      .toList();
+  listSource2.shuffle();
+  MusicPasswordSource source = listSource2.first;
+  return MusicPassword(
+    level: level,
+    soundLink: source.soundLink,
+    answer: source.answer,
+    change: 5,
+    time: 600 - ((level % 10)) * 30,
+  );
 }
