@@ -336,7 +336,9 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                         Align(
                           alignment: Alignment.centerRight,
                           child: IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
                             icon: const Icon(
                               Icons.arrow_back,
                               size: 40,

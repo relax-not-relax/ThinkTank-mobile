@@ -4,8 +4,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+
 import 'package:thinktank_mobile/models/musicpasssource.dart';
 import 'package:thinktank_mobile/models/musicpassword.dart';
+
+import 'package:thinktank_mobile/screens/flipcard/flipcard_game.dart';
+
 import 'package:thinktank_mobile/screens/introscreen.dart';
 import 'package:thinktank_mobile/screens/startscreen.dart';
 
@@ -79,6 +83,7 @@ class _MyAppState extends State<MyApp> {
         //       change: 5,
         //       time: 120),
         // ),
+        //home: const FlipCardGamePlay(),
         );
   }
 }

@@ -95,6 +95,7 @@ final ButtonStyle buttonWin = ElevatedButton.styleFrom(
     ),
   ),
 );
+
 final ButtonStyle buttonLose = ElevatedButton.styleFrom(
   backgroundColor: const Color.fromRGBO(45, 64, 89, 1),
   elevation: 0,
@@ -144,6 +145,22 @@ ButtonStyle buttonLevel(BuildContext context) {
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(
         Radius.circular(50),
+      ),
+    ),
+  );
+}
+
+ButtonStyle buttonYesBottomSheet(BuildContext context) {
+  return ElevatedButton.styleFrom(
+    fixedSize: Size(MediaQuery.of(context).size.width - 100, 70.0),
+    backgroundColor: const Color.fromARGB(255, 103, 152, 215),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(50),
+      ),
+      side: BorderSide(
+        color: Color.fromARGB(255, 255, 255, 255),
+        width: 4,
       ),
     ),
   );
