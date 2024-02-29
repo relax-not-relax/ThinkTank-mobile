@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
+import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/logininfo.dart';
@@ -73,7 +74,10 @@ class LoginScreenState extends State<LoginScreen> {
                         _showResizableDialog(context);
                         String usn = _usernameController.text;
                         String pass = _passwordController.text;
-                        Account? acc = await ApiAuthentication.login(usn, pass);
+                        String? fcmToken =
+                            await FirebaseMessageAPI().getToken();
+                        Account? acc =
+                            await ApiAuthentication.login(usn, pass, fcmToken!);
                         if (acc == null) {
                           print('sai');
                           setState(() {

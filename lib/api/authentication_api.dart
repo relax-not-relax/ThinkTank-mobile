@@ -3,10 +3,12 @@ import 'package:http/http.dart' as http;
 import 'package:thinktank_mobile/models/account.dart';
 
 class ApiAuthentication {
-  static Future<Account?> login(String username, String password) async {
+  static Future<Account?> login(
+      String username, String password, String fcmToken) async {
     Map<String, String> loginData = {
       "userName": username,
       "password": password,
+      "fcm": fcmToken
     };
     String jsonBody = jsonEncode(loginData);
 

@@ -14,4 +14,9 @@ class FirebaseMessageAPI {
     print('Token: $FCMToken');
     FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
   }
+
+  Future<String?> getToken() async {
+    final FCMToken = await _firebaseMessage.getToken();
+    return FCMToken;
+  }
 }
