@@ -189,12 +189,12 @@ class IntroScreenState extends State<IntroScreen> {
                           onPressed: () async {
                             await SharedPreferencesHelper.saveFirstUse();
                             // ignore: use_build_context_synchronously
-                            Navigator.pushAndRemoveUntil(
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
                                       const CreateAccountScreen()),
-                              (route) => false,
+                              //(route) => false,
                             );
                           },
                           style: buttonPrimaryPink,
