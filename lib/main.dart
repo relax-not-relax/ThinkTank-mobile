@@ -15,7 +15,7 @@ void main() async {
               apiKey: 'AIzaSyCR9osDq8OhcwSmMW3_AlgD8KvqqlClHdE',
               appId: '1:454344962783:android:3fd8550149acb08a1b6f6a',
               messagingSenderId: '454344962783',
-              projectId: 'thinktank-ad0b3'),
+              projectId: 'thinktank-ad0b3hihi'),
         )
       : await Firebase.initializeApp();
   await FirebaseMessageAPI().initNotification();
