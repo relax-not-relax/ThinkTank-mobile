@@ -7,9 +7,9 @@ import 'package:thinktank_mobile/models/game.dart';
 import 'package:thinktank_mobile/screens/game/game_menu.dart';
 import 'package:thinktank_mobile/widgets/game/game_item.dart';
 
+final PageController _pageController = PageController();
 late List<Widget> _pages;
 int _activePage = 0;
-final PageController _pageController = PageController(initialPage: 0);
 Timer? timer;
 
 class OptionScreen extends StatefulWidget {
@@ -20,19 +20,28 @@ class OptionScreen extends StatefulWidget {
 
 class _OptionScreenState extends State<OptionScreen> {
   void startTimer() {
-    timer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (_pageController.page == contest.length - 1) {
-        _pageController.animateToPage(
-          0,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
-      } else {
-        _pageController.nextPage(
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
-      }
+    int _currentPage;
+    _currentPage = 0;
+    _pageController.addListener(() {
+      setState(() {
+        _currentPage = _pageController.page!.toInt();
+      });
+    });
+    _pageController.addListener(() {
+      timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+        if (_pageController.page!.toInt() == contest.length - 1) {
+          _pageController.animateToPage(
+            0,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        } else {
+          _pageController.nextPage(
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        }
+      });
     });
   }
 
@@ -53,11 +62,6 @@ class _OptionScreenState extends State<OptionScreen> {
     _pages = List.generate(
       contest.length,
       (index) {
-        // return Image.network(
-        //   contest[index],
-        //   fit: BoxFit.cover,
-
-        // );
         return Container(
           height: 210,
           decoration: BoxDecoration(
@@ -70,7 +74,12 @@ class _OptionScreenState extends State<OptionScreen> {
         );
       },
     );
-    startTimer();
+    Future.delayed(
+      Duration(seconds: 3),
+      () {
+        startTimer();
+      },
+    );
   }
 
   @override

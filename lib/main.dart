@@ -4,12 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
-
-import 'package:thinktank_mobile/models/musicpasssource.dart';
-import 'package:thinktank_mobile/models/musicpassword.dart';
-
-import 'package:thinktank_mobile/screens/flipcard/flipcard_game.dart';
-
 import 'package:thinktank_mobile/screens/introscreen.dart';
 import 'package:thinktank_mobile/screens/startscreen.dart';
 
@@ -25,21 +19,12 @@ void main() async {
         )
       : await Firebase.initializeApp();
   await FirebaseMessageAPI().initNotification();
-  await updateMusicPasswordSource();
+  await SharedPreferencesHelper.saveMusicPasswordLevel(1);
   runApp(const MyApp());
-}
-
-Future updateMusicPasswordSource() async {
-  List<MusicPasswordSource> source = [];
-  source.add(const MusicPasswordSource(soundLink: 'link1', answer: 'c1d1e1'));
-  source.add(const MusicPasswordSource(soundLink: 'link2', answer: 'c2d1e1'));
-  source.add(const MusicPasswordSource(soundLink: 'link3', answer: 'c3d1e1'));
-  await SharedPreferencesHelper.saveMusicPasswordSources(source);
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
-
   @override
   State<MyApp> createState() => _MyAppState();
 }

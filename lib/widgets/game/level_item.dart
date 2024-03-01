@@ -62,7 +62,7 @@ class LevelItem extends StatelessWidget {
       ],
     );
 
-    if (levelCompleted == levelNumber) {
+    if (levelCompleted >= levelNumber) {
       content = Column(
         children: [
           Center(
@@ -137,8 +137,12 @@ class LevelItem extends StatelessWidget {
 Future<MusicPassword> getMusicPassword(int level) async {
   List<MusicPasswordSource> listSource =
       await SharedPreferencesHelper.getMusicPasswordSources();
+  print(listSource.first.answer.length.toString() +
+      ' - ' +
+      (((level / 10) + 4) * 2).toInt().toString());
   List<MusicPasswordSource> listSource2 = listSource
-      .where((element) => element.answer.length == ((level / 10) + 3) * 2)
+      .where((element) =>
+          element.answer.length == (((level / 10) + 4) * 2).toInt())
       .toList();
   listSource2.shuffle();
   MusicPasswordSource source = listSource2.first;

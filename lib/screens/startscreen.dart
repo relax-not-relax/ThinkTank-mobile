@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/api/init_api.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/musicpasssource.dart';
+import 'package:thinktank_mobile/models/resourceversion.dart';
 import 'package:thinktank_mobile/screens/authentication/loginscreen.dart';
 import 'package:thinktank_mobile/screens/introscreen.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
@@ -20,6 +24,16 @@ class StartScreenState extends State<StartScreen>
   late Animation<double> _opacityAnimation;
   bool wait = false;
   bool visibleButton = false;
+
+  Future updateMusicPasswordSource() async {
+    List<MusicPasswordSource> source = await ApiInit.getMusicPasswordSources();
+    await SharedPreferencesHelper.saveMusicPasswordSources(source);
+    List<MusicPasswordSource> musicPasswordSource =
+        await SharedPreferencesHelper.getMusicPasswordSources();
+    for (var element in musicPasswordSource) {
+      print(element.toJson().toString() + '\n');
+    }
+  }
 
   @override
   void initState() {
@@ -57,7 +71,16 @@ class StartScreenState extends State<StartScreen>
     _controller.forward();
   }
 
-  void displaybutton() {
+  void displaybutton() async {
+    ResourceVersion? resourceVersion = await ApiInit.getResourceVersion();
+    ResourceVersion? resourceVersionInApp =
+        await SharedPreferencesHelper.getResourceVersion();
+    if (resourceVersionInApp == null ||
+        resourceVersionInApp.musicPasswordVersion !=
+            resourceVersion!.musicPasswordVersion) {
+      await updateMusicPasswordSource();
+    }
+    await SharedPreferencesHelper.saveResourceVersion(resourceVersion!);
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         wait = false;
@@ -74,7 +97,9 @@ class StartScreenState extends State<StartScreen>
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(color: Color.fromRGBO(40, 52, 68, 1)),
+        decoration: const BoxDecoration(
+          color: Color.fromRGBO(40, 52, 68, 1),
+        ),
         child: Stack(
           children: [
             Center(

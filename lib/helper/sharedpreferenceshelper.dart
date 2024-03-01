@@ -4,12 +4,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/logininfo.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
+import 'package:thinktank_mobile/models/resourceversion.dart';
 
 class SharedPreferencesHelper {
   static const String loginInfoKey = 'loginInfo';
   static const String accInfoKey = 'accInfo';
   static const String firstUse = 'fisrtUse';
   static const String musicPassSource = 'musicPassSource';
+  static const String musicPasswordLevel = 'musicPassLevel';
+  static const String resourceVersionKey = 'resourceVersion';
 
   static Future<void> saveAccount(LoginInfo account) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -21,6 +24,25 @@ class SharedPreferencesHelper {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String accountJson = jsonEncode(account.toJson());
     prefs.setString(accInfoKey, accountJson);
+  }
+
+  static Future<void> saveResourceVersion(
+      ResourceVersion resourceVersion) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String resourceVerisonJson = jsonEncode(resourceVersion.toJson());
+    prefs.setString(resourceVersionKey, resourceVerisonJson);
+  }
+
+  static Future<ResourceVersion?> getResourceVersion() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? resourceVerisonJson = prefs.getString(resourceVersionKey);
+
+    if (resourceVerisonJson != null) {
+      Map<String, dynamic> versionMap = jsonDecode(resourceVerisonJson);
+      return ResourceVersion.fromJson(versionMap);
+    } else {
+      return null;
+    }
   }
 
   static Future<Account?> getInfo() async {
@@ -76,6 +98,21 @@ class SharedPreferencesHelper {
     String jsonString = jsonEncode(jsonList);
 
     await prefs.setStringList(musicPassSource, [jsonString]);
+  }
+
+  static Future<void> saveMusicPasswordLevel(int level) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(musicPasswordLevel, level.toString());
+  }
+
+  static Future<int> getMusicPasswordLevel() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? json = prefs.getString(musicPasswordLevel);
+    if (json != null) {
+      return int.parse(json);
+    } else {
+      return 0;
+    }
   }
 
   static Future<void> removeAccount() async {
