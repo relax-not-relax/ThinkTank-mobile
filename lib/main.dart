@@ -1,9 +1,10 @@
 import 'dart:io';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/screens/friend/addfriend_screen.dart';
+import 'package:thinktank_mobile/screens/friend/firend_screen.dart';
 import 'package:thinktank_mobile/screens/introscreen.dart';
 import 'package:thinktank_mobile/screens/startscreen.dart';
 
@@ -15,7 +16,7 @@ void main() async {
               apiKey: 'AIzaSyCR9osDq8OhcwSmMW3_AlgD8KvqqlClHdE',
               appId: '1:454344962783:android:3fd8550149acb08a1b6f6a',
               messagingSenderId: '454344962783',
-              projectId: 'thinktank-ad0b3hihi'),
+              projectId: 'thinktank-ad0b3'),
         )
       : await Firebase.initializeApp();
   await FirebaseMessageAPI().initNotification();
@@ -58,7 +59,7 @@ class _MyAppState extends State<MyApp> {
           ),
           useMaterial3: true,
         ),
-        home: const StartScreen()
+        home: const AddFriendScreen()
         // home: const MusicPasswordGamePlay(
         //   info: MusicPassword(
         //       level: 1,
