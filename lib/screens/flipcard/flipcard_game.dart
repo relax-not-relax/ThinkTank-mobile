@@ -40,6 +40,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
   int pair = 0;
   bool continueVisible = false;
   bool isLosed = false;
+  bool _isCheckingCards = false;
 
   bool _areAllCardsFlipped() {
     print(_game.matchedCards.every((isFlipped) => false));
@@ -134,9 +135,9 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
 
                   return FlipCard(
                     key: cardKeys[index],
-                    flipOnTouch: !isMatched && !isLosed,
+                    flipOnTouch: !isMatched && !_isCheckingCards && !isLosed,
                     onFlip: () {
-                      if (!isMatched && !isLosed) {
+                      if (!isMatched && !_isCheckingCards && !isLosed) {
                         _handleCardFlip(index, cardKeys[index]);
                       }
                     },
@@ -230,7 +231,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
       startTimer();
       _timerStarted = true;
     }
-    if (_game.matchedCards[index]) {
+    if (_game.matchedCards[index] || _isCheckingCards) {
       return;
     }
     _areAllCardsFlipped();
@@ -242,6 +243,10 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
     });
 
     if (_game.matchCheck.length == 2) {
+      setState(() {
+        _isCheckingCards = true;
+      });
+
       double points = (remainingTime.inMilliseconds / 1000);
       if (_game.matchCheck[0].values.first ==
               _game.matchCheck[1].values.first &&
@@ -252,6 +257,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
         _game.matchedCards[secondCardIndex] = true;
         setState(() {
           count += 2;
+          _isCheckingCards = false;
         });
 
         checkCardKeys.clear();
@@ -259,12 +265,9 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
       } else {
         Future.delayed(Duration(milliseconds: 600), () {
           setState(() {
-            //checkCardKeys[0].currentState?.toggleCard();
-            print(checkCardKeys.length);
-            print(checkCardKeys[0].currentState.toString());
-            //cardKey.currentState?.toggleCard();
             checkCardKeys[0].currentState?.toggleCard();
             checkCardKeys[1].currentState?.toggleCard();
+            _isCheckingCards = false;
           });
           checkCardKeys.clear();
           _game.matchCheck.clear();
