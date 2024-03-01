@@ -46,6 +46,8 @@ dependencies:
   firebase_core: ^2.25.4
   firebase_messaging: ^14.7.16
   provider: ^6.1.1
+  flip_card: ^0.7.0
+  percent_indicator: ^4.2.3
 
 dev_dependencies:
   flutter_test:

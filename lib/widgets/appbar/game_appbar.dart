@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:unicons/unicons.dart';
 
@@ -11,12 +12,18 @@ class TGameAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.userAvatar,
     required this.remainingTime,
     required this.gameName,
+    required this.progressTitle,
+    required this.progressMessage,
+    required this.percent,
   });
 
   final double preferredHeight;
   final String userAvatar;
   final Duration remainingTime;
   final String gameName;
+  final String progressTitle;
+  final String progressMessage;
+  final double percent;
 
   @override
   State<TGameAppBar> createState() => _TGameAppBarState();
@@ -160,19 +167,16 @@ class _TGameAppBarState extends State<TGameAppBar> {
             ],
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.only(
-            left: 20.0,
-            right: 10.0,
-          ),
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0, right: 10.0),
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -186,7 +190,7 @@ class _TGameAppBarState extends State<TGameAppBar> {
                         ),
                       ),
                       child: CircleAvatar(
-                        radius: 35, // Avatar radius
+                        radius: 40, // Avatar radius
                         backgroundImage: NetworkImage(
                             widget.userAvatar), // Your avatar image URL here
                       ),
@@ -280,8 +284,54 @@ class _TGameAppBarState extends State<TGameAppBar> {
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(
+                height: 12.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 30.0,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      widget.progressTitle,
+                      style: GoogleFonts.roboto(
+                        color: Colors.white,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      widget.progressMessage,
+                      style: GoogleFonts.roboto(
+                        color: Colors.white,
+                        fontSize: 25.0,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 3.0,
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                child: LinearPercentIndicator(
+                  width: MediaQuery.of(context).size.width * 0.93,
+                  animation: true,
+                  lineHeight: 25.0,
+                  animationDuration: 1000,
+                  animateFromLastPercent: true,
+                  percent: widget.percent,
+                  barRadius: const Radius.circular(20.0),
+                  progressColor: const Color.fromRGBO(255, 212, 96, 1),
+                  backgroundColor: Color.fromARGB(141, 255, 215, 105),
+                ),
+              ),
+            ],
           ),
         ),
       ),
