@@ -4,7 +4,9 @@ import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thinktank_mobile/data/data.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:thinktank_mobile/widgets/others/textstroke.dart';
@@ -146,7 +148,8 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
     });
   }
 
-  void win() {
+  void win() async {
+    await SharedPreferencesHelper.saveMusicPasswordLevel(widget.info.level + 1);
     setState(() {
       bg = 'assets/pics/winmuisc.png';
       checkVisible = false;
@@ -577,10 +580,10 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                     children: [
                       InkWell(
                         onTap: () {
-                          isListenAlready = false;
                           if (audioPlayer.state != PlayerState.playing &&
                               listenTime > 0 &&
                               isListenAlready) {
+                            isListenAlready = false;
                             audioPlayer.play(UrlSource(widget.info.soundLink));
                             audioPlayer.onPlayerComplete.listen((event) {
                               listenTime -= 1;

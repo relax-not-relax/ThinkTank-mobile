@@ -17,3 +17,15 @@ class Game {
   final List<String> type;
   final Color color;
 }
+
+class GameInfo {
+  static Game musicPassword = const Game(
+    id: 2,
+    imageUrl: "assets/pics/game_2.png",
+    name: "Music Password",
+    description:
+        "Players will listen to a piece of music provided by the host to decipher the password for the house, enhancing their auditory memory skills.",
+    type: ["Auditory memory", "Interactive memory", "Sensory memory"],
+    color: Color.fromARGB(255, 245, 171, 43),
+  );
+}

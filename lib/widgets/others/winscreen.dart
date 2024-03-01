@@ -2,10 +2,9 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/game.dart';
 import 'package:thinktank_mobile/models/level.dart';
-import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
 import 'package:thinktank_mobile/screens/game/level_select.dart';
-import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
 class WinScreen extends StatefulWidget {
@@ -128,16 +127,21 @@ class WinScreenState extends State<WinScreen> {
                     ),
                     child: ElevatedButton(
                       onPressed: () async {
+                        int levelCompleted = await SharedPreferencesHelper
+                            .getMusicPasswordLevel();
                         Account? account =
                             await SharedPreferencesHelper.getInfo();
                         // ignore: use_build_context_synchronously
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => HomeScreen(
-                                    account: account!,
+                              builder: (context) => LevelSelectScreen(
+                                    level: Level(
+                                        totalLevel: 100,
+                                        levelCompleted: levelCompleted,
+                                        game: GameInfo.musicPassword),
                                   )),
-                          (route) => false,
+                          (route) => true,
                         );
                       },
                       style: widget.isWin ? buttonWin : buttonLose,
