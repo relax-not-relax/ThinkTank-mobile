@@ -102,7 +102,7 @@ class LevelItem extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => FlipCardGamePlay(
-                            maxTime: const Duration(seconds: 120),
+                            maxTime: const Duration(seconds: 10),
                             account: account!,
                             gameName: game,
                           ),
