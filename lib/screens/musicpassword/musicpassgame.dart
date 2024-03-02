@@ -166,7 +166,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
   void lose() {
     setState(() {
       isWin = false;
-      bg = 'assets/pics/winmusic.png';
+      bg = 'assets/pics/losemusic.png';
       checkVisible = false;
       enterPassVisible = false;
       script = "Oh no. Jame can't remember password!\nHe can't open the door!";
@@ -291,21 +291,16 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
 
   @override
   Widget build(BuildContext context) {
-    final minutesStr =
-        (remainingTime.inMinutes % 60).toString().padLeft(2, '0');
-    final secondsStr =
-        (remainingTime.inSeconds % 60).toString().padLeft(2, '0');
-    final millisecondsStr = (remainingTime.inMilliseconds % 1000)
-        .toString()
-        .padLeft(2, '0')
-        .substring(0, 2);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: TGameAppBar(
-        preferredHeight: MediaQuery.of(context).size.height * 0.19,
+        preferredHeight: MediaQuery.of(context).size.height * 0.26,
         userAvatar: 'link',
         remainingTime: remainingTime,
         gameName: 'game name',
+        progressTitle: 'Chance',
+        progressMessage: '$remainChange/5',
+        percent: remainChange / 5,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -577,8 +572,8 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
               child: Center(
                 child: Container(
                   margin: const EdgeInsets.only(top: 100),
-                  height: MediaQuery.of(context).size.height * 0.65,
-                  width: MediaQuery.of(context).size.width - 50,
+                  height: MediaQuery.of(context).size.height * 0.58,
+                  width: MediaQuery.of(context).size.width - 100,
                   decoration: const BoxDecoration(
                     color: Color.fromRGBO(0, 0, 0, 0.7),
                     borderRadius: BorderRadius.all(
@@ -589,30 +584,33 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                     children: [
                       InkWell(
                         onTap: () {
-                          if (audioPlayer.state != PlayerState.playing &&
-                              listenTime > 0 &&
-                              isListenAlready) {
-                            isListenAlready = false;
-                            audioPlayer.play(UrlSource(widget.info.soundLink));
-                            audioPlayer.onPlayerComplete.listen((event) {
-                              listenTime -= 1;
-                              isListenAlready = true;
-                            });
-                          }
+                          setState(() {
+                            if (audioPlayer.state != PlayerState.playing &&
+                                listenTime > 0 &&
+                                isListenAlready) {
+                              isListenAlready = false;
+                              audioPlayer
+                                  .play(UrlSource(widget.info.soundLink));
+                              audioPlayer.onPlayerComplete.listen((event) {
+                                listenTime -= 1;
+                                isListenAlready = true;
+                              });
+                            }
+                          });
                         },
                         child: Container(
                           margin: const EdgeInsets.only(
                             top: 20,
                           ),
-                          height: 70,
-                          width: 175,
+                          height: 50,
+                          width: 140,
                           decoration: const BoxDecoration(
                             color: Color.fromRGBO(122, 122, 122, 0.63),
                           ),
                           padding: const EdgeInsets.all(10),
                           child: Center(
                             child: Text(
-                              'Tap here to listen the sound ($listenTime)',
+                              'Listen ($listenTime)',
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                   color: Colors.white,
@@ -624,10 +622,10 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                       ),
                       Container(
                         margin: const EdgeInsets.only(
-                          top: 30,
+                          top: 10,
                         ),
-                        width: MediaQuery.of(context).size.width - 100,
-                        height: 80,
+                        width: MediaQuery.of(context).size.width - 150,
+                        height: 50,
                         decoration: const BoxDecoration(
                           color: Color.fromRGBO(122, 122, 122, 0.63),
                           borderRadius: BorderRadius.all(
@@ -647,8 +645,8 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                       Container(
                         margin: const EdgeInsets.only(
                           top: 20,
-                          left: 60,
-                          right: 60,
+                          left: 50,
+                          right: 50,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -759,8 +757,8 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                       Container(
                         margin: const EdgeInsets.only(
                           top: 20,
-                          left: 60,
-                          right: 60,
+                          left: 50,
+                          right: 50,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -870,8 +868,8 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                       Container(
                         margin: const EdgeInsets.only(
                           top: 20,
-                          left: 60,
-                          right: 60,
+                          left: 50,
+                          right: 50,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -981,8 +979,8 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                       Container(
                         margin: const EdgeInsets.only(
                           top: 20,
-                          left: 60,
-                          right: 60,
+                          left: 50,
+                          right: 50,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
