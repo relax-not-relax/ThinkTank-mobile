@@ -3,9 +3,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/musicpasssource.dart';
+import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/screens/friend/addfriend_screen.dart';
 import 'package:thinktank_mobile/screens/friend/firend_screen.dart';
 import 'package:thinktank_mobile/screens/introscreen.dart';
+import 'package:thinktank_mobile/screens/musicpassword/musicpassgame.dart';
 import 'package:thinktank_mobile/screens/startscreen.dart';
 
 void main() async {
@@ -21,6 +24,7 @@ void main() async {
       : await Firebase.initializeApp();
   await FirebaseMessageAPI().initNotification();
   await SharedPreferencesHelper.saveMusicPasswordLevel(1);
+
   runApp(const MyApp());
 }
 
@@ -51,25 +55,43 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0x283444),
-          background: const Color.fromARGB(255, 0, 0, 0),
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0x283444),
+            background: const Color.fromARGB(255, 0, 0, 0),
+          ),
+          useMaterial3: true,
         ),
-        useMaterial3: true,
-      ),
-      home: const StartScreen(),
-      // home: const MusicPasswordGamePlay(
-      //   info: MusicPassword(
-      //       level: 1,
-      //       soundLink:
-      //           'https://firebasestorage.googleapis.com/v0/b/lottery-4803d.appspot.com/o/as1.mp3?alt=media&token=7d5c4fd4-f626-4466-aad3-e5146402eaa7',
-      //       answer: 'c1e1g1c2',
-      //       change: 5,
-      //       time: 120),
-      // ),
-      //home: const FlipCardGamePlay(),
-    );
+        home: const StartScreen()
+        // home: const MusicPasswordGamePlay(
+        //   info: MusicPassword(
+        //       level: 1,
+        //       soundLink:
+        //           'https://firebasestorage.googleapis.com/v0/b/lottery-4803d.appspot.com/o/as1.mp3?alt=media&token=7d5c4fd4-f626-4466-aad3-e5146402eaa7',
+        //       answer: 'c1e1g1c2',
+        //       change: 5,
+        //       time: 120),
+        // ),
+        //home: const FlipCardGamePlay(),
+        );
   }
+}
+
+Future<MusicPassword> getMusicPassword(int level) async {
+  List<MusicPasswordSource> listSource =
+      await SharedPreferencesHelper.getMusicPasswordSources();
+  List<MusicPasswordSource> listSource2 = listSource
+      .where((element) =>
+          element.answer.length == (((level / 10) + 4) * 2).toInt())
+      .toList();
+  listSource2.shuffle();
+  MusicPasswordSource source = listSource2.first;
+  return MusicPassword(
+    level: level,
+    soundLink: source.soundLink,
+    answer: source.answer,
+    change: 5,
+    time: 600 - ((level % 10)) * 30,
+  );
 }
