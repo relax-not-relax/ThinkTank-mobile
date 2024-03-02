@@ -14,7 +14,7 @@ class ApiAuthentication {
 
     final response = await http.post(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication'),
+          'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-player'),
       headers: {'Content-Type': 'application/json'},
       body: jsonBody,
     );

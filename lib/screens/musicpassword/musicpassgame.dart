@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/musicpassword.dart';
+import 'package:thinktank_mobile/widgets/appbar/game_appbar.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:thinktank_mobile/widgets/others/textstroke.dart';
 import 'package:thinktank_mobile/widgets/others/winscreen.dart';
@@ -165,7 +166,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
   void lose() {
     setState(() {
       isWin = false;
-      bg = 'assets/pics/winmusic.png';
+      bg = 'assets/pics/losemusic.png';
       checkVisible = false;
       enterPassVisible = false;
       script = "Oh no. Jame can't remember password!\nHe can't open the door!";
@@ -290,16 +291,17 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
 
   @override
   Widget build(BuildContext context) {
-    final minutesStr =
-        (remainingTime.inMinutes % 60).toString().padLeft(2, '0');
-    final secondsStr =
-        (remainingTime.inSeconds % 60).toString().padLeft(2, '0');
-    final millisecondsStr = (remainingTime.inMilliseconds % 1000)
-        .toString()
-        .padLeft(2, '0')
-        .substring(0, 2);
     return Scaffold(
       extendBodyBehindAppBar: true,
+      appBar: TGameAppBar(
+        preferredHeight: MediaQuery.of(context).size.height * 0.26,
+        userAvatar: 'link',
+        remainingTime: remainingTime,
+        gameName: 'game name',
+        progressTitle: 'Chance',
+        progressMessage: '$remainChange/5',
+        percent: remainChange / 5,
+      ),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -313,147 +315,147 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
         width: MediaQuery.of(context).size.width,
         child: Stack(
           children: [
-            Stack(
-              children: [
-                Container(
-                  height: 200,
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20),
-                    ),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color.fromRGBO(255, 153, 0, 1),
-                        Color.fromRGBO(234, 67, 53, 1),
-                      ],
-                    ),
-                  ),
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 40),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(
-                              Icons.arrow_back,
-                              size: 40,
-                              weight: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: const BoxDecoration(
-                            color: Color.fromRGBO(255, 212, 96, 1),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              minutesStr,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          ' : ',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: const BoxDecoration(
-                            color: Color.fromRGBO(255, 212, 96, 1),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              secondsStr,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const Text(
-                          ' - ',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: const BoxDecoration(
-                            color: Color.fromRGBO(242, 153, 115, 1),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              remainChange.toString(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(left: 30),
-                          height: 100,
-                          width: 100,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                                image:
-                                    AssetImage('assets/pics/musicpassbng.png'),
-                                fit: BoxFit.cover),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(100)),
-                            border: Border.fromBorderSide(
-                              BorderSide(
-                                color: Colors.white,
-                                width: 3,
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            // Stack(
+            //   children: [
+            //     Container(
+            //       height: 200,
+            //       decoration: const BoxDecoration(
+            //         borderRadius: BorderRadius.only(
+            //           bottomLeft: Radius.circular(20),
+            //           bottomRight: Radius.circular(20),
+            //         ),
+            //         gradient: LinearGradient(
+            //           begin: Alignment.topLeft,
+            //           end: Alignment.bottomRight,
+            //           colors: [
+            //             Color.fromRGBO(255, 153, 0, 1),
+            //             Color.fromRGBO(234, 67, 53, 1),
+            //           ],
+            //         ),
+            //       ),
+            //       child: Container(
+            //         margin: const EdgeInsets.only(top: 40),
+            //         child: Row(
+            //           mainAxisAlignment: MainAxisAlignment.center,
+            //           children: [
+            //             Align(
+            //               alignment: Alignment.centerRight,
+            //               child: IconButton(
+            //                 onPressed: () {
+            //                   Navigator.pop(context);
+            //                 },
+            //                 icon: const Icon(
+            //                   Icons.arrow_back,
+            //                   size: 40,
+            //                   weight: 20,
+            //                   color: Colors.white,
+            //                 ),
+            //               ),
+            //             ),
+            //             const SizedBox(
+            //               width: 20,
+            //             ),
+            //             Container(
+            //               height: 50,
+            //               width: 50,
+            //               decoration: const BoxDecoration(
+            //                 color: Color.fromRGBO(255, 212, 96, 1),
+            //                 borderRadius: BorderRadius.all(
+            //                   Radius.circular(10),
+            //                 ),
+            //               ),
+            //               child: Center(
+            //                 child: Text(
+            //                   minutesStr,
+            //                   style: const TextStyle(
+            //                     color: Colors.white,
+            //                     fontSize: 28,
+            //                     fontWeight: FontWeight.bold,
+            //                   ),
+            //                 ),
+            //               ),
+            //             ),
+            //             const Text(
+            //               ' : ',
+            //               style: TextStyle(
+            //                 color: Colors.white,
+            //                 fontSize: 28,
+            //                 fontWeight: FontWeight.bold,
+            //               ),
+            //             ),
+            //             Container(
+            //               height: 50,
+            //               width: 50,
+            //               decoration: const BoxDecoration(
+            //                 color: Color.fromRGBO(255, 212, 96, 1),
+            //                 borderRadius: BorderRadius.all(
+            //                   Radius.circular(10),
+            //                 ),
+            //               ),
+            //               child: Center(
+            //                 child: Text(
+            //                   secondsStr,
+            //                   style: const TextStyle(
+            //                     color: Colors.white,
+            //                     fontSize: 28,
+            //                     fontWeight: FontWeight.bold,
+            //                   ),
+            //                 ),
+            //               ),
+            //             ),
+            //             const Text(
+            //               ' - ',
+            //               style: TextStyle(
+            //                 color: Colors.white,
+            //                 fontSize: 28,
+            //                 fontWeight: FontWeight.bold,
+            //               ),
+            //             ),
+            //             Container(
+            //               height: 50,
+            //               width: 50,
+            //               decoration: const BoxDecoration(
+            //                 color: Color.fromRGBO(242, 153, 115, 1),
+            //                 borderRadius: BorderRadius.all(
+            //                   Radius.circular(10),
+            //                 ),
+            //               ),
+            //               child: Center(
+            //                 child: Text(
+            //                   remainChange.toString(),
+            //                   style: const TextStyle(
+            //                     color: Colors.white,
+            //                     fontSize: 28,
+            //                     fontWeight: FontWeight.bold,
+            //                   ),
+            //                 ),
+            //               ),
+            //             ),
+            //             Container(
+            //               margin: const EdgeInsets.only(left: 30),
+            //               height: 100,
+            //               width: 100,
+            //               decoration: const BoxDecoration(
+            //                 image: DecorationImage(
+            //                     image:
+            //                         AssetImage('assets/pics/musicpassbng.png'),
+            //                     fit: BoxFit.cover),
+            //                 borderRadius:
+            //                     BorderRadius.all(Radius.circular(100)),
+            //                 border: Border.fromBorderSide(
+            //                   BorderSide(
+            //                     color: Colors.white,
+            //                     width: 3,
+            //                   ),
+            //                 ),
+            //               ),
+            //             )
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
             Visibility(
               visible: roundVisible,
               child: Container(
@@ -570,8 +572,8 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
               child: Center(
                 child: Container(
                   margin: const EdgeInsets.only(top: 100),
-                  height: MediaQuery.of(context).size.height * 0.65,
-                  width: MediaQuery.of(context).size.width - 50,
+                  height: MediaQuery.of(context).size.height * 0.58,
+                  width: MediaQuery.of(context).size.width - 100,
                   decoration: const BoxDecoration(
                     color: Color.fromRGBO(0, 0, 0, 0.7),
                     borderRadius: BorderRadius.all(
@@ -582,30 +584,33 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                     children: [
                       InkWell(
                         onTap: () {
-                          if (audioPlayer.state != PlayerState.playing &&
-                              listenTime > 0 &&
-                              isListenAlready) {
-                            isListenAlready = false;
-                            audioPlayer.play(UrlSource(widget.info.soundLink));
-                            audioPlayer.onPlayerComplete.listen((event) {
-                              listenTime -= 1;
-                              isListenAlready = true;
-                            });
-                          }
+                          setState(() {
+                            if (audioPlayer.state != PlayerState.playing &&
+                                listenTime > 0 &&
+                                isListenAlready) {
+                              isListenAlready = false;
+                              audioPlayer
+                                  .play(UrlSource(widget.info.soundLink));
+                              audioPlayer.onPlayerComplete.listen((event) {
+                                listenTime -= 1;
+                                isListenAlready = true;
+                              });
+                            }
+                          });
                         },
                         child: Container(
                           margin: const EdgeInsets.only(
                             top: 20,
                           ),
-                          height: 70,
-                          width: 175,
+                          height: 50,
+                          width: 140,
                           decoration: const BoxDecoration(
                             color: Color.fromRGBO(122, 122, 122, 0.63),
                           ),
                           padding: const EdgeInsets.all(10),
                           child: Center(
                             child: Text(
-                              'Tap here to listen the sound ($listenTime)',
+                              'Listen ($listenTime)',
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                   color: Colors.white,
@@ -617,10 +622,10 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                       ),
                       Container(
                         margin: const EdgeInsets.only(
-                          top: 30,
+                          top: 10,
                         ),
-                        width: MediaQuery.of(context).size.width - 100,
-                        height: 80,
+                        width: MediaQuery.of(context).size.width - 150,
+                        height: 50,
                         decoration: const BoxDecoration(
                           color: Color.fromRGBO(122, 122, 122, 0.63),
                           borderRadius: BorderRadius.all(
@@ -640,8 +645,8 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                       Container(
                         margin: const EdgeInsets.only(
                           top: 20,
-                          left: 60,
-                          right: 60,
+                          left: 50,
+                          right: 50,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -752,8 +757,8 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                       Container(
                         margin: const EdgeInsets.only(
                           top: 20,
-                          left: 60,
-                          right: 60,
+                          left: 50,
+                          right: 50,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -863,8 +868,8 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                       Container(
                         margin: const EdgeInsets.only(
                           top: 20,
-                          left: 60,
-                          right: 60,
+                          left: 50,
+                          right: 50,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -974,8 +979,8 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                       Container(
                         margin: const EdgeInsets.only(
                           top: 20,
-                          left: 60,
-                          right: 60,
+                          left: 50,
+                          right: 50,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

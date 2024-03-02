@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:thinktank_mobile/screens/friend/addfriend_screen.dart';
+import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:unicons/unicons.dart';
 
 class FriendScreen extends StatefulWidget {
@@ -10,6 +13,99 @@ class FriendScreen extends StatefulWidget {
   State<StatefulWidget> createState() {
     return FriendScreenState();
   }
+}
+
+void _showResizableDialog(BuildContext context, String username) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 140,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 30,
+              ),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    'Remove $username as a friend',
+                    style: const TextStyle(
+                        color: Color.fromRGBO(129, 140, 155, 1),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(
+                    bottom: 10,
+                  ),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            print('No');
+                          },
+                          child: const SizedBox(
+                            height: 50,
+                            width: 125,
+                            child: Center(
+                              child: Text(
+                                'No',
+                                style: TextStyle(
+                                  color: Color.fromRGBO(72, 145, 255, 1),
+                                  fontSize: 25,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            print('Yes');
+                          },
+                          child: const SizedBox(
+                            height: 50,
+                            width: 125,
+                            child: Center(
+                              child: Text(
+                                'Yes',
+                                style: TextStyle(
+                                  color: Color.fromRGBO(72, 145, 255, 1),
+                                  fontSize: 25,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
 
 class FriendScreenState extends State<FriendScreen> {
@@ -44,7 +140,14 @@ class FriendScreenState extends State<FriendScreen> {
             centerTitle: true,
             actions: [
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AddFriendScreen(),
+                    ),
+                  );
+                },
                 icon: const Icon(
                   IconlyBold.plus,
                   size: 30,
@@ -173,9 +276,12 @@ class FriendScreenState extends State<FriendScreen> {
                           ),
                           Container(
                             margin: const EdgeInsets.only(right: 10),
-                            child: const Icon(
-                              UniconsLine.ellipsis_h,
+                            child: IconButton(
+                              icon: const Icon(UniconsLine.ellipsis_h),
                               color: Colors.white,
+                              onPressed: () {
+                                displayBottomSheet(context, 'Đỗ Hoàng Huy');
+                              },
                             ),
                           ),
                         ],
@@ -185,6 +291,59 @@ class FriendScreenState extends State<FriendScreen> {
                 ),
               ),
             )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future displayBottomSheet(BuildContext context, String useranme) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        height: 130,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20.0,
+          vertical: 40.0,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            InkWell(
+              onTap: () {
+                _showResizableDialog(context, useranme);
+              },
+              child: Row(
+                children: [
+                  Container(
+                    width: 50.0,
+                    height: 50.0,
+                    //padding: const EdgeInsets.all(20.0),
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(255, 217, 217, 217),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(50.0),
+                      ),
+                    ),
+                    child: const Icon(
+                      Iconsax.user_minus,
+                      color: Color.fromARGB(255, 45, 64, 89),
+                      size: 30.0,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20.0,
+                  ),
+                  Text(
+                    "Mark All As Read",
+                    style: GoogleFonts.roboto(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
