@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/game.dart';
 import 'package:thinktank_mobile/models/level.dart';
 import 'package:thinktank_mobile/screens/game/level_select.dart';
@@ -369,12 +370,20 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                               ],
                             ),
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
+                                int level = 1;
+                                switch (widget.game.id) {
+                                  case 2:
+                                    level = await SharedPreferencesHelper
+                                        .getMusicPasswordLevel();
+                                    break;
+                                }
+                                // ignore: use_build_context_synchronously
                                 onPlay(
                                   context,
                                   Level(
-                                    totalLevel: 6,
-                                    levelCompleted: 1,
+                                    totalLevel: 100,
+                                    levelCompleted: level,
                                     game: widget.game,
                                   ),
                                 );

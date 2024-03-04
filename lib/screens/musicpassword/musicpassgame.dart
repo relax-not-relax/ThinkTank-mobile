@@ -5,8 +5,10 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/widgets/appbar/game_appbar.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
@@ -14,8 +16,10 @@ import 'package:thinktank_mobile/widgets/others/textstroke.dart';
 import 'package:thinktank_mobile/widgets/others/winscreen.dart';
 
 class MusicPasswordGamePlay extends StatefulWidget {
-  const MusicPasswordGamePlay({super.key, required this.info});
+  const MusicPasswordGamePlay(
+      {super.key, required this.info, required this.account});
   final MusicPassword info;
+  final Account account;
 
   @override
   State<StatefulWidget> createState() {
@@ -150,7 +154,16 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
   }
 
   void win() async {
+    double points = (remainingTime.inMilliseconds / 1000);
     await SharedPreferencesHelper.saveMusicPasswordLevel(widget.info.level + 1);
+    await ApiAchieviements.addAchieviements(
+      (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() / 1000,
+      (points * 100).toInt(),
+      widget.info.level,
+      2,
+      widget.account.id,
+      widget.account.accessToken,
+    );
     setState(() {
       bg = 'assets/pics/winmuisc.png';
       checkVisible = false;
@@ -295,7 +308,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
       extendBodyBehindAppBar: true,
       appBar: TGameAppBar(
         preferredHeight: MediaQuery.of(context).size.height * 0.26,
-        userAvatar: 'link',
+        userAvatar: widget.account.avatar!,
         remainingTime: remainingTime,
         gameName: 'game name',
         progressTitle: 'Chance',
@@ -315,147 +328,6 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
         width: MediaQuery.of(context).size.width,
         child: Stack(
           children: [
-            // Stack(
-            //   children: [
-            //     Container(
-            //       height: 200,
-            //       decoration: const BoxDecoration(
-            //         borderRadius: BorderRadius.only(
-            //           bottomLeft: Radius.circular(20),
-            //           bottomRight: Radius.circular(20),
-            //         ),
-            //         gradient: LinearGradient(
-            //           begin: Alignment.topLeft,
-            //           end: Alignment.bottomRight,
-            //           colors: [
-            //             Color.fromRGBO(255, 153, 0, 1),
-            //             Color.fromRGBO(234, 67, 53, 1),
-            //           ],
-            //         ),
-            //       ),
-            //       child: Container(
-            //         margin: const EdgeInsets.only(top: 40),
-            //         child: Row(
-            //           mainAxisAlignment: MainAxisAlignment.center,
-            //           children: [
-            //             Align(
-            //               alignment: Alignment.centerRight,
-            //               child: IconButton(
-            //                 onPressed: () {
-            //                   Navigator.pop(context);
-            //                 },
-            //                 icon: const Icon(
-            //                   Icons.arrow_back,
-            //                   size: 40,
-            //                   weight: 20,
-            //                   color: Colors.white,
-            //                 ),
-            //               ),
-            //             ),
-            //             const SizedBox(
-            //               width: 20,
-            //             ),
-            //             Container(
-            //               height: 50,
-            //               width: 50,
-            //               decoration: const BoxDecoration(
-            //                 color: Color.fromRGBO(255, 212, 96, 1),
-            //                 borderRadius: BorderRadius.all(
-            //                   Radius.circular(10),
-            //                 ),
-            //               ),
-            //               child: Center(
-            //                 child: Text(
-            //                   minutesStr,
-            //                   style: const TextStyle(
-            //                     color: Colors.white,
-            //                     fontSize: 28,
-            //                     fontWeight: FontWeight.bold,
-            //                   ),
-            //                 ),
-            //               ),
-            //             ),
-            //             const Text(
-            //               ' : ',
-            //               style: TextStyle(
-            //                 color: Colors.white,
-            //                 fontSize: 28,
-            //                 fontWeight: FontWeight.bold,
-            //               ),
-            //             ),
-            //             Container(
-            //               height: 50,
-            //               width: 50,
-            //               decoration: const BoxDecoration(
-            //                 color: Color.fromRGBO(255, 212, 96, 1),
-            //                 borderRadius: BorderRadius.all(
-            //                   Radius.circular(10),
-            //                 ),
-            //               ),
-            //               child: Center(
-            //                 child: Text(
-            //                   secondsStr,
-            //                   style: const TextStyle(
-            //                     color: Colors.white,
-            //                     fontSize: 28,
-            //                     fontWeight: FontWeight.bold,
-            //                   ),
-            //                 ),
-            //               ),
-            //             ),
-            //             const Text(
-            //               ' - ',
-            //               style: TextStyle(
-            //                 color: Colors.white,
-            //                 fontSize: 28,
-            //                 fontWeight: FontWeight.bold,
-            //               ),
-            //             ),
-            //             Container(
-            //               height: 50,
-            //               width: 50,
-            //               decoration: const BoxDecoration(
-            //                 color: Color.fromRGBO(242, 153, 115, 1),
-            //                 borderRadius: BorderRadius.all(
-            //                   Radius.circular(10),
-            //                 ),
-            //               ),
-            //               child: Center(
-            //                 child: Text(
-            //                   remainChange.toString(),
-            //                   style: const TextStyle(
-            //                     color: Colors.white,
-            //                     fontSize: 28,
-            //                     fontWeight: FontWeight.bold,
-            //                   ),
-            //                 ),
-            //               ),
-            //             ),
-            //             Container(
-            //               margin: const EdgeInsets.only(left: 30),
-            //               height: 100,
-            //               width: 100,
-            //               decoration: const BoxDecoration(
-            //                 image: DecorationImage(
-            //                     image:
-            //                         AssetImage('assets/pics/musicpassbng.png'),
-            //                     fit: BoxFit.cover),
-            //                 borderRadius:
-            //                     BorderRadius.all(Radius.circular(100)),
-            //                 border: Border.fromBorderSide(
-            //                   BorderSide(
-            //                     color: Colors.white,
-            //                     width: 3,
-            //                   ),
-            //                 ),
-            //               ),
-            //             )
-            //           ],
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
             Visibility(
               visible: roundVisible,
               child: Container(
@@ -588,11 +460,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                             if (audioPlayer.state != PlayerState.playing &&
                                 listenTime > 0 &&
                                 isListenAlready) {
+                              listenTime = listenTime - 1;
                               isListenAlready = false;
                               audioPlayer
                                   .play(UrlSource(widget.info.soundLink));
                               audioPlayer.onPlayerComplete.listen((event) {
-                                listenTime -= 1;
                                 isListenAlready = true;
                               });
                             }

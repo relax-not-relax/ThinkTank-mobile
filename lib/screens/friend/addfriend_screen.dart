@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
+import 'package:thinktank_mobile/api/friends_api.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/friendship.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:unicons/unicons.dart';
 
@@ -14,6 +18,27 @@ class AddFriendScreen extends StatefulWidget {
 }
 
 class AddFriendScreenState extends State<AddFriendScreen> {
+  List<Friendship> list = [];
+  TextEditingController _codeController = TextEditingController();
+
+  Future<void> search(String code) async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    List<Friendship> listTmp = await ApiFriends.searchFriends(
+        1, 100, account!.id, code, account.accessToken);
+    setState(() {
+      list = listTmp;
+    });
+  }
+
+  Future<void> add(int index) async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    setState(() {
+      list[index].status = false;
+    });
+    await ApiFriends.addFriend(
+        account!.id, list[index].accountId2!, account.accessToken);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,6 +100,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                 ),
               ),
               child: TextField(
+                controller: _codeController,
                 style:
                     const TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                 decoration: InputDecoration(
@@ -99,7 +125,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                       size: 35,
                     ),
                     onPressed: () {
-                      setState(() {});
+                      search(_codeController.text);
                     },
                   ),
                 ),
@@ -109,195 +135,125 @@ class AddFriendScreenState extends State<AddFriendScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Container(
-                      height: 80,
-                      margin: const EdgeInsets.only(top: 10),
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(left: 15),
-                            child: Badge(
-                              label: const SizedBox(
-                                height: 10,
-                                width: 10,
-                              ),
-                              alignment: Alignment.bottomRight,
-                              backgroundColor:
-                                  const Color.fromRGBO(96, 234, 84, 1),
-                              isLabelVisible: true,
-                              child: CircleAvatar(
-                                radius: 30,
-                                child: Image.asset(
-                                  'assets/pics/cup.png',
+                    for (var element in list)
+                      Container(
+                        height: 80,
+                        margin: const EdgeInsets.only(top: 10),
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(left: 15),
+                              child: Badge(
+                                label: const SizedBox(
+                                  height: 10,
+                                  width: 10,
                                 ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              margin: const EdgeInsets.only(left: 20),
-                              child: const Text(
-                                'Đỗ Hoàng Huy',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(right: 10),
-                            child: SizedBox(
-                              height: 40,
-                              width: 80,
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                style: buttonAdd,
-                                child: const Center(
-                                  child: Text(
-                                    'Add',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(205, 205, 205, 1),
-                                      fontSize: 18,
+                                alignment: Alignment.bottomRight,
+                                backgroundColor: Color.fromARGB(0, 97, 234, 84),
+                                isLabelVisible: true,
+                                child: Container(
+                                  height: 60,
+                                  width: 60,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    border: Border.all(color: Colors.black),
+                                    image: DecorationImage(
+                                      image: NetworkImage(element.avatar2!),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      height: 80,
-                      margin: const EdgeInsets.only(top: 10),
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(left: 15),
-                            child: Badge(
-                              label: const SizedBox(
-                                height: 10,
-                                width: 10,
-                              ),
-                              alignment: Alignment.bottomRight,
-                              backgroundColor:
-                                  const Color.fromRGBO(96, 234, 84, 1),
-                              isLabelVisible: true,
-                              child: CircleAvatar(
-                                radius: 30,
-                                child: Image.asset(
-                                  'assets/pics/cup.png',
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              margin: const EdgeInsets.only(left: 20),
-                              child: const Text(
-                                'Đỗ Hoàng Huy',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(right: 10),
-                            child: SizedBox(
-                              height: 40,
-                              width: 100,
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                style: buttonAdded,
-                                child: const Center(
-                                  child: Text(
-                                    'Added',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(103, 151, 215, 1),
-                                      fontSize: 18,
-                                    ),
+                            Expanded(
+                              child: Container(
+                                margin: const EdgeInsets.only(left: 20),
+                                child: Text(
+                                  element.userName2!,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      height: 80,
-                      margin: const EdgeInsets.only(top: 10),
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(left: 15),
-                            child: Badge(
-                              label: const SizedBox(
-                                height: 10,
-                                width: 10,
-                              ),
-                              alignment: Alignment.bottomRight,
-                              backgroundColor:
-                                  const Color.fromRGBO(96, 234, 84, 1),
-                              isLabelVisible: true,
-                              child: CircleAvatar(
-                                radius: 30,
-                                child: Image.asset(
-                                  'assets/pics/cup.png',
+                            if (element.status == null)
+                              Container(
+                                margin: const EdgeInsets.only(right: 10),
+                                child: SizedBox(
+                                  height: 40,
+                                  width: 80,
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      if (element.status == null) {
+                                        await add(list.indexOf(element));
+                                      }
+                                    },
+                                    style: buttonAdd,
+                                    child: const Center(
+                                      child: Text(
+                                        'Add',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color:
+                                              Color.fromRGBO(205, 205, 205, 1),
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              margin: const EdgeInsets.only(left: 20),
-                              child: const Text(
-                                'Đỗ Hoàng Huy',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500,
+                              )
+                            else if (element.status == false)
+                              Container(
+                                margin: const EdgeInsets.only(right: 10),
+                                child: SizedBox(
+                                  height: 40,
+                                  width: 100,
+                                  child: ElevatedButton(
+                                    onPressed: () {},
+                                    style: buttonAdded,
+                                    child: const Center(
+                                      child: Text(
+                                        'Added',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color:
+                                              Color.fromRGBO(103, 151, 215, 1),
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(right: 10),
-                            child: SizedBox(
-                              height: 40,
-                              width: 100,
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                style: buttonFirend,
-                                child: const Center(
-                                  child: Text(
-                                    'Friend',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(96, 234, 84, 1),
-                                      fontSize: 18,
+                              )
+                            else
+                              Container(
+                                margin: const EdgeInsets.only(right: 10),
+                                child: SizedBox(
+                                  height: 40,
+                                  width: 100,
+                                  child: ElevatedButton(
+                                    onPressed: () {},
+                                    style: buttonFirend,
+                                    child: const Center(
+                                      child: Text(
+                                        'Friend',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Color.fromRGBO(96, 234, 84, 1),
+                                          fontSize: 18,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),

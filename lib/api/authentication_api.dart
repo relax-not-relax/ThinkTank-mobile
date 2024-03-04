@@ -45,4 +45,28 @@ class ApiAuthentication {
     );
     return response;
   }
+
+  static Future<Account?> refreshToken(
+    String refreshToken,
+    String accessToken,
+  ) async {
+    Map<String, String?> data = {
+      "accessToken": accessToken,
+      "refreshToken": refreshToken,
+    };
+    String jsonBody = jsonEncode(data);
+    final response = await http.post(
+      Uri.parse(
+          'https://thinktank-sep490.azurewebsites.net/api/accounts/token-verification'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonBody,
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      return Account.fromJson(jsonData);
+    } else {
+      return null;
+    }
+  }
 }
