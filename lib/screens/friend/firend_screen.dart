@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:thinktank_mobile/api/friends_api.dart';
+import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/friendship.dart';
 import 'package:thinktank_mobile/screens/friend/addfriend_screen.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:unicons/unicons.dart';
 
 class FriendScreen extends StatefulWidget {
-  const FriendScreen({super.key});
+  const FriendScreen({super.key, required this.account});
+  final Account account;
 
   @override
   State<StatefulWidget> createState() {
@@ -25,7 +29,9 @@ void _showResizableDialog(BuildContext context, String username) {
           width: 250,
           height: 140,
           decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
               color: Color.fromARGB(255, 249, 249, 249)),
           child: Column(
             children: [
@@ -109,6 +115,28 @@ void _showResizableDialog(BuildContext context, String username) {
 }
 
 class FriendScreenState extends State<FriendScreen> {
+  late Future<List<Friendship>> _getFriensship;
+  List<Friendship> list = [];
+  int countFriend = 0;
+  @override
+  void initState() {
+    super.initState();
+    _getFriensship = ApiFriends.getFriends(
+      1,
+      100,
+      widget.account.id,
+      widget.account.accessToken,
+    );
+    _getFriensship.then((listFriend) {
+      setState(() {
+        if (listFriend.isNotEmpty) {
+          list = listFriend;
+          countFriend = list.length;
+        }
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -221,11 +249,11 @@ class FriendScreenState extends State<FriendScreen> {
                 top: 10,
                 left: 20,
               ),
-              child: const Align(
+              child: Align(
                 alignment: Alignment.topLeft,
                 child: Text(
-                  '10 Friends',
-                  style: TextStyle(
+                  '$countFriend Friends',
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -238,61 +266,95 @@ class FriendScreenState extends State<FriendScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Container(
-                      height: 80,
-                      margin: const EdgeInsets.only(top: 10),
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Badge(
-                            label: const SizedBox(
-                              height: 10,
-                              width: 10,
-                            ),
-                            alignment: Alignment.bottomRight,
-                            backgroundColor:
-                                const Color.fromRGBO(96, 234, 84, 1),
-                            isLabelVisible: true,
-                            child: CircleAvatar(
-                              radius: 30,
-                              child: Image.asset(
-                                'assets/pics/cup.png',
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              margin: const EdgeInsets.only(left: 20),
-                              child: const Text(
-                                'Đỗ Hoàng Huy',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(right: 10),
-                            child: IconButton(
-                              icon: const Icon(UniconsLine.ellipsis_h),
-                              color: Colors.white,
-                              onPressed: () {
-                                displayBottomSheet(context, 'Đỗ Hoàng Huy');
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    for (var fs in list)
+                      FriendItem(
+                        isOnline: true,
+                        avtLink: fs.avatar2!,
+                        name: fs.userName2!,
+                        accountId: fs.accountId2!,
+                        friendShipId: fs.id,
+                      )
                   ],
                 ),
               ),
             )
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ignore: non_constant_identifier_names
+class FriendItem extends StatelessWidget {
+  const FriendItem(
+      {super.key,
+      required this.isOnline,
+      required this.avtLink,
+      required this.name,
+      required this.accountId,
+      required this.friendShipId});
+  final bool isOnline;
+  final String avtLink;
+  final String name;
+  final int accountId;
+  final int friendShipId;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 80,
+      margin: const EdgeInsets.only(top: 10),
+      width: MediaQuery.of(context).size.width,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Badge(
+            label: const SizedBox(
+              height: 10,
+              width: 10,
+            ),
+            alignment: Alignment.bottomRight,
+            backgroundColor: isOnline
+                ? const Color.fromRGBO(96, 234, 84, 1)
+                : const Color.fromARGB(0, 255, 193, 7),
+            isLabelVisible: true,
+            child: Container(
+              height: 60,
+              width: 60,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                border: Border.all(color: Colors.black),
+                image: DecorationImage(
+                  image: NetworkImage(avtLink),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.only(left: 20),
+              child: Text(
+                name,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: IconButton(
+              icon: const Icon(UniconsLine.ellipsis_h),
+              color: Colors.white,
+              onPressed: () {
+                displayBottomSheet(context, name);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -335,7 +397,7 @@ class FriendScreenState extends State<FriendScreen> {
                     width: 20.0,
                   ),
                   Text(
-                    "Mark All As Read",
+                    "Remove this friendship",
                     style: GoogleFonts.roboto(
                       fontSize: 16.0,
                       fontWeight: FontWeight.w500,

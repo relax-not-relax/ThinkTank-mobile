@@ -9,7 +9,41 @@ class ApiFriends {
       int page, int pageSize, int accountId, String authToken) async {
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&AccountId1=$accountId'),
+          'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=true&AccountId=$accountId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $authToken',
+      },
+    );
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      final jsonList = jsonData['results'];
+      List<Friendship> list = [];
+      for (var element in jsonList) {
+        list.add(
+          Friendship(
+            id: element['id'],
+            status: element['status'],
+            accountId1: element['accountId1'],
+            accountId2: element['accountId2'],
+            userName1: element['userName1'],
+            avatar1: element['avatar1'],
+            userName2: element['userName2'],
+            avatar2: element['avatar2'],
+          ),
+        );
+      }
+      return list;
+    } else {
+      return [];
+    }
+  }
+
+  static Future<List<Friendship>> searchFriends(int page, int pageSize,
+      int accountId, String userCode, String authToken) async {
+    final response = await http.get(
+      Uri.parse(
+          'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=all&AccountId=$accountId&UserCode=$userCode'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $authToken',
@@ -54,6 +88,25 @@ class ApiFriends {
         'Authorization': 'Bearer $authToken',
       },
       body: jsonBody,
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      return Friendship.fromJson(jsonData);
+    } else {
+      return null;
+    }
+  }
+
+  static Future<Friendship?> acceptFriend(
+      int friendShipId, String authToken) async {
+    final response = await http.post(
+      Uri.parse(
+          'https://thinktank-sep490.azurewebsites.net/api/friends/$friendShipId/status'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $authToken',
+      },
     );
 
     if (response.statusCode == 200) {

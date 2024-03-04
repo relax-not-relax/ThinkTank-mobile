@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
@@ -93,8 +94,11 @@ class LoginScreenState extends State<LoginScreen> {
                             _isIncorrect = false;
                           });
                           await SharedPreferencesHelper.saveInfo(acc);
+                          await ApiAchieviements.getAchieviements(
+                              acc.id, acc.accessToken);
                           // ignore: use_build_context_synchronously
                           _closeDialog(context);
+
                           // ignore: use_build_context_synchronously
                           Navigator.pushAndRemoveUntil(
                             context,

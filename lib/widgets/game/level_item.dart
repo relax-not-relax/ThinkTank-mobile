@@ -91,8 +91,8 @@ class LevelItem extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              MusicPasswordGamePlay(info: data),
+                          builder: (context) => MusicPasswordGamePlay(
+                              info: data, account: account!),
                         ),
                       );
                       break;

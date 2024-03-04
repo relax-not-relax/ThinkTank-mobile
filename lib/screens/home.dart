@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/screens/friend/firend_screen.dart';
 import 'package:thinktank_mobile/screens/notification/notiscreen.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/appbar/appbar.dart';
@@ -50,7 +51,20 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: SizedBox(
         height: 70,
         child: BottomNavigationBar(
-          onTap: (value) {},
+          onTap: (value) async {
+            Account? account = await SharedPreferencesHelper.getInfo();
+            switch (value) {
+              case 4:
+                // ignore: use_build_context_synchronously
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FriendScreen(account: account!),
+                  ),
+                );
+                break;
+            }
+          },
           currentIndex: 0,
           showUnselectedLabels: true,
           type: BottomNavigationBarType.fixed,

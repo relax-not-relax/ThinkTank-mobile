@@ -1,12 +1,12 @@
 class Friendship {
   int id;
-  bool status;
-  int accountId1;
-  int accountId2;
-  String userName1;
-  String avatar1;
-  String userName2;
-  String avatar2;
+  bool? status;
+  int? accountId1;
+  int? accountId2;
+  String? userName1;
+  String? avatar1;
+  String? userName2;
+  String? avatar2;
 
   Friendship({
     required this.id,

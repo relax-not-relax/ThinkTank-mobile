@@ -5,10 +5,7 @@ import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
 import 'package:thinktank_mobile/models/musicpassword.dart';
-import 'package:thinktank_mobile/screens/friend/addfriend_screen.dart';
-import 'package:thinktank_mobile/screens/friend/firend_screen.dart';
 import 'package:thinktank_mobile/screens/introscreen.dart';
-import 'package:thinktank_mobile/screens/musicpassword/musicpassgame.dart';
 import 'package:thinktank_mobile/screens/startscreen.dart';
 
 void main() async {
