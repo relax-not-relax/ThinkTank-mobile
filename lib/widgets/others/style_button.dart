@@ -150,6 +150,20 @@ final ButtonStyle buttonAdded = ElevatedButton.styleFrom(
     ),
   ),
 );
+
+final ButtonStyle buttonApprove = ElevatedButton.styleFrom(
+  backgroundColor: Color.fromARGB(0, 240, 122, 63),
+  elevation: 8,
+  shape: const RoundedRectangleBorder(
+    side: BorderSide(
+      color: Color.fromRGBO(255, 212, 96, 1),
+      width: 1,
+    ),
+    borderRadius: BorderRadius.all(
+      Radius.circular(10),
+    ),
+  ),
+);
 final ButtonStyle buttonFirend = ElevatedButton.styleFrom(
   backgroundColor: Color.fromARGB(0, 240, 122, 63),
   elevation: 8,

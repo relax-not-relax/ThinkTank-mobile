@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 Future<void> handleBackgroundMessage(RemoteMessage message) async {
@@ -18,5 +19,13 @@ class FirebaseMessageAPI {
   Future<String?> getToken() async {
     final FCMToken = await _firebaseMessage.getToken();
     return FCMToken;
+  }
+}
+
+class FirebaseRealTime {
+  static final DatabaseReference _databaseReference =
+      FirebaseDatabase.instance.ref();
+  static void setOnline(int id, bool value) {
+    _databaseReference.child('online').child(id.toString()).set(value);
   }
 }
