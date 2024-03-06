@@ -9,6 +9,8 @@ import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
 import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,10 +24,12 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
   late Future<LoginInfo?> _loginFuture;
   bool _isObscured = true;
   bool isRemember = false;
   bool _isIncorrect = false;
+
   @override
   void initState() {
     super.initState();
@@ -332,7 +336,7 @@ class LoginScreenState extends State<LoginScreen> {
 }
 
 void _closeDialog(BuildContext context) {
-  Navigator.of(context).pop(); // Sử dụng Navigator để đóng AlertDialog
+  Navigator.of(context).pop();
 }
 
 void _showResizableDialog(BuildContext context) {
@@ -343,17 +347,16 @@ void _showResizableDialog(BuildContext context) {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(0),
         content: Container(
-          width: 250, // Điều chỉnh kích thước chiều rộng
+          width: 250,
           height: 400,
           decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10)),
-              color: Color.fromARGB(
-                  255, 249, 249, 249)), // Điều chỉnh kích thước chiều cao
+              color: Color.fromARGB(255, 249, 249, 249)),
           child: Column(
             children: [
               const SizedBox(height: 20),
               Image.asset(
-                'assets/pics/accOragne.png', // Thay thế bằng đường dẫn hình ảnh của bạn
+                'assets/pics/accOragne.png',
                 height: 150,
                 width: 150,
               ),

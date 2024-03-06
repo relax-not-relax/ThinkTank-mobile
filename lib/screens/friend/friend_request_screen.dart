@@ -10,43 +10,53 @@ import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:unicons/unicons.dart';
 
-class AddFriendScreen extends StatefulWidget {
-  const AddFriendScreen({super.key});
+class FriendRequestScreen extends StatefulWidget {
+  const FriendRequestScreen({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return AddFriendScreenState();
+    return FriendRequestScreenState();
   }
 }
 
-class AddFriendScreenState extends State<AddFriendScreen> {
+class FriendRequestScreenState extends State<FriendRequestScreen> {
   List<Friendship> list = [];
+  List<Friendship> listTmp = [];
   TextEditingController _codeController = TextEditingController();
-  bool _isLoading = false;
+  bool _isLoading = true;
 
-  Future<void> search(String code) async {
-    if (code.trim().isNotEmpty) {
-      setState(() {
-        _isLoading = true;
-      });
-      Account? account = await SharedPreferencesHelper.getInfo();
-      List<Friendship> listTmp = await ApiFriends.searchFriends(
-          1, 1000, account!.id, code, account.accessToken);
-      setState(() {
-        list = listTmp;
-        _isLoading = false;
-      });
-    }
+  Future<void> search(String username) async {
+    setState(() {
+      list = listTmp
+          .where((element) =>
+              element.userName1 != null &&
+              element.userName1!.contains(username))
+          .toList();
+    });
   }
 
-  Future<void> add(int index) async {
+  Future<List<Friendship>> getListRequest() async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    listTmp = await ApiFriends.searchRequest(
+        1, 1000, account!.id, "", account.accessToken);
+    return listTmp.where((element) => element.accountId1 != null).toList();
+  }
+
+  late Future<List<Friendship>> _getRequest;
+
+  Future<void> accept(int friendShipId, int index) async {
     LoadingCustom.loading(context);
     Account? account = await SharedPreferencesHelper.getInfo();
     setState(() {
-      list[index].status = false;
+      listTmp.removeAt(index);
+      list = listTmp
+          .where((element) =>
+              element.userName1 != null &&
+              element.userName1!.contains(_codeController.text))
+          .toList();
     });
-    await ApiFriends.addFriend(
-        account!.id, list[index].accountId2!, account.accessToken);
+    await ApiFriends.acceptFriend(friendShipId, account!.accessToken);
+    // ignore: use_build_context_synchronously
     LoadingCustom.loaded(context);
   }
 
@@ -54,20 +64,31 @@ class AddFriendScreenState extends State<AddFriendScreen> {
     LoadingCustom.loading(context);
     Account? account = await SharedPreferencesHelper.getInfo();
     setState(() {
-      list[index].status = null;
+      listTmp.removeAt(index);
+      list = listTmp
+          .where((element) =>
+              element.userName1 != null &&
+              element.userName1!.contains(_codeController.text))
+          .toList();
     });
     await ApiFriends.deleteFriend(friendShipId, account!.accessToken);
+    // ignore: use_build_context_synchronously
     LoadingCustom.loaded(context);
   }
 
-  Future<void> accept(int friendShipId, int index) async {
-    LoadingCustom.loading(context);
-    Account? account = await SharedPreferencesHelper.getInfo();
-    setState(() {
-      list[index].status = true;
+  int countFriend = 0;
+  @override
+  void initState() {
+    super.initState();
+    _getRequest = getListRequest();
+    _getRequest.then((listFriend) {
+      setState(() {
+        if (listFriend.isNotEmpty) {
+          list = listFriend;
+        }
+        _isLoading = false;
+      });
     });
-    await ApiFriends.acceptFriend(friendShipId, account!.accessToken);
-    LoadingCustom.loaded(context);
   }
 
   @override
@@ -76,26 +97,31 @@ class AddFriendScreenState extends State<AddFriendScreen> {
       extendBodyBehindAppBar: false,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(90.0),
-        child: Container(
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: Color.fromARGB(103, 129, 140, 155),
-                width: 1.0,
+        child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).requestFocus(FocusNode());
+          },
+          child: Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Color.fromARGB(103, 129, 140, 155),
+                  width: 1.0,
+                ),
               ),
             ),
-          ),
-          child: AppBar(
-            backgroundColor: Colors.black,
-            toolbarHeight: 90.0,
-            title: Text(
-              "Add friends",
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
+            child: AppBar(
+              backgroundColor: Colors.black,
+              toolbarHeight: 90.0,
+              title: Text(
+                "Friend requests",
+                style: GoogleFonts.inter(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
+              centerTitle: true,
             ),
-            centerTitle: true,
           ),
         ),
       ),
@@ -117,7 +143,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                   alignment: Alignment.topLeft,
                   child: Text(
                     textAlign: TextAlign.start,
-                    "User's code",
+                    "Username",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 30,
@@ -135,6 +161,9 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                   ),
                 ),
                 child: TextField(
+                  onChanged: (value) {
+                    search(value);
+                  },
                   controller: _codeController,
                   style: const TextStyle(
                       color: Color.fromARGB(255, 255, 255, 255)),
@@ -142,7 +171,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                     hintStyle: const TextStyle(
                       color: Color.fromRGBO(65, 65, 65, 1),
                     ),
-                    hintText: "User's code",
+                    hintText: "Username",
                     contentPadding: const EdgeInsets.all(20),
                     enabledBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -160,7 +189,6 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                         size: 35,
                       ),
                       onPressed: () {
-                        FocusScope.of(context).requestFocus(FocusNode());
                         search(_codeController.text);
                       },
                     ),
@@ -170,7 +198,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
               Expanded(
                 child: _isLoading
                     ? const Center(
-                        child: const CustomLoadingSpinner(),
+                        child: CustomLoadingSpinner(),
                       )
                     : SingleChildScrollView(
                         child: Column(
@@ -226,68 +254,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                                         ),
                                       ),
                                     ),
-                                    if (element.status == null)
-                                      Container(
-                                        margin:
-                                            const EdgeInsets.only(right: 10),
-                                        child: SizedBox(
-                                          height: 40,
-                                          width: 80,
-                                          child: ElevatedButton(
-                                            onPressed: () async {
-                                              if (element.status == null) {
-                                                await add(
-                                                    list.indexOf(element));
-                                              }
-                                            },
-                                            style: buttonAdd,
-                                            child: const Center(
-                                              child: Text(
-                                                'Add',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color: Color.fromRGBO(
-                                                      205, 205, 205, 1),
-                                                  fontSize: 18,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    else if (element.status == false &&
-                                        element.accountId1 == null)
-                                      Container(
-                                        margin:
-                                            const EdgeInsets.only(right: 10),
-                                        child: SizedBox(
-                                          height: 40,
-                                          width: 100,
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              _showResizableDialog(
-                                                  context,
-                                                  element.userName2!,
-                                                  element.id,
-                                                  list.indexOf(element),
-                                                  "added");
-                                            },
-                                            style: buttonAdded,
-                                            child: const Center(
-                                              child: Text(
-                                                'Added',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color: Color.fromRGBO(
-                                                      103, 151, 215, 1),
-                                                  fontSize: 18,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    else if (element.status == false &&
+                                    if (element.status == false &&
                                         element.accountId1 != null)
                                       Container(
                                         margin:
@@ -298,11 +265,11 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                                           child: ElevatedButton(
                                             onPressed: () async {
                                               _showResizableDialog(
-                                                  context,
-                                                  element.userName1!,
-                                                  element.id,
-                                                  list.indexOf(element),
-                                                  "approve");
+                                                context,
+                                                element.userName1!,
+                                                element.id,
+                                                listTmp.indexOf(element),
+                                              );
                                             },
                                             style: buttonApprove,
                                             child: const Center(
@@ -357,8 +324,8 @@ class AddFriendScreenState extends State<AddFriendScreen> {
     );
   }
 
-  void _showResizableDialog(BuildContext context, String username,
-      int friendShipId, int index, String type) {
+  void _showResizableDialog(
+      BuildContext context, String username, int friendShipId, int index) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -380,9 +347,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                 Expanded(
                   child: Center(
                     child: Text(
-                      type == "approve"
-                          ? ('Accept $username as a friend')
-                          : "Cancle the request to $username?",
+                      'Accept $username as a friend',
                       style: const TextStyle(
                           color: Color.fromRGBO(129, 140, 155, 1),
                           fontSize: 18,
@@ -415,16 +380,15 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                           InkWell(
                             onTap: () async {
                               Navigator.pop(context);
-                              if (type == "approve")
-                                await denied(friendShipId, index);
+                              await denied(friendShipId, index);
                             },
-                            child: SizedBox(
+                            child: const SizedBox(
                               height: 50,
                               width: 125,
                               child: Center(
                                 child: Text(
-                                  type == "approve" ? ('Rejecte') : "No",
-                                  style: const TextStyle(
+                                  'Rejecte',
+                                  style: TextStyle(
                                     color: Color.fromRGBO(255, 58, 58, 1),
                                     fontSize: 20,
                                   ),
@@ -436,18 +400,15 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                           InkWell(
                             onTap: () async {
                               Navigator.pop(context);
-                              if (type == "approve") {
-                                await accept(friendShipId, index);
-                              } else
-                                await denied(friendShipId, index);
+                              await accept(friendShipId, index);
                             },
-                            child: SizedBox(
+                            child: const SizedBox(
                               height: 50,
                               width: 125,
                               child: Center(
                                 child: Text(
-                                  type == "approve" ? ('Accept') : "Yes",
-                                  style: const TextStyle(
+                                  'Accept',
+                                  style: TextStyle(
                                     color: Color.fromRGBO(72, 145, 255, 1),
                                     fontSize: 20,
                                   ),

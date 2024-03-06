@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/models/account.dart';
 
 class ApiAuthentication {
@@ -21,6 +22,7 @@ class ApiAuthentication {
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
+      FirebaseRealTime.setOnline(Account.fromJson(jsonData).id, true);
       return Account.fromJson(jsonData);
     } else {
       return null;
