@@ -10,14 +10,14 @@ import 'package:thinktank_mobile/widgets/appbar/game_appbar.dart';
 class GameMainScreen extends StatefulWidget {
   const GameMainScreen({
     super.key,
-    // required this.maxTime,
-    // required this.account,
-    // required this.gameName,
+    required this.maxTime,
+    required this.account,
+    required this.gameName,
   });
 
-  // final Duration maxTime;
-  // final Account account;
-  // final String gameName;
+  final Duration maxTime;
+  final Account account;
+  final String gameName;
 
   @override
   State<GameMainScreen> createState() => _GameMainScreenState();
@@ -42,10 +42,6 @@ class _GameMainScreenState extends State<GameMainScreen> {
         final newTime = remainingTime - const Duration(milliseconds: 500);
         if (newTime.isNegative) {
           timer!.cancel();
-          // setState(() {
-          //   isLosed = true;
-          //   continueVisible = true;
-          // });
         } else {
           remainingTime = newTime;
         }

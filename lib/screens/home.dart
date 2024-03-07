@@ -14,6 +14,7 @@ import 'package:thinktank_mobile/widgets/others/loadingcustom.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.account});
+
   final Account account;
 
   @override
@@ -21,53 +22,33 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  void openNotification(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const NotiScreen(),
-      ),
-    );
+  int _selectedPageIndex = 0;
+
+  void _selectPage(int index) async {
+    setState(() {
+      _selectedPageIndex = index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget activePage = OptionScreen(
+      account: widget.account,
+    );
+
+    switch (_selectedPageIndex) {
+      case 4:
+        activePage = const FriendScreen();
+        break;
+    }
+
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: TAppBar(
-        onSelectNotification: () => openNotification(context),
-        urlAvt: widget.account.avatar ?? '',
-        fullname: widget.account.fullName,
-      ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/pics/main_bg.png"),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Container(
-          child: const OptionScreen(),
-        ),
-      ),
+      body: activePage,
       bottomNavigationBar: SizedBox(
         height: 70,
         child: BottomNavigationBar(
-          onTap: (value) async {
-            switch (value) {
-              case 4:
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const FriendScreen(),
-                  ),
-                );
-                break;
-            }
-          },
-          currentIndex: 0,
+          onTap: _selectPage,
+          currentIndex: _selectedPageIndex,
           showUnselectedLabels: true,
           type: BottomNavigationBarType.fixed,
           selectedItemColor: Colors.white,
