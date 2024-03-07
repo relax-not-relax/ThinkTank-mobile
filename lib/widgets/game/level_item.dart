@@ -8,6 +8,7 @@ import 'package:thinktank_mobile/models/account.dart';
 
 import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/screens/flipcard/flipcard_game.dart';
+import 'package:thinktank_mobile/screens/imagesWalkthrough/game_mainscreen.dart';
 import 'package:thinktank_mobile/screens/musicpassword/musicpassgame.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
@@ -109,6 +110,18 @@ class LevelItem extends StatelessWidget {
                         ),
                       );
                       break;
+                    // case 'Images Walkthrough':
+                    //   // ignore: use_build_context_synchronously
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => GameMainScreen(
+                    //         maxTime: const Duration(seconds: 120),
+                    //         account: account!,
+                    //         gameName: game,
+                    //       ),
+                    //     ),
+                    //   );
                   }
                 },
                 style: buttonLevelCompleted(context),

@@ -32,7 +32,9 @@ class WalkThroughItem extends StatelessWidget {
     }
 
     return InkWell(
-      onTap: onSelect,
+      onTap: () {
+        onSelect();
+      },
       child: Container(
         //padding: const EdgeInsets.all(30.0),
         decoration: BoxDecoration(
