@@ -110,18 +110,19 @@ class LevelItem extends StatelessWidget {
                         ),
                       );
                       break;
-                    // case 'Images Walkthrough':
-                    //   // ignore: use_build_context_synchronously
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => GameMainScreen(
-                    //         maxTime: const Duration(seconds: 120),
-                    //         account: account!,
-                    //         gameName: game,
-                    //       ),
-                    //     ),
-                    //   );
+                    case 'Images Walkthrough':
+                      // ignore: use_build_context_synchronously
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GameMainScreen(
+                            maxTime: const Duration(seconds: 120),
+                            account: account!,
+                            gameName: game,
+                          ),
+                        ),
+                      );
+                      break;
                   }
                 },
                 style: buttonLevelCompleted(context),

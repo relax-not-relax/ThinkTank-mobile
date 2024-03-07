@@ -71,7 +71,7 @@ class _MyAppState extends State<MyApp> {
       //   onSelect: () {},
       //   itemIndex: 0,
       // ),
-      home: GameMainScreen(),
+      home: StartScreen(),
       // home: const MusicPasswordGamePlay(
       //   info: MusicPassword(
       //       level: 1,
