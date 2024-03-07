@@ -5,8 +5,14 @@ import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
 import 'package:thinktank_mobile/models/musicpassword.dart';
+
+import 'package:thinktank_mobile/screens/friend/addfriend_screen.dart';
+import 'package:thinktank_mobile/screens/friend/firend_screen.dart';
+import 'package:thinktank_mobile/screens/imagesWalkthrough/game_mainscreen.dart';
+
 import 'package:thinktank_mobile/screens/introscreen.dart';
 import 'package:thinktank_mobile/screens/startscreen.dart';
+import 'package:thinktank_mobile/widgets/game/walkthrough_item.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,26 +58,31 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0x283444),
-            background: const Color.fromARGB(255, 0, 0, 0),
-          ),
-          useMaterial3: true,
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0x283444),
+          background: const Color.fromARGB(255, 0, 0, 0),
         ),
-        home: const StartScreen()
-        // home: const MusicPasswordGamePlay(
-        //   info: MusicPassword(
-        //       level: 1,
-        //       soundLink:
-        //           'https://firebasestorage.googleapis.com/v0/b/lottery-4803d.appspot.com/o/as1.mp3?alt=media&token=7d5c4fd4-f626-4466-aad3-e5146402eaa7',
-        //       answer: 'c1e1g1c2',
-        //       change: 5,
-        //       time: 120),
-        // ),
-        //home: const FlipCardGamePlay(),
-        );
+        useMaterial3: true,
+      ),
+      // home: WalkThroughItem(
+      //   imgPath: "assets/pics/fruit_2.png",
+      //   onSelect: () {},
+      //   itemIndex: 0,
+      // ),
+      home: GameMainScreen(),
+      // home: const MusicPasswordGamePlay(
+      //   info: MusicPassword(
+      //       level: 1,
+      //       soundLink:
+      //           'https://firebasestorage.googleapis.com/v0/b/lottery-4803d.appspot.com/o/as1.mp3?alt=media&token=7d5c4fd4-f626-4466-aad3-e5146402eaa7',
+      //       answer: 'c1e1g1c2',
+      //       change: 5,
+      //       time: 120),
+      // ),
+      //home: const FlipCardGamePlay(),
+    );
   }
 }
 
