@@ -9,10 +9,14 @@ class ImagesWalkthroughGameScreen extends StatefulWidget {
     super.key,
     required this.onSelectImage,
     required this.onCorrectAnswer,
+    required this.onEndGame,
+    required this.onInCorrectAnswer,
   });
 
   final void Function(String imgAnswer) onSelectImage;
   final void Function() onCorrectAnswer;
+  final void Function() onInCorrectAnswer;
+  final void Function() onEndGame;
 
   @override
   State<ImagesWalkthroughGameScreen> createState() =>
@@ -28,15 +32,25 @@ class _ImagesWalkthroughGameScreenState
   void answerQuestion(String selectedAnswer) {
     if (selectedAnswer == walkthroughs[currentQuestionIndex - 1].bigImgPath) {
       widget.onCorrectAnswer();
+    } else if (selectedAnswer !=
+        walkthroughs[currentQuestionIndex - 1].bigImgPath) {
+      widget.onInCorrectAnswer();
+      setState(() {
+        currentQuestionIndex = 1;
+      });
     }
 
     widget.onSelectImage(selectedAnswer);
     setState(() {
       currentQuestionIndex++;
-      print(currentQuestionIndex);
+    });
+
+    if (currentQuestionIndex == walkthroughs.length) {
+      widget.onEndGame();
+    } else {
       shuffle = List.from(walkthroughs[currentQuestionIndex].answerImgPath);
       shuffle!.shuffle();
-    });
+    }
   }
 
   @override

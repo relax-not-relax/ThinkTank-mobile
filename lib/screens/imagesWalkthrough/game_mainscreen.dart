@@ -2,12 +2,22 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/data/imageswalkthrough_data.dart';
+import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/imageswalkthroughgame_screen.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/startgame_screen.dart';
 import 'package:thinktank_mobile/widgets/appbar/game_appbar.dart';
 
 class GameMainScreen extends StatefulWidget {
-  const GameMainScreen({super.key});
+  const GameMainScreen({
+    super.key,
+    // required this.maxTime,
+    // required this.account,
+    // required this.gameName,
+  });
+
+  // final Duration maxTime;
+  // final Account account;
+  // final String gameName;
 
   @override
   State<GameMainScreen> createState() => _GameMainScreenState();
@@ -71,10 +81,28 @@ class _GameMainScreenState extends State<GameMainScreen> {
     });
   }
 
+  void incorrectSelect() {
+    timer?.cancel();
+
+    setState(() {
+      correct = 0;
+      percent = correct / total;
+      activeScreen = 'start-screen';
+      if (_timerStarted) {
+        _timerStarted = false;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget screenWidget = StartGameScreen(startImage: switchScreen);
+
     //Widget screenWidget = ImagesWalkthroughGameScreen();
+
+    if (activeScreen == 'start-screen') {
+      StartGameScreen(startImage: switchScreen);
+    }
 
     if (activeScreen == 'questions-screen') {
       screenWidget = ImagesWalkthroughGameScreen(
@@ -86,6 +114,15 @@ class _GameMainScreenState extends State<GameMainScreen> {
             correct++;
             percent = correct / total;
           });
+        },
+        onEndGame: () {
+          timer?.cancel();
+          setState(() {
+            timer = null;
+          });
+        },
+        onInCorrectAnswer: () {
+          incorrectSelect();
         },
       );
     }
