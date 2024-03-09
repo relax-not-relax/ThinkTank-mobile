@@ -42,10 +42,10 @@ const games = [
   Game(
     id: 5,
     imageUrl: "assets/pics/game_5.png",
-    name: "Storyteller",
+    name: "Room Party",
     description:
-        "The player is given an intriguing story, and your task is to arrange provided images to form a complete narrative.",
-    type: ["Sequential memory", "Spatial memory", "Associative memory"],
+        "Create a common playroom for friends to improve memory together.",
+    type: [],
     color: Color.fromARGB(255, 45, 64, 89),
   ),
 ];
@@ -68,4 +68,10 @@ var notiTemp = [
     description: "Hoang Huy Do sent you a friend request.",
     time: DateTime.utc(2024, 02, 20),
   ),
+];
+
+var genders = [
+  "Male",
+  "Female",
+  "Other",
 ];
