@@ -328,7 +328,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                                           width: 100,
                                           child: ElevatedButton(
                                             onPressed: () {},
-                                            style: buttonFirend,
+                                            style: buttonFriend,
                                             child: const Center(
                                               child: Text(
                                                 'Friend',

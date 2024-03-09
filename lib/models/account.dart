@@ -8,6 +8,7 @@ class Account {
   final String email;
   final String? gender;
   final String? dateOfBirth;
+  final String? registrationDate;
   final String? avatar;
   final int? coin;
   final bool? isOnline;
@@ -26,6 +27,7 @@ class Account {
     required this.email,
     this.gender,
     this.dateOfBirth,
+    required this.registrationDate,
     this.avatar,
     this.coin,
     this.isOnline,
@@ -53,6 +55,7 @@ class Account {
       fcm: json['fcm'],
       status: json['status'],
       googleId: json['googleId'],
+      registrationDate: json['registrationDate'],
       accessToken: json['accessToken'],
       version: json['version'],
     );
@@ -73,6 +76,7 @@ class Account {
       'fcm': fcm,
       'status': status,
       'googleId': googleId,
+      'registrationDate': registrationDate,
       'accessToken': accessToken,
       'version': version,
     };
@@ -80,6 +84,6 @@ class Account {
 
   @override
   String toString() {
-    return 'Account{id: $id, code: $code, fullName: $fullName, userName: $userName, email: $email, gender: $gender, dateOfBirth: $dateOfBirth, avatar: $avatar, coin: $coin, isOnline: $isOnline, refreshToken: $refreshToken, fcm: $fcm, status: $status, googleId: $googleId, accessToken: $accessToken, version: $version}';
+    return 'Account{id: $id, code: $code, fullName: $fullName, userName: $userName, email: $email, gender: $gender, dateOfBirth: $dateOfBirth, avatar: $avatar, coin: $coin, isOnline: $isOnline, refreshToken: $refreshToken, fcm: $fcm, status: $status, googleId: $googleId, registrationDate: $registrationDate , accessToken: $accessToken, version: $version}';
   }
 }

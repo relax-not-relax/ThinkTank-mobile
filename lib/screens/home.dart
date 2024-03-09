@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/api/friends_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/screens/account/account_mainscreen.dart';
 import 'package:thinktank_mobile/screens/friend/firend_screen.dart';
 import 'package:thinktank_mobile/screens/notification/notiscreen.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
@@ -40,6 +41,10 @@ class _HomeScreenState extends State<HomeScreen> {
       case 4:
         activePage = const FriendScreen();
         break;
+      case 2:
+        activePage = AccountMainScreen(
+          account: widget.account,
+        );
     }
 
     return Scaffold(
@@ -70,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             BottomNavigationBarItem(
               icon: Icon(IconlyLight.profile),
+              activeIcon: Icon(IconlyBold.profile),
               label: 'Account',
             ),
             BottomNavigationBarItem(
@@ -78,6 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             BottomNavigationBarItem(
               icon: Icon(IconlyLight.user_1),
+              activeIcon: Icon(IconlyBold.user_3),
               label: 'Friends',
             ),
           ],

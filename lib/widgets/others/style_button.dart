@@ -20,6 +20,29 @@ final ButtonStyle buttonPrimary = ElevatedButton.styleFrom(
     ),
   ),
 );
+
+final ButtonStyle buttonPrimary_2 = ElevatedButton.styleFrom(
+  minimumSize: const Size(double.infinity, 40),
+  backgroundColor: const Color.fromRGBO(240, 123, 63, 1),
+  elevation: 0,
+  shape: const RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(
+      Radius.circular(10),
+    ),
+  ),
+);
+
+final ButtonStyle buttonPrimary_3 = ElevatedButton.styleFrom(
+  minimumSize: const Size(double.infinity, 55),
+  backgroundColor: const Color.fromRGBO(240, 123, 63, 1),
+  elevation: 0,
+  shape: const RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(
+      Radius.circular(10),
+    ),
+  ),
+);
+
 final ButtonStyle buttonPrimaryPink = ElevatedButton.styleFrom(
   minimumSize: const Size(350, 70),
   backgroundColor: const Color.fromRGBO(234, 84, 85, 1),
@@ -164,7 +187,7 @@ final ButtonStyle buttonApprove = ElevatedButton.styleFrom(
     ),
   ),
 );
-final ButtonStyle buttonFirend = ElevatedButton.styleFrom(
+final ButtonStyle buttonFriend = ElevatedButton.styleFrom(
   backgroundColor: Color.fromARGB(0, 240, 122, 63),
   elevation: 8,
   shape: const RoundedRectangleBorder(
@@ -235,3 +258,17 @@ ButtonStyle buttonLevelCompleted(BuildContext context) {
     ),
   );
 }
+
+final ButtonStyle buttonLogout = ElevatedButton.styleFrom(
+  backgroundColor: Colors.black,
+  elevation: 8,
+  shape: const RoundedRectangleBorder(
+    side: BorderSide(
+      color: Color.fromARGB(255, 81, 81, 81),
+      width: 2,
+    ),
+    borderRadius: BorderRadius.all(
+      Radius.circular(13),
+    ),
+  ),
+);
