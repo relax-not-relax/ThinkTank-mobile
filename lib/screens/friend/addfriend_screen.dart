@@ -31,7 +31,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
       });
       Account? account = await SharedPreferencesHelper.getInfo();
       List<Friendship> listTmp = await ApiFriends.searchFriends(
-          1, 1000, account!.id, code, account.accessToken);
+          1, 1000, account!.id, code, account.accessToken!);
       setState(() {
         list = listTmp;
         _isLoading = false;
@@ -46,7 +46,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
       list[index].status = false;
     });
     await ApiFriends.addFriend(
-        account!.id, list[index].accountId2!, account.accessToken);
+        account!.id, list[index].accountId2!, account.accessToken!);
     LoadingCustom.loaded(context);
   }
 
@@ -56,7 +56,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
     setState(() {
       list[index].status = null;
     });
-    await ApiFriends.deleteFriend(friendShipId, account!.accessToken);
+    await ApiFriends.deleteFriend(friendShipId, account!.accessToken!);
     LoadingCustom.loaded(context);
   }
 
@@ -66,7 +66,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
     setState(() {
       list[index].status = true;
     });
-    await ApiFriends.acceptFriend(friendShipId, account!.accessToken);
+    await ApiFriends.acceptFriend(friendShipId, account!.accessToken!);
     LoadingCustom.loaded(context);
   }
 

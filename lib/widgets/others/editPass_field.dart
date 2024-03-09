@@ -6,10 +6,14 @@ class EditPasswordField extends StatefulWidget {
     super.key,
     required this.controllerPass,
     required this.title,
+    this.errorText,
+    this.borderColor,
   });
 
   final TextEditingController controllerPass;
   final String title;
+  final String? errorText;
+  final Color? borderColor;
 
   @override
   State<EditPasswordField> createState() => _EditPasswordFieldState();
@@ -60,15 +64,17 @@ class _EditPasswordFieldState extends State<EditPasswordField> {
           obscureText: _isObscured,
           style: TextStyle(color: textColor),
           decoration: InputDecoration(
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(
+            border: OutlineInputBorder(
+              borderRadius: const BorderRadius.all(
                 Radius.circular(10.0),
               ),
               borderSide: BorderSide(
-                color: Color.fromARGB(255, 102, 102, 102),
+                color: widget.borderColor ??
+                    const Color.fromARGB(255, 102, 102, 102),
                 width: 1.0,
               ),
             ),
+            errorText: widget.errorText,
             focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(
                 Radius.circular(10.0),

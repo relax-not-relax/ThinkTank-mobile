@@ -49,8 +49,8 @@ class ApiAuthentication {
   }
 
   static Future<Account?> refreshToken(
-    String refreshToken,
-    String accessToken,
+    String? refreshToken,
+    String? accessToken,
   ) async {
     Map<String, String?> data = {
       "accessToken": accessToken,

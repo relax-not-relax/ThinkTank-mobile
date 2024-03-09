@@ -20,20 +20,66 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       TextEditingController();
 
   late Future<LoginInfo?> _loginFuture;
+  bool _isPasswordMismatch = false;
+  bool _isInCorrectOldPassword = false;
+  bool _isUnChecked = false;
+  String passCheck = "";
 
   @override
   void initState() {
     super.initState();
-    _newPasswordController.text == "";
-    _confirmPasswordController.text == "";
+    _newPasswordController.text = "";
+    _confirmPasswordController.text = "";
     _loginFuture = SharedPreferencesHelper.getAccount();
     _loginFuture.then((loginInfo) {
       setState(() {
         if (loginInfo != null) {
           _passwordController.text = loginInfo.password;
+          passCheck = loginInfo.password;
         }
       });
     });
+  }
+
+  void _validateAndSave() {
+    if (_passwordController.text != passCheck) {
+      setState(() {
+        _isInCorrectOldPassword = true;
+      });
+    } else {
+      _isInCorrectOldPassword = false;
+    }
+
+    if (_newPasswordController.text != _confirmPasswordController.text) {
+      setState(() {
+        _isPasswordMismatch = true;
+      });
+    } else {
+      setState(() {
+        _isPasswordMismatch = false;
+      });
+    }
+
+    if (_newPasswordController.text != "") {
+      if (_newPasswordController.text.contains(' ')) {
+        setState(() {
+          _isUnChecked = true;
+        });
+      } else {
+        _isUnChecked = false;
+      }
+    }
+
+    if (_isInCorrectOldPassword == false && _isPasswordMismatch == false) {
+      if (_newPasswordController.text == "") {
+        setState(() {
+          _newPasswordController.text = _passwordController.text;
+        });
+        Navigator.pop(context, _newPasswordController.text);
+      } else if (_newPasswordController.text != "" && _isUnChecked == false) {
+        Navigator.pop(context, _newPasswordController.text);
+      }
+    }
   }
 
   @override
@@ -53,16 +99,30 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   EditPasswordField(
-                      controllerPass: _passwordController,
-                      title: "Old password"),
+                    controllerPass: _passwordController,
+                    title: "Old password",
+                    errorText: _isInCorrectOldPassword
+                        ? 'Old password is incorrect'
+                        : null,
+                    borderColor: _isInCorrectOldPassword ? Colors.red : null,
+                  ),
                   const SizedBox(height: 20),
                   EditPasswordField(
-                      controllerPass: _newPasswordController,
-                      title: "New password"),
+                    controllerPass: _newPasswordController,
+                    title: "New password",
+                    errorText: _isUnChecked
+                        ? 'Password must not contain spaces!'
+                        : null,
+                    borderColor: _isUnChecked ? Colors.red : null,
+                  ),
                   const SizedBox(height: 20),
                   EditPasswordField(
                     controllerPass: _confirmPasswordController,
                     title: "Confirm password",
+                    errorText: _isPasswordMismatch
+                        ? 'Confirm password does not match the new password!'
+                        : null,
+                    borderColor: _isPasswordMismatch ? Colors.red : null,
                   ),
                 ],
               ),
@@ -70,7 +130,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             Align(
               alignment: Alignment.bottomCenter,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  _validateAndSave();
+                },
                 style: buttonPrimary_3,
                 child: Text(
                   "Save Changes",

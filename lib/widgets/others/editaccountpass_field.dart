@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:thinktank_mobile/screens/account/changepassword_screen.dart';
+//import 'package:thinktank_mobile/screens/account/changepassword_screen.dart';
 
 class EditAccountPassField extends StatefulWidget {
   const EditAccountPassField({
     super.key,
     required this.title,
     required this.controllerPass,
+    required this.openChange,
   });
 
   final TextEditingController controllerPass;
   final String title;
+  final VoidCallback openChange;
 
   @override
   State<EditAccountPassField> createState() => _EditAccountPassFieldState();
@@ -34,14 +36,7 @@ class _EditAccountPassFieldState extends State<EditAccountPassField> {
           height: 5,
         ),
         InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ChangePasswordScreen(),
-              ),
-            );
-          },
+          onTap: widget.openChange,
           child: IgnorePointer(
             child: TextFormField(
               obscureText: true,

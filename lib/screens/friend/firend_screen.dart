@@ -61,7 +61,7 @@ class FriendScreenState extends State<FriendScreen> {
           .toList();
       countFriend = listTmp.length;
     });
-    await ApiFriends.deleteFriend(friendShipId, account!.accessToken);
+    await ApiFriends.deleteFriend(friendShipId, account!.accessToken!);
     LoadingCustom.loaded(context);
     Navigator.pop(context);
   }
@@ -69,7 +69,7 @@ class FriendScreenState extends State<FriendScreen> {
   Future<List<Friendship>> getFriendShip() async {
     Account? account = await SharedPreferencesHelper.getInfo();
     hasRequest = (await ApiFriends.searchRequest(
-            1, 1000, account!.id, "", account.accessToken))
+            1, 1000, account!.id, "", account.accessToken!))
         .where((element) => element.userName1 != null)
         .isNotEmpty;
     if (mounted) {
@@ -81,7 +81,7 @@ class FriendScreenState extends State<FriendScreen> {
       1,
       1000,
       account!.id,
-      account.accessToken,
+      account.accessToken!,
     );
   }
 
@@ -151,7 +151,7 @@ class FriendScreenState extends State<FriendScreen> {
                       Account? account =
                           await SharedPreferencesHelper.getInfo();
                       hasRequest = (await ApiFriends.searchRequest(
-                              1, 1000, account!.id, "", account.accessToken))
+                              1, 1000, account!.id, "", account.accessToken!))
                           .where((element) => element.userName1 != null)
                           .isNotEmpty;
                       setState(() {
@@ -161,7 +161,7 @@ class FriendScreenState extends State<FriendScreen> {
                         1,
                         1000,
                         account!.id,
-                        account.accessToken,
+                        account.accessToken!,
                       );
                       _getFriensship.then((listFriend) {
                         if (mounted) {
@@ -285,7 +285,7 @@ class FriendScreenState extends State<FriendScreen> {
                           Account? account =
                               await SharedPreferencesHelper.getInfo();
                           hasRequest = (await ApiFriends.searchRequest(1, 1000,
-                                  account!.id, "", account.accessToken))
+                                  account!.id, "", account.accessToken!))
                               .where((element) => element.userName1 != null)
                               .isNotEmpty;
                           setState(() {
@@ -295,7 +295,7 @@ class FriendScreenState extends State<FriendScreen> {
                             1,
                             1000,
                             account!.id,
-                            account.accessToken,
+                            account.accessToken!,
                           );
                           _getFriensship.then((listFriend) {
                             if (mounted) {

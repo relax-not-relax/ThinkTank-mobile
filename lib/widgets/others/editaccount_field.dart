@@ -4,28 +4,28 @@ import 'package:google_fonts/google_fonts.dart';
 class EditAccountField extends StatefulWidget {
   const EditAccountField({
     super.key,
-    required this.text,
+    required this.controller,
     required this.title,
+    this.errorText,
+    this.borderColor,
   });
 
-  final String text;
+  final TextEditingController controller;
   final String title;
+  final String? errorText;
+  final Color? borderColor;
 
   @override
   State<EditAccountField> createState() => _EditAccountFieldState();
 }
 
 class _EditAccountFieldState extends State<EditAccountField> {
-  late String textChange;
-  late TextEditingController _controller;
   late FocusNode _focusNode;
   late Color textColor;
 
   @override
   void initState() {
     super.initState();
-    textChange = widget.text;
-    _controller = TextEditingController(text: textChange);
     _focusNode = FocusNode();
     textColor = const Color.fromARGB(255, 139, 139, 139);
 
@@ -59,20 +59,21 @@ class _EditAccountFieldState extends State<EditAccountField> {
           height: 5,
         ),
         TextFormField(
-          controller: _controller,
+          controller: widget.controller,
           focusNode: _focusNode,
           style: TextStyle(color: textColor),
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.all(
+              borderRadius: const BorderRadius.all(
                 Radius.circular(10.0),
               ),
               borderSide: BorderSide(
-                color: Color.fromARGB(255, 102, 102, 102),
-                width: 1.0,
+                color: widget.borderColor ??
+                    const Color.fromARGB(255, 102, 102, 102),
               ),
             ),
-            focusedBorder: OutlineInputBorder(
+            errorText: widget.errorText,
+            focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(
                 Radius.circular(10.0),
               ),
@@ -81,12 +82,12 @@ class _EditAccountFieldState extends State<EditAccountField> {
                 width: 1.0,
               ),
             ),
-            contentPadding: EdgeInsets.symmetric(
+            contentPadding: const EdgeInsets.symmetric(
               vertical: 7.0,
               horizontal: 10.0,
             ),
             filled: true,
-            fillColor: Color.fromARGB(255, 22, 22, 22),
+            fillColor: const Color.fromARGB(255, 22, 22, 22),
           ),
         ),
       ],

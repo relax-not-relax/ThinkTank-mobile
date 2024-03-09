@@ -12,11 +12,11 @@ class Account {
   final String? avatar;
   final int? coin;
   final bool? isOnline;
-  final String refreshToken;
+  String? refreshToken;
   final String? fcm;
   final bool status;
   final String? googleId;
-  final String accessToken;
+  String? accessToken;
   final String version;
 
   Account({

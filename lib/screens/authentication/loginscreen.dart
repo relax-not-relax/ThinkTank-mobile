@@ -99,7 +99,7 @@ class LoginScreenState extends State<LoginScreen> {
                           });
                           await SharedPreferencesHelper.saveInfo(acc);
                           await ApiAchieviements.getAchieviements(
-                              acc.id, acc.accessToken);
+                              acc.id, acc.accessToken!);
                           // ignore: use_build_context_synchronously
                           _closeDialog(context);
 

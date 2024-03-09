@@ -6,9 +6,11 @@ class SelectorForm extends StatefulWidget {
   const SelectorForm({
     super.key,
     required this.genderInput,
+    required this.onGenderChanged,
   });
 
   final String genderInput;
+  final Function(String) onGenderChanged;
 
   @override
   State<SelectorForm> createState() => _SelectorFormState();
@@ -20,7 +22,18 @@ class _SelectorFormState extends State<SelectorForm> {
   @override
   void initState() {
     super.initState();
-    _genderSelector = widget.genderInput;
+    _genderSelector = genders.contains(widget.genderInput)
+        ? widget.genderInput
+        : genders.first;
+  }
+
+  void _onDropdownChanged(String? newValue) {
+    if (newValue != null) {
+      setState(() {
+        _genderSelector = newValue;
+      });
+      widget.onGenderChanged(newValue);
+    }
   }
 
   @override
@@ -51,11 +64,7 @@ class _SelectorFormState extends State<SelectorForm> {
             child: DropdownButton<String>(
               isExpanded: true,
               value: _genderSelector,
-              onChanged: (String? newValue) {
-                setState(() {
-                  _genderSelector = newValue!;
-                });
-              },
+              onChanged: _onDropdownChanged,
               items: genders.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
