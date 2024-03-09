@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/logininfo.dart';
@@ -31,6 +34,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
   late String? gender;
   late Future<LoginInfo?> _loginFuture;
   TextEditingController _controller = TextEditingController();
+  File? _selectedImage;
 
   @override
   void initState() {
@@ -50,6 +54,15 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     });
   }
 
+  Future _pickImageFromGallery() async {
+    final returnedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _selectedImage = File(returnedImage!.path);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Future displayBottomSheet(BuildContext context) {
@@ -65,7 +78,10 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImageFromGallery();
+                },
                 child: Row(
                   children: [
                     Container(
@@ -153,10 +169,15 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
             Center(
               child: Column(
                 children: [
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(widget.account.avatar!),
-                    radius: 50,
-                  ),
+                  _selectedImage != null
+                      ? CircleAvatar(
+                          backgroundImage: FileImage(_selectedImage!),
+                          radius: 50,
+                        )
+                      : CircleAvatar(
+                          backgroundImage: NetworkImage(widget.account.avatar!),
+                          radius: 50,
+                        ),
                   const SizedBox(
                     height: 2.0,
                   ),

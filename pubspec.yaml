@@ -49,6 +49,7 @@ dependencies:
   flip_card: ^0.7.0
   percent_indicator: ^4.2.3
   firebase_database: ^10.4.8
+  image_picker: ^1.0.7
 
 dev_dependencies:
   flutter_test:
