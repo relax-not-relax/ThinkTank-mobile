@@ -4,15 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:thinktank_mobile/api/account_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/logininfo.dart';
+import 'package:thinktank_mobile/screens/account/account_mainscreen.dart';
+import 'package:thinktank_mobile/screens/account/changepassword_screen.dart';
 import 'package:thinktank_mobile/widgets/appbar/normal_appbar.dart';
 import 'package:thinktank_mobile/widgets/others/datetime_picker.dart';
 import 'package:thinktank_mobile/widgets/others/editaccount_field.dart';
 import 'package:thinktank_mobile/widgets/others/editaccountpass_field.dart';
 import 'package:thinktank_mobile/widgets/others/selector_form.dart';
+import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
+import 'package:http/http.dart';
 
 class EditAccountScreen extends StatefulWidget {
   const EditAccountScreen({
@@ -27,28 +32,36 @@ class EditAccountScreen extends StatefulWidget {
 }
 
 class _EditAccountScreenState extends State<EditAccountScreen> {
-  late String name;
-  late String userName;
-  late String email;
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _userNameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
   late String birthday;
-  late String? gender;
+  late String gender;
   late Future<LoginInfo?> _loginFuture;
   TextEditingController _controller = TextEditingController();
+  late String oldPassword;
   File? _selectedImage;
+  bool _isNullField = false;
+  late String avatar;
+  late int id;
 
   @override
   void initState() {
     super.initState();
-    name = widget.account.fullName;
-    userName = widget.account.userName;
-    email = widget.account.email;
+    _nameController.text = widget.account.fullName;
+    _userNameController.text = widget.account.userName;
+    _emailController.text = widget.account.email;
     birthday = widget.account.dateOfBirth!;
     gender = widget.account.gender ?? "Male";
+    avatar = widget.account.avatar ??
+        "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/0%2FUntitled%20design%20%281%29.png?alt=media&token=a68548c0-4658-4525-ab56-67516c399b0b";
+    id = widget.account.id;
     _loginFuture = SharedPreferencesHelper.getAccount();
     _loginFuture.then((loginInfo) {
       setState(() {
         if (loginInfo != null) {
           _controller.text = loginInfo.password;
+          oldPassword = loginInfo.password;
         }
       });
     });
@@ -61,6 +74,34 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     setState(() {
       _selectedImage = File(returnedImage!.path);
     });
+    // print(response);
+  }
+
+  void handlePageChange(String newBirthday) {
+    setState(() {
+      birthday = newBirthday;
+    });
+  }
+
+  void handleGenderChange(String newGender) {
+    setState(() {
+      gender = newGender;
+    });
+  }
+
+  Future<void> _changePassword() async {
+    final newPassword = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ChangePasswordScreen(),
+      ),
+    );
+
+    if (newPassword != null) {
+      setState(() {
+        _controller.text = newPassword;
+      });
+    }
   }
 
   @override
@@ -175,9 +216,13 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                           radius: 50,
                         )
                       : CircleAvatar(
-                          backgroundImage: NetworkImage(widget.account.avatar!),
+                          backgroundImage: NetworkImage(avatar),
                           radius: 50,
                         ),
+                  // CircleAvatar(
+                  //   backgroundImage: NetworkImage(widget.account.avatar!),
+                  //   radius: 50,
+                  // ),
                   const SizedBox(
                     height: 2.0,
                   ),
@@ -204,17 +249,17 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     EditAccountField(
-                      text: name,
+                      controller: _nameController,
                       title: "Name",
                     ),
                     const SizedBox(height: 20),
                     EditAccountField(
-                      text: userName,
+                      controller: _userNameController,
                       title: "Username",
                     ),
                     const SizedBox(height: 20),
                     EditAccountField(
-                      text: email,
+                      controller: _emailController,
                       title: "Email",
                     ),
                     const SizedBox(height: 20),
@@ -223,14 +268,19 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                       children: [
                         Expanded(
                           flex: 5,
-                          child: DatePickerNormal(date: birthday),
+                          child: DatePickerNormal(
+                            date: birthday,
+                            onDateChanged: handlePageChange,
+                          ),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
                           flex: 6,
-                          child: SelectorForm(genderInput: gender!),
+                          child: SelectorForm(
+                              genderInput: gender,
+                              onGenderChanged: handleGenderChange),
                         ),
                       ],
                     ),
@@ -238,6 +288,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                     EditAccountPassField(
                       controllerPass: _controller,
                       title: "Password",
+                      openChange: _changePassword,
                     ),
                     const SizedBox(height: 40),
                   ],
@@ -245,7 +296,57 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () async {
+                _showResizableDialog(context);
+
+                if (_selectedImage != null) {
+                  String response = await ApiAccount.addFile(
+                      _selectedImage!.path, widget.account.accessToken!);
+                  setState(() {
+                    avatar = response;
+                  });
+                }
+
+                if (gender == "") {
+                  setState(() {
+                    gender = "Male";
+                  });
+                }
+
+                Account? updatedAccount = await ApiAccount.updateProfile(
+                  _nameController.text,
+                  _userNameController.text,
+                  _emailController.text,
+                  gender,
+                  birthday,
+                  avatar,
+                  oldPassword,
+                  _controller.text,
+                  widget.account.accessToken!,
+                  id,
+                );
+
+                if (updatedAccount == null) {
+                  print("Can not update!");
+                  // ignore: use_build_context_synchronously
+                  _closeDialog(context);
+                } else {
+                  print("Truoc");
+                  await SharedPreferencesHelper.saveInfo(updatedAccount);
+                  print("Sau");
+                  // ignore: use_build_context_synchronously
+                  _closeDialog(context);
+
+                  // ignore: use_build_context_synchronously
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AccountMainScreen(account: updatedAccount)),
+                    (route) => false,
+                  );
+                }
+              },
               style: buttonPrimary_3,
               child: Text(
                 "Save Changes",
@@ -261,4 +362,63 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
       ),
     );
   }
+}
+
+void _showResizableDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 400,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/pics/accOragne.png',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Please wait...',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 5,
+                ),
+                child: Text(
+                  'Please wait a moment, your profile is updating.',
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const CustomLoadingSpinner(),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _closeDialog(BuildContext context) {
+  Navigator.of(context).pop();
 }

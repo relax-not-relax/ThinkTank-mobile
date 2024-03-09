@@ -7,9 +7,11 @@ class DatePickerNormal extends StatefulWidget {
   const DatePickerNormal({
     super.key,
     required this.date,
+    required this.onDateChanged,
   });
 
   final String date;
+  final Function(String) onDateChanged;
 
   @override
   State<DatePickerNormal> createState() => _DatePickerNormalState();
@@ -37,6 +39,9 @@ class _DatePickerNormalState extends State<DatePickerNormal> {
       setState(() {
         dateInput = datePicker;
       });
+      widget.onDateChanged(
+        DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(dateInput),
+      );
     }
   }
 

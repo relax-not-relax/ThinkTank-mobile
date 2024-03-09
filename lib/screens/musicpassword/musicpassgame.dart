@@ -162,7 +162,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
       widget.info.level,
       2,
       widget.account.id,
-      widget.account.accessToken,
+      widget.account.accessToken!,
     );
     setState(() {
       bg = 'assets/pics/winmuisc.png';
