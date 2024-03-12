@@ -310,7 +310,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
         preferredHeight: MediaQuery.of(context).size.height * 0.26,
         userAvatar: widget.account.avatar!,
         remainingTime: remainingTime,
-        gameName: 'game name',
+        gameName: 'Music Password',
         progressTitle: 'Chance',
         progressMessage: '$remainChange/5',
         percent: remainChange / 5,
