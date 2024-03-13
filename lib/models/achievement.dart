@@ -8,7 +8,7 @@ class Challenge {
   final int completedMilestone;
   final String unit;
   final int? completedLevel;
-  final String? status;
+  final bool? status;
   final DateTime? completedDate;
   final String missionsImg;
 
@@ -34,7 +34,7 @@ class Challenge {
       completedMilestone: json['completedMilestone'] as int,
       unit: json['unit'] as String,
       completedLevel: json['completedLevel'] as int?,
-      status: json['status'] as String?,
+      status: json['status'] as bool?,
       completedDate: json['completedDate'] != null
           ? DateTime.parse(json['completedDate'] as String)
           : null,

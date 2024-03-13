@@ -45,14 +45,14 @@ class _CustomPainter extends BoxPainter {
   }
 }
 
-class AchivementScreen extends StatefulWidget {
+class ChallengesScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return AchievementScreenState();
+    return ChallengesScreenState();
   }
 }
 
-class AchievementScreenState extends State<AchivementScreen>
+class ChallengesScreenState extends State<ChallengesScreen>
     with SingleTickerProviderStateMixin {
   PageController _pageController = PageController();
   int _currentPage = 0;
@@ -63,10 +63,11 @@ class AchievementScreenState extends State<AchivementScreen>
   Future<void> getChallenges() async {
     Account? account = await SharedPreferencesHelper.getInfo();
     list = await ApiChallenges.getChallenges(account!.id, account.accessToken!);
-    setState(() async {
-      list;
-    });
-    print('messi' + list.length.toString());
+    if (mounted) {
+      setState(() {
+        list;
+      });
+    }
   }
 
   @override
@@ -83,11 +84,44 @@ class AchievementScreenState extends State<AchivementScreen>
     super.dispose();
   }
 
+  List<Color> backgroundColors = [
+    const Color.fromRGBO(250, 205, 67, 1),
+    const Color.fromRGBO(189, 155, 255, 1),
+    const Color.fromRGBO(255, 176, 176, 1),
+    const Color.fromRGBO(219, 255, 191, 1),
+    const Color.fromRGBO(118, 195, 223, 1),
+    const Color.fromRGBO(155, 85, 154, 1),
+    const Color.fromRGBO(248, 171, 127, 1),
+    const Color.fromRGBO(203, 91, 91, 1),
+    const Color.fromRGBO(146, 166, 250, 1),
+    const Color.fromRGBO(89, 205, 209, 1)
+  ];
+  List<Color> shadowColors = [
+    const Color.fromRGBO(235, 165, 0, 1),
+    const Color.fromRGBO(152, 102, 250, 1),
+    const Color.fromRGBO(255, 122, 122, 1),
+    const Color.fromRGBO(186, 255, 133, 1),
+    const Color.fromRGBO(89, 177, 209, 1),
+    const Color.fromRGBO(137, 52, 136, 1),
+    const Color.fromRGBO(255, 140, 75, 1),
+    const Color.fromRGBO(175, 48, 48, 1),
+    const Color.fromRGBO(114, 135, 225, 1),
+    const Color.fromARGB(255, 68, 190, 194),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: false,
-      appBar: const AvhievementAppBar(),
+      appBar: AvhievementAppBar(
+          coins: 2998,
+          progress: list
+              .where((element) =>
+                  ((element.completedLevel == null)
+                      ? 0
+                      : element.completedLevel! / element.completedMilestone) ==
+                  1)
+              .length),
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
@@ -139,48 +173,25 @@ class AchievementScreenState extends State<AchivementScreen>
                             Radius.circular(30),
                           ),
                         ),
-                        child: const Column(
-                          children: [
-                            ItemAchieve(
-                              imgLink: 'assets/pics/achi1.png',
-                              backgroundColor: Color.fromRGBO(104, 162, 239, 1),
-                              shadowColor: Color.fromRGBO(74, 109, 156, 1),
-                              title: 'Legend',
-                              description:
-                                  'Achieve top 1 in single play mode 5 times',
-                              progress: 1,
-                              total: 1,
-                              recived: false,
-                              descriptionDone:
-                                  'You achieved top 1 in single play mode 5 times',
-                            ),
-                            ItemAchieve(
-                              imgLink: 'assets/pics/achi1.png',
-                              backgroundColor: Color.fromRGBO(104, 162, 239, 1),
-                              shadowColor: Color.fromRGBO(74, 109, 156, 1),
-                              title: 'Legend',
-                              description:
-                                  'Achieve top 1 in single play mode 5 times',
-                              progress: 1,
-                              total: 1,
-                              recived: true,
-                              descriptionDone:
-                                  'You achieved top 1 in single play mode 5 times',
-                            ),
-                            ItemAchieve(
-                              imgLink: 'assets/pics/achi1.png',
-                              backgroundColor: Color.fromRGBO(104, 162, 239, 1),
-                              shadowColor: Color.fromRGBO(74, 109, 156, 1),
-                              title: 'Legend',
-                              description:
-                                  'Achieve top 1 in single play mode 5 times',
-                              progress: 2,
-                              total: 3,
-                              recived: true,
-                              descriptionDone:
-                                  'You achieved top 1 in single play mode 5 times',
-                            ),
-                          ],
+                        child: Column(
+                          children: list
+                              .map(
+                                (e) => ItemAchieve(
+                                  imgLink: e.missionsImg,
+                                  backgroundColor:
+                                      backgroundColors[list.indexOf(e)],
+                                  shadowColor: shadowColors[list.indexOf(e)],
+                                  title: e.name,
+                                  description: e.description,
+                                  progress: (e.completedLevel == null)
+                                      ? 0
+                                      : e.completedLevel!,
+                                  total: e.completedMilestone,
+                                  recived:
+                                      (e.status == null) ? false : e.status!,
+                                ),
+                              )
+                              .toList(),
                         ),
                       ),
                     ),
@@ -200,24 +211,24 @@ class AchievementScreenState extends State<AchivementScreen>
                             Radius.circular(30),
                           ),
                         ),
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ItemBadge(
-                              imgLink: 'assets/pics/badge1.png',
-                              title: 'Legend',
-                              time: 'January 2024',
-                              active: true,
-                              borderBottom: true,
-                            ),
-                            ItemBadge(
-                              imgLink: 'assets/pics/badge2.png',
-                              title: 'Fast and Furious',
-                              time: 'January 2024',
-                              active: false,
-                              borderBottom: false,
-                            )
-                          ],
+                          children: list
+                              .where((element) => (element.status == null)
+                                  ? false
+                                  : element.status!)
+                              .map((e) => ItemBadge(
+                                  imgLink: e.avatar,
+                                  title: e.name,
+                                  time: e.completedDate.toString(),
+                                  active: ((e.completedLevel == null)
+                                              ? 0
+                                              : e.completedLevel)! /
+                                          e.completedMilestone ==
+                                      1,
+                                  borderBottom:
+                                      list.indexOf(e) != list.length - 1))
+                              .toList(),
                         ),
                       ),
                     ),
@@ -233,23 +244,22 @@ class AchievementScreenState extends State<AchivementScreen>
 }
 
 class ItemAchieve extends StatelessWidget {
-  const ItemAchieve(
-      {super.key,
-      required this.imgLink,
-      required this.backgroundColor,
-      required this.shadowColor,
-      required this.title,
-      required this.description,
-      required this.progress,
-      required this.total,
-      required this.recived,
-      required this.descriptionDone});
+  const ItemAchieve({
+    super.key,
+    required this.imgLink,
+    required this.backgroundColor,
+    required this.shadowColor,
+    required this.title,
+    required this.description,
+    required this.progress,
+    required this.total,
+    required this.recived,
+  });
   final String imgLink;
   final Color backgroundColor;
   final Color shadowColor;
   final String title;
   final String description;
-  final String descriptionDone;
   final int progress;
   final int total;
   final bool recived;
@@ -264,7 +274,7 @@ class ItemAchieve extends StatelessWidget {
           ColorFiltered(
             colorFilter: (progress / total != 1)
                 ? const ColorFilter.mode(
-                    Color.fromARGB(255, 0, 0, 0),
+                    Color.fromARGB(172, 0, 0, 0),
                     BlendMode.hue,
                   )
                 : const ColorFilter.mode(
@@ -287,7 +297,7 @@ class ItemAchieve extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Image.asset(imgLink),
+              child: Image.network(imgLink),
             ),
           ),
           Expanded(
@@ -313,7 +323,7 @@ class ItemAchieve extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      (recived) ? descriptionDone : description,
+                      description,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 13,
@@ -324,7 +334,7 @@ class ItemAchieve extends StatelessWidget {
                 ),
                 (progress / total != 1)
                     ? Container(
-                        margin: EdgeInsets.only(top: 10, left: 10),
+                        margin: const EdgeInsets.only(top: 10, left: 10),
                         child: Stack(
                           children: [
                             LinearPercentIndicator(
@@ -355,25 +365,30 @@ class ItemAchieve extends StatelessWidget {
                         ),
                       )
                     : Visibility(
-                        visible: !recived,
+                        visible: true,
                         child: Align(
                           alignment: Alignment.topLeft,
                           child: Container(
                             margin: const EdgeInsets.only(left: 20, top: 10),
                             height: 30,
                             width: 150,
-                            decoration: const BoxDecoration(
-                              color: Color.fromRGBO(255, 199, 0, 1),
-                              borderRadius: BorderRadius.all(
+                            decoration: BoxDecoration(
+                              color: (!recived)
+                                  ? const Color.fromRGBO(255, 199, 0, 1)
+                                  : Colors.grey,
+                              borderRadius: const BorderRadius.all(
                                 Radius.circular(10),
                               ),
                             ),
-                            child: const Align(
+                            child: Align(
                               alignment: Alignment.center,
                               child: Text(
-                                'Receive reward',
+                                (!recived)
+                                    ? 'Receive reward'
+                                    : 'Received reward',
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color:
+                                      (recived) ? Colors.black : Colors.white,
                                   fontSize: 15,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -434,11 +449,11 @@ class ItemBadge extends StatelessWidget {
                       Color.fromARGB(255, 0, 0, 0),
                       BlendMode.hue,
                     ),
-                    child: Image.asset(
+                    child: Image.network(
                       imgLink,
                     ),
                   )
-                : Image.asset(
+                : Image.network(
                     imgLink,
                   ),
           ),
@@ -486,7 +501,11 @@ class ItemBadge extends StatelessWidget {
 class AvhievementAppBar extends StatelessWidget implements PreferredSizeWidget {
   const AvhievementAppBar({
     super.key,
+    required this.coins,
+    required this.progress,
   });
+  final int coins;
+  final int progress;
 
   @override
   Widget build(BuildContext context) {
@@ -543,9 +562,9 @@ class AvhievementAppBar extends StatelessWidget implements PreferredSizeWidget {
                           margin: const EdgeInsets.only(
                             left: 40,
                           ),
-                          child: const Text(
-                            '1234 ThinkTank coins',
-                            style: TextStyle(
+                          child: Text(
+                            '$coins ThinkTank coins',
+                            style: const TextStyle(
                               color: Colors.black,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -620,19 +639,19 @@ class AvhievementAppBar extends StatelessWidget implements PreferredSizeWidget {
                                     lineHeight: 25.0,
                                     animationDuration: 1000,
                                     animateFromLastPercent: true,
-                                    percent: 4 / 10,
+                                    percent: progress / 10,
                                     barRadius: const Radius.circular(10.0),
                                     progressColor:
                                         const Color.fromRGBO(255, 212, 96, 1),
                                     backgroundColor:
                                         const Color.fromRGBO(0, 0, 0, 0.26),
                                   ),
-                                  const SizedBox(
+                                  SizedBox(
                                     height: 25,
                                     child: Center(
                                       child: Text(
-                                        '4/10',
-                                        style: TextStyle(
+                                        '$progress/10',
+                                        style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                           color:
