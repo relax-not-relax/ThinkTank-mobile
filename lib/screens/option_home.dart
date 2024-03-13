@@ -2,9 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:thinktank_mobile/api/firebase_message_api.dart';
+import 'package:thinktank_mobile/api/notification_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/game.dart';
+import 'package:thinktank_mobile/models/notification_item.dart';
 import 'package:thinktank_mobile/screens/game/game_menu.dart';
 import 'package:thinktank_mobile/screens/notification/notiscreen.dart';
 import 'package:thinktank_mobile/widgets/appbar/appbar.dart';
@@ -61,6 +65,16 @@ class _OptionScreenState extends State<OptionScreen> {
     );
   }
 
+  late int amount = 0;
+  late Future<List<NotificationItem>> notifications =
+      SharedPreferencesHelper.getNotifications();
+
+  void pushNotification() {
+    setState(() {
+      amount++;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -85,6 +99,21 @@ class _OptionScreenState extends State<OptionScreen> {
         startTimer();
       },
     );
+    FirebaseMessageAPI().initNoticationItems(pushNotification);
+    updateNotifications();
+  }
+
+  Future<void> updateNotifications() async {
+    List<NotificationItem> notifications =
+        await ApiNotification.getNotifications(
+            widget.account.id, widget.account.accessToken!);
+    int notiAmountNotRead = notifications
+        .where((notification) => notification.status == false)
+        .length;
+    setState(() {
+      amount = notiAmountNotRead;
+    });
+    SharedPreferencesHelper.saveNotifications(notifications);
   }
 
   void openNotification(BuildContext context) {
@@ -93,6 +122,19 @@ class _OptionScreenState extends State<OptionScreen> {
       MaterialPageRoute(
         builder: (context) => const NotiScreen(),
       ),
+    ).then(
+      (value) async {
+        List<NotificationItem> notifications =
+            await ApiNotification.getNotifications(
+                widget.account.id, widget.account.accessToken!);
+        int notiAmountNotRead = notifications
+            .where((notification) => notification.status == false)
+            .length;
+        setState(() {
+          amount = notiAmountNotRead;
+        });
+        SharedPreferencesHelper.saveNotifications(notifications);
+      },
     );
   }
 
@@ -102,8 +144,8 @@ class _OptionScreenState extends State<OptionScreen> {
       extendBodyBehindAppBar: true,
       appBar: TAppBar(
         onSelectNotification: () => openNotification(context),
-        urlAvt: widget.account.avatar ?? '',
-        fullname: widget.account.fullName,
+        account: widget.account,
+        notiAmount: amount,
       ),
       body: Container(
         height: MediaQuery.of(context).size.height,

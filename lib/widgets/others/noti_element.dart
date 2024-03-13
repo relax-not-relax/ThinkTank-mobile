@@ -1,17 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:thinktank_mobile/api/notification_api.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/notification_item.dart';
 
-class NotificationElement extends StatelessWidget {
+class NotificationElement extends StatefulWidget {
   const NotificationElement({
     super.key,
     required this.notiEl,
-    required this.onClick,
+    required this.handleReadNotification,
   });
 
   final NotificationItem notiEl;
-  final void Function() onClick;
+  final Function() handleReadNotification;
+
+  @override
+  State<NotificationElement> createState() => _NotificationElementState();
+}
+
+class _NotificationElementState extends State<NotificationElement> {
+  late String parsedDate;
+  late DateTime formatDate;
+
+  late bool _isRead;
+
+  @override
+  void initState() {
+    super.initState();
+    formatDate = DateTime.parse(widget.notiEl.dateTime!);
+    parsedDate = DateFormat('MMM dd, yyyy').format(formatDate);
+    _isRead = widget.notiEl.status!;
+  }
+
+  void readNotification() async {
+    Account? loginInfo = await SharedPreferencesHelper.getInfo();
+
+    await ApiNotification.updateStatusNotification(
+        widget.notiEl.id!, loginInfo!.accessToken!);
+
+    if (_isRead == false) {
+      setState(() {
+        _isRead = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,17 +55,22 @@ class NotificationElement extends StatelessWidget {
           height: 15.0,
         ),
         GestureDetector(
-          onTap: () {},
+          onTap: () {
+            readNotification();
+            widget.handleReadNotification();
+          },
           child: Container(
             margin: const EdgeInsets.symmetric(
               horizontal: 14.0,
             ),
             padding: const EdgeInsets.all(15.0),
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(
                 Radius.circular(10.0),
               ),
-              color: Color.fromARGB(255, 44, 44, 44),
+              color: _isRead == false
+                  ? const Color.fromARGB(255, 44, 44, 44)
+                  : Color.fromARGB(255, 22, 22, 22),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -41,7 +80,7 @@ class NotificationElement extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 25.0,
-                      backgroundImage: AssetImage(notiEl.imgUrl),
+                      backgroundImage: NetworkImage(widget.notiEl.avatar!),
                     ),
                     Expanded(
                       child: Container(
@@ -54,7 +93,7 @@ class NotificationElement extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              notiEl.title,
+                              widget.notiEl.title!,
                               style: GoogleFonts.roboto(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500,
@@ -62,7 +101,7 @@ class NotificationElement extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              notiEl.description,
+                              widget.notiEl.description!,
                               style: GoogleFonts.roboto(
                                 color: Colors.white,
                                 fontSize: 14.0,
@@ -72,7 +111,7 @@ class NotificationElement extends StatelessWidget {
                               height: 15.0,
                             ),
                             Text(
-                              DateFormat('MMM dd, yyyy').format(notiEl.time),
+                              parsedDate,
                               style: GoogleFonts.roboto(
                                 color: Colors.white,
                                 fontSize: 14.0,
@@ -83,10 +122,15 @@ class NotificationElement extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const CircleAvatar(
-                      backgroundColor: Color.fromARGB(255, 240, 122, 63),
-                      radius: 7.0,
-                    )
+                    _isRead == false
+                        ? const CircleAvatar(
+                            backgroundColor: Color.fromARGB(255, 240, 122, 63),
+                            radius: 7.0,
+                          )
+                        : const CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            radius: 7.0,
+                          ),
                   ],
                 )
               ],

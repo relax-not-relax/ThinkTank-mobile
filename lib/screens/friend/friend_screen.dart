@@ -366,6 +366,9 @@ class FriendScreenState extends State<FriendScreen> {
                                         if (snapshot.hasData &&
                                             snapshot.data!.snapshot.value !=
                                                 null) {
+                                          print(snapshot.data!.snapshot.value!
+                                                  .toString() +
+                                              "messi");
                                           bool isOnline = bool.parse(snapshot
                                               .data!.snapshot.value!
                                               .toString());

@@ -72,15 +72,15 @@ class StartScreenState extends State<StartScreen>
   }
 
   void displaybutton() async {
-    ResourceVersion? resourceVersion = await ApiInit.getResourceVersion();
-    ResourceVersion? resourceVersionInApp =
-        await SharedPreferencesHelper.getResourceVersion();
-    if (resourceVersionInApp == null ||
-        resourceVersionInApp.musicPasswordVersion !=
-            resourceVersion!.musicPasswordVersion) {
-      await updateMusicPasswordSource();
-    }
-    await SharedPreferencesHelper.saveResourceVersion(resourceVersion!);
+    // ResourceVersion? resourceVersion = await ApiInit.getResourceVersion();
+    // ResourceVersion? resourceVersionInApp =
+    //     await SharedPreferencesHelper.getResourceVersion();
+    // if (resourceVersionInApp == null ||
+    //     resourceVersionInApp.musicPasswordVersion !=
+    //         resourceVersion!.musicPasswordVersion) {
+    //   await updateMusicPasswordSource();
+    // }
+    // await SharedPreferencesHelper.saveResourceVersion(resourceVersion!);
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         wait = false;
