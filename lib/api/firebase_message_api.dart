@@ -16,6 +16,12 @@ class FirebaseMessageAPI {
     FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
   }
 
+  void initNoticationItems(void Function() pushNotification) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      pushNotification();
+    });
+  }
+
   Future<String?> getToken() async {
     final FCMToken = await _firebaseMessage.getToken();
     return FCMToken;

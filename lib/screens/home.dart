@@ -6,7 +6,7 @@ import 'package:thinktank_mobile/api/friends_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/screens/account/account_mainscreen.dart';
-import 'package:thinktank_mobile/screens/friend/firend_screen.dart';
+import 'package:thinktank_mobile/screens/friend/friend_screen.dart';
 import 'package:thinktank_mobile/screens/notification/notiscreen.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/appbar/appbar.dart';

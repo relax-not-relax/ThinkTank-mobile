@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/logininfo.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
+import 'package:thinktank_mobile/models/notification_item.dart';
 import 'package:thinktank_mobile/models/resourceversion.dart';
 
 class SharedPreferencesHelper {
@@ -83,6 +84,38 @@ class SharedPreferencesHelper {
       List<MusicPasswordSource> musicPasswordSources =
           jsonList.map((json) => MusicPasswordSource.fromJson(json)).toList();
       return musicPasswordSources;
+    } else {
+      return [];
+    }
+  }
+
+  static Future<void> saveNotifications(
+      List<NotificationItem> notifications) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<Map<String, dynamic>> jsonList =
+        notifications.map((notification) => notification.toJson()).toList();
+    String notificationsString = json.encode(jsonList);
+    await prefs.setString('notifications', notificationsString);
+  }
+
+  static Future<List<NotificationItem>> getNotifications() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? notificationsString = prefs.getString('notifications');
+    if (notificationsString != null) {
+      try {
+        List<dynamic> jsonList =
+            json.decode(notificationsString) as List<dynamic>;
+
+        List<NotificationItem> notifications = jsonList
+            .map((jsonItem) =>
+                NotificationItem.fromJson(jsonItem as Map<String, dynamic>))
+            .toList();
+        return notifications;
+      } catch (e) {
+        print('Error parsing notifications from SharedPreferences: $e');
+        return [];
+      }
     } else {
       return [];
     }

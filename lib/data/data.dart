@@ -55,21 +55,6 @@ const contest = [
   "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/0%2Fcontest_2.png?alt=media&token=ade1f3b9-2b52-4bad-a84d-2e80bc6e577b",
 ];
 
-var notiTemp = [
-  NotificationItem(
-    imgUrl: "assets/pics/logo_2.png",
-    title: "ThinkTank",
-    description: "Mission “Vua trò chơi” is completed. Claim the badge now.",
-    time: DateTime.utc(2024, 02, 20),
-  ),
-  NotificationItem(
-    imgUrl: "assets/pics/ava_noti_test.png",
-    title: "ThinkTank Community",
-    description: "Hoang Huy Do sent you a friend request.",
-    time: DateTime.utc(2024, 02, 20),
-  ),
-];
-
 var genders = [
   "Male",
   "Female",

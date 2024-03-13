@@ -331,20 +331,15 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                   // ignore: use_build_context_synchronously
                   _closeDialog(context);
                 } else {
-                  print("Truoc");
                   await SharedPreferencesHelper.saveInfo(updatedAccount);
-                  print("Sau");
+
                   // ignore: use_build_context_synchronously
                   _closeDialog(context);
 
-                  // ignore: use_build_context_synchronously
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            AccountMainScreen(account: updatedAccount)),
-                    (route) => false,
-                  );
+                  Future.delayed(const Duration(seconds: 2), () {
+                    // ignore: use_build_context_synchronously
+                    _showResizableDialogSuccess(context);
+                  });
                 }
               },
               style: buttonPrimary_3,
@@ -411,6 +406,57 @@ void _showResizableDialog(BuildContext context) {
                 height: 30,
               ),
               const CustomLoadingSpinner(),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _showResizableDialogSuccess(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 300,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/pics/check1.png',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Successfully updated!',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 5,
+                ),
+                child: Text(
+                  'Let we know more about you.',
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ],
           ),
         ),

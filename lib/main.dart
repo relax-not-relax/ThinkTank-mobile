@@ -9,6 +9,11 @@ import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/screens/achievement/achievement_screen.dart';
 import 'package:thinktank_mobile/screens/findanonymous/cardprovider.dart';
 import 'package:thinktank_mobile/screens/findanonymous/findanonymous_game.dart';
+
+import 'package:thinktank_mobile/screens/friend/addfriend_screen.dart';
+import 'package:thinktank_mobile/screens/friend/friend_screen.dart';
+import 'package:thinktank_mobile/screens/imagesWalkthrough/game_mainscreen.dart';
+
 import 'package:thinktank_mobile/screens/introscreen.dart';
 import 'package:thinktank_mobile/screens/startscreen.dart';
 import 'package:thinktank_mobile/widgets/game/walkthrough_item.dart';

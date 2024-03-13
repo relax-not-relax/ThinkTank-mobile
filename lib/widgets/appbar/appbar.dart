@@ -3,28 +3,61 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:thinktank_mobile/api/firebase_message_api.dart';
+import 'package:thinktank_mobile/api/notification_api.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/notification_item.dart';
 
-class TAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const TAppBar({
-    super.key,
-    required this.onSelectNotification,
-    required this.urlAvt,
-    required this.fullname,
-    // required this.title,
-    // required this.showBackArrow,
-    // required this.leadingIcon,
-    // required this.actions,
-    // required this.leadingOnPressed,
-  });
+class TAppBar extends StatefulWidget implements PreferredSizeWidget {
+  const TAppBar(
+      {super.key,
+      required this.onSelectNotification,
+      required this.account,
+      required this.notiAmount});
 
-  // final Widget? title;
-  // final bool showBackArrow;
-  // final IconData? leadingIcon;
-  // final List<Widget> actions;
-  // final VoidCallback? leadingOnPressed;
   final void Function() onSelectNotification;
-  final String? urlAvt;
-  final String fullname;
+  final Account account;
+  final int notiAmount;
+
+  @override
+  State<TAppBar> createState() => _TAppBarState();
+
+  @override
+  // TODO: implement preferredSize
+  Size get preferredSize => const Size.fromHeight(130.0);
+}
+
+class _TAppBarState extends State<TAppBar> {
+  // late int notiAmount = 0;
+  // late Future<List<NotificationItem>> notifications =
+  //     SharedPreferencesHelper.getNotifications();
+
+  // void pushNotification() {
+  //   setState(() {
+  //     notiAmount++;
+  //   });
+  // }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   FirebaseMessageAPI().initNoticationItems(pushNotification);
+  //   updateNotifications();
+  // }
+
+  // Future<void> updateNotifications() async {
+  //   List<NotificationItem> notifications =
+  //       await ApiNotification.getNotifications(
+  //           widget.account.id, widget.account.accessToken!);
+  //   int notiAmountNotRead = notifications
+  //       .where((notification) => notification.status == false)
+  //       .length;
+  //   setState(() {
+  //     notiAmount = notiAmountNotRead;
+  //   });
+  //   SharedPreferencesHelper.saveNotifications(notifications);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +102,7 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
                 backgroundColor: Colors.transparent,
                 leading: CircleAvatar(
                   radius: 50,
-                  backgroundImage: NetworkImage(urlAvt!),
+                  backgroundImage: NetworkImage(widget.account.avatar!),
                 ),
                 title: Padding(
                   padding: const EdgeInsets.fromLTRB(7, 0, 0, 0),
@@ -85,7 +118,7 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
                         ),
                       ),
                       Text(
-                        fullname,
+                        widget.account.fullName,
                         style: GoogleFonts.roboto(
                           color: Colors.white,
                           fontSize: 20.0,
@@ -96,26 +129,38 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 actions: [
-                  IconButton(
-                    onPressed: () {
-                      onSelectNotification();
-                    },
-                    icon: Badge(
-                      backgroundColor: const Color.fromARGB(255, 234, 84, 85),
-                      label: Text(
-                        "1",
-                        style: GoogleFonts.roboto(
-                          color: Colors.white,
+                  widget.notiAmount == 0
+                      ? IconButton(
+                          onPressed: () {
+                            widget.onSelectNotification();
+                          },
+                          icon: const Icon(
+                            Iconsax.notification,
+                            color: Color.fromARGB(255, 255, 212, 96),
+                            size: 30.0,
+                          ),
+                        )
+                      : IconButton(
+                          onPressed: () {
+                            widget.onSelectNotification();
+                          },
+                          icon: Badge(
+                            backgroundColor:
+                                const Color.fromARGB(255, 234, 84, 85),
+                            label: Text(
+                              widget.notiAmount.toString(),
+                              style: GoogleFonts.roboto(
+                                color: Colors.white,
+                              ),
+                            ),
+                            isLabelVisible: true,
+                            child: const Icon(
+                              Iconsax.notification,
+                              color: Color.fromARGB(255, 255, 212, 96),
+                              size: 30.0,
+                            ),
+                          ),
                         ),
-                      ),
-                      isLabelVisible: true,
-                      child: const Icon(
-                        Iconsax.notification,
-                        color: Color.fromARGB(255, 255, 212, 96),
-                        size: 30.0,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -124,7 +169,4 @@ class TAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(130.0);
 }

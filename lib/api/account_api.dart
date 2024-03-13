@@ -33,7 +33,7 @@ class ApiAccount {
       request.files.add(await http.MultipartFile.fromPath('file', filePath));
       request.headers.addAll({
         'Content-Type': 'multipart/form-data',
-        'Authorization': 'Bearer $authToken',
+        'Authorization': 'Bearer ${account2.accessToken}',
       });
 
       var streamedResponse2 = await request.send();
@@ -101,7 +101,7 @@ class ApiAccount {
             'https://thinktank-sep490.azurewebsites.net/api/accounts/$id'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $authToken',
+          'Authorization': 'Bearer ${account2.accessToken}',
         },
         body: jsonBody,
       );
