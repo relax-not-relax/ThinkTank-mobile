@@ -8,12 +8,24 @@ class CardProvider extends ChangeNotifier {
   Offset get position => _position;
   Size _screenSize = Size.zero;
   double _angle = 0;
-  List<Color> _urlImages = [];
+  List<String> _urlImages = [];
+  List<String> _urlTmp = [];
+  late void Function(String) confirmVoid;
+  late void Function(String) skipVoid;
 
   CardProvider() {}
 
-  List<Color> get urlImages => _urlImages;
-  set urlImages(List<Color> images) {
+  List<String> get urlImages => _urlImages;
+
+  set confirmSet(void Function(String) _confirmVoid) {
+    confirmVoid = _confirmVoid;
+  }
+
+  set skipSet(void Function(String) _skipVoid) {
+    skipVoid = _skipVoid;
+  }
+
+  set urlImages(List<String> images) {
     _urlImages = images;
   }
 
@@ -72,6 +84,7 @@ class CardProvider extends ChangeNotifier {
   void confirm() {
     _angle = 20;
     _position += Offset(2 * _screenSize.width, 0);
+    confirmVoid(urlImages.last);
     _nextCard();
     notifyListeners();
   }
@@ -79,6 +92,7 @@ class CardProvider extends ChangeNotifier {
   void skip() {
     _angle = 20;
     _position -= Offset(2 * _screenSize.width, 0);
+    _urlTmp.add(_urlImages.last);
     _nextCard();
     notifyListeners();
   }
@@ -87,13 +101,12 @@ class CardProvider extends ChangeNotifier {
     if (_urlImages.isEmpty) return;
     await Future.delayed(Duration(milliseconds: 200));
     _urlImages.removeLast();
+    if (_urlImages.length == 1) {
+      for (var element in _urlTmp) {
+        _urlImages.insert(0, element);
+      }
+      _urlTmp.clear();
+    }
     resetPosition();
-  }
-
-  void resetSource() {
-    _urlImages = <Color>[Colors.black, Colors.amber, Colors.pink, Colors.green]
-        .reversed
-        .toList();
-    notifyListeners();
   }
 }

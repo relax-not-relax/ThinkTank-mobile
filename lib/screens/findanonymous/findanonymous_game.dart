@@ -4,19 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:thinktank_mobile/screens/findanonymous/cardprovider.dart';
 import 'package:thinktank_mobile/widgets/appbar/game_appbar.dart';
+import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:thinktank_mobile/widgets/others/textstroke.dart';
 
 class AnonymousCard extends StatefulWidget {
   const AnonymousCard(
-      {super.key,
-      required this.avtlink,
-      required this.color,
-      required this.isFront});
+      {super.key, required this.avtlink, required this.isFront});
   final String avtlink;
-  final Color color;
   final bool isFront;
-
   @override
   State<AnonymousCard> createState() => _AnonymousCardState();
 }
@@ -75,18 +71,38 @@ class _AnonymousCardState extends State<AnonymousCard> {
         height: MediaQuery.of(context).size.height * 0.55,
         width: MediaQuery.of(context).size.width * 0.8,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10), color: widget.color),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          child: Image.network(
+            widget.avtlink,
+            fit: BoxFit.cover,
+          ),
+        ),
       );
 }
 
 class FindAnonymousGame extends StatefulWidget {
-  const FindAnonymousGame({super.key, required this.avt});
+  const FindAnonymousGame(
+      {super.key,
+      required this.avt,
+      required this.listAnswer,
+      required this.listAvt});
   final String avt;
-
+  final List<AnswerAnonymous> listAnswer;
+  final List<String> listAvt;
   @override
   State<StatefulWidget> createState() {
     return FindAnonymousGameState();
   }
+}
+
+class AnswerAnonymous {
+  final String imageLink;
+  final String description;
+
+  AnswerAnonymous({required this.imageLink, required this.description});
 }
 
 class FindAnonymousGameState extends State<FindAnonymousGame>
@@ -96,12 +112,36 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
   late AnimationController _controller;
   bool scriptVisibile = false;
   bool findVisible = false;
-
+  bool cardVisible = false;
+  String description = '';
+  int progress = 0;
+  bool loadingVisible = false;
   bool showBG = true;
-  List<Color> lisColor = [Colors.black, Colors.amber, Colors.blue, Colors.pink];
+  List<AnswerAnonymous> listAnswer = [];
+  List<String> lisAvt = [];
+
+  List<String> modifyList(List<String> inputList, List<String> listTmp) {
+    List<String> modifiedList = List.from(inputList);
+
+    while (areAdjacent(modifiedList, listTmp)) {
+      modifiedList.shuffle();
+    }
+
+    return modifiedList;
+  }
 
   @override
   void initState() {
+    List<String> listTmp = [];
+    setState(() {
+      listAnswer = widget.listAnswer;
+      lisAvt = widget.listAvt;
+      for (var element in listAnswer) {
+        description += '${element.description}\n';
+        listTmp.add(element.imageLink);
+      }
+    });
+    lisAvt = modifyList(lisAvt, listTmp);
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
@@ -115,27 +155,70 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
     ));
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        Future.delayed(
-          const Duration(seconds: 1),
-          () {
-            setState(() {
-              lisColor = lisColor.reversed.toList();
-              roundVisible = false;
-              scriptVisibile = true;
-              findVisible = true;
-            });
-          },
-        );
+        setState(() {
+          lisAvt = lisAvt.reversed.toList();
+          roundVisible = false;
+          scriptVisibile = true;
+          findVisible = true;
+        });
       }
     });
     _controller.forward();
     super.initState();
   }
 
+  bool checkIsAnswer(String imglink) {
+    if (listAnswer
+        .where((element) => element.imageLink == imglink)
+        .isNotEmpty) {
+      return true;
+    } else
+      return false;
+  }
+
+  void confirm(String imgLink) {
+    if (checkIsAnswer(imgLink)) {
+      setState(() {
+        progress++;
+      });
+    } else {
+      setState(() {
+        print("Cút");
+      });
+    }
+  }
+
+  void skip(String imgLink) {
+    if (!checkIsAnswer(imgLink)) {
+      print("Đúng, Chơi tiếp");
+    } else {
+      print("Sai, Cút");
+    }
+  }
+
+  bool areAdjacent(List<String> objects, List<String> targetObjects) {
+    int targetLength = targetObjects.length;
+    for (int i = 0; i <= objects.length - targetLength; i++) {
+      bool match = true;
+      for (int j = 0; j < targetLength; j++) {
+        if (targetObjects.contains(objects[i + j])) {
+          match = false;
+          break;
+        }
+      }
+      if (match) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<CardProvider>(context);
-    provider.urlImages = lisColor;
+    provider.urlImages = lisAvt;
+    provider.confirmSet = confirm;
+    provider.skipSet = skip;
     final urlImages = provider.urlImages;
 
     return Scaffold(
@@ -143,11 +226,11 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
       appBar: TGameAppBar(
         preferredHeight: MediaQuery.of(context).size.height * 0.26,
         userAvatar: widget.avt,
-        remainingTime: Duration(seconds: 1),
-        gameName: 'game name',
-        progressTitle: 'Chance',
-        progressMessage: '5/5',
-        percent: 5 / 5,
+        remainingTime: const Duration(seconds: 1),
+        gameName: 'Find Anonymous',
+        progressTitle: 'Found',
+        progressMessage: '$progress/${listAnswer.length}',
+        percent: progress / listAnswer.length,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -165,6 +248,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
         child: Stack(
           children: [
             Visibility(
+              visible: cardVisible,
               child: SafeArea(
                 child: Container(
                   padding: const EdgeInsets.all(10),
@@ -177,8 +261,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
                           children: urlImages
                               .map(
                                 (e) => AnonymousCard(
-                                  avtlink: '',
-                                  color: e,
+                                  avtlink: e,
                                   isFront: urlImages.last == e,
                                 ),
                               )
@@ -188,6 +271,15 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
                     ],
                   ),
                 ),
+              ),
+            ),
+            Visibility(
+              visible: loadingVisible,
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                color: Color.fromARGB(48, 0, 0, 0),
+                child: const Center(child: CustomLoadingSpinner()),
               ),
             ),
             Visibility(
@@ -230,9 +322,9 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
                           ),
                         ),
                       ),
-                      child: const Text(
-                        "- A girl: long hair, blue asda asdui iouagsd iubasd eyes!\n_A boy: black hair, blue eyes!\n_A boy: black hair, blue eyes!\n_A boy: black hair, blue eyes!\n_A boy: black hair, blue eyes!\n_A boy: black hair, blue eyes!\n_A boy: black hair, blue eyes!",
-                        style: TextStyle(
+                      child: Text(
+                        description,
+                        style: const TextStyle(
                           color: Color.fromARGB(255, 0, 0, 0),
                           fontSize: 15,
                         ),
@@ -267,11 +359,18 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
                         ],
                       ),
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           setState(() {
                             findVisible = false;
                             scriptVisibile = false;
                             showBG = false;
+                            cardVisible = true;
+                            loadingVisible = true;
+                          });
+                          Future.delayed(const Duration(seconds: 5), () {
+                            setState(() {
+                              loadingVisible = false;
+                            });
                           });
                         },
                         style: button1v1,
