@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/findanonymous.dart';
 
 import 'package:thinktank_mobile/models/level.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
@@ -97,6 +100,18 @@ class LevelItem extends StatelessWidget {
                         ),
                       );
                       break;
+                    case 'Find The Anonymous':
+                      var data = await getMusicPassword(levelNumber);
+
+                      // ignore: use_build_context_synchronously
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MusicPasswordGamePlay(
+                              info: data, account: account!),
+                        ),
+                      );
+                      break;
                     case 'Flip Card Challenge':
                       // ignore: use_build_context_synchronously
                       Navigator.push(
@@ -168,3 +183,28 @@ Future<MusicPassword> getMusicPassword(int level) async {
     time: 600 - ((level % 10)) * 30,
   );
 }
+
+Future<double> getTimeAnonymous(int level) async {
+  int m = level ~/ 10 + 1;
+  int c = (level % 10 <= 1) ? level ~/ 10 : ((level ~/ 10) + 1);
+  if (level == 1)
+    return (3.15 * m);
+  else {
+    return (await getTimeAnonymous(level - 1) -
+        (3.15 - 0.48) / pow(2, c) / 10 * m);
+  }
+}
+// Future<FindAnonymous> geFindAnonymous(int level) async {
+
+// int time = (await getTimeAnonymous(level)).toInt() + 20;
+// //20s để cộng vào thời gian xem hình;
+//   List<MusicPasswordSource> listSource =
+//       await SharedPreferencesHelper.getMusicPasswordSources();
+//   List<MusicPasswordSource> listSource2 = listSource
+//       .where((element) =>
+//           element.answer.length == (((level / 10) + 4) * 2).toInt())
+//       .toList();
+//   listSource2.shuffle();
+//   MusicPasswordSource source = listSource2.first;
+//   return FindAnonymous(level: level, listAnswer: listAnswer, time: time);
+// }
