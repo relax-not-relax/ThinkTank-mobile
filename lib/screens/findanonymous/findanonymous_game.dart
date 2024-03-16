@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:thinktank_mobile/models/findanounymous_assets.dart';
 import 'package:thinktank_mobile/screens/findanonymous/cardprovider.dart';
 import 'package:thinktank_mobile/widgets/appbar/game_appbar.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
@@ -85,14 +86,19 @@ class _AnonymousCardState extends State<AnonymousCard> {
 }
 
 class FindAnonymousGame extends StatefulWidget {
-  const FindAnonymousGame(
-      {super.key,
-      required this.avt,
-      required this.listAnswer,
-      required this.listAvt});
+  const FindAnonymousGame({
+    super.key,
+    required this.avt,
+    required this.listAnswer,
+    required this.level,
+    required this.numberOfAnswer,
+    required this.time,
+  });
   final String avt;
-  final List<AnswerAnonymous> listAnswer;
-  final List<String> listAvt;
+  final List<FindAnonymousAsset> listAnswer;
+  final int level;
+  final int numberOfAnswer;
+  final int time;
   @override
   State<StatefulWidget> createState() {
     return FindAnonymousGameState();
@@ -123,7 +129,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
   int progress = 0;
   bool loadingVisible = false;
   bool showBG = true;
-  List<AnswerAnonymous> listAnswer = [];
+  List<FindAnonymousAsset> listAnswer = [];
   List<String> lisAvt = [];
   Duration remainingTime = const Duration(seconds: 10);
   Timer? timer;
@@ -142,11 +148,16 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
   void initState() {
     List<String> listTmp = [];
     setState(() {
-      listAnswer = widget.listAnswer;
-      lisAvt = widget.listAvt;
+      remainingTime = Duration(seconds: widget.time);
+      for (var element in widget.listAnswer) {
+        lisAvt.add(element.imgPath);
+      }
+      for (int i = 1; i <= widget.numberOfAnswer; i++) {
+        listAnswer.add(widget.listAnswer[i - 1]);
+      }
       for (var element in listAnswer) {
         description += '${element.description}\n';
-        listTmp.add(element.imageLink);
+        listTmp.add(element.imgPath);
       }
     });
     lisAvt = modifyList(lisAvt, listTmp);
@@ -176,9 +187,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
   }
 
   bool checkIsAnswer(String imglink) {
-    if (listAnswer
-        .where((element) => element.imageLink == imglink)
-        .isNotEmpty) {
+    if (listAnswer.where((element) => element.imgPath == imglink).isNotEmpty) {
       return true;
     } else
       return false;
@@ -220,6 +229,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
 
   void reset() {
     setState(() {
+      remainingTime = Duration(seconds: widget.time);
       isWin = false;
       scriptVisibile = false;
       findVisible = false;
@@ -238,11 +248,15 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
       timer;
       List<String> listTmp = [];
       setState(() {
-        listAnswer = widget.listAnswer;
-        lisAvt = widget.listAvt;
+        for (var element in widget.listAnswer) {
+          lisAvt.add(element.imgPath);
+        }
+        for (int i = 1; i <= widget.numberOfAnswer; i++) {
+          listAnswer.add(widget.listAnswer[i - 1]);
+        }
         for (var element in listAnswer) {
           description += '${element.description}\n';
-          listTmp.add(element.imageLink);
+          listTmp.add(element.imgPath);
         }
       });
       lisAvt = modifyList(lisAvt, listTmp);
@@ -396,7 +410,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
                     visible: roundVisible,
                     child: Center(
                         child: TextWidget(
-                      'Round 1',
+                      'Round ${widget.level}',
                       fontFamily: 'ButtonCustomFont',
                       fontSize: 70,
                       strokeColor: const Color.fromRGBO(255, 212, 96, 1),

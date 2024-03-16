@@ -49,7 +49,7 @@ class AssetsAPI {
       },
     );
     print("Version" + version.toString());
-    int maxVersion = 0;
+    int maxVersion = await SharedPreferencesHelper.getResourceVersion();
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);

@@ -1,4 +1,4 @@
-import 'package:thinktank_mobile/screens/findanonymous/findanonymous_game.dart';
+import 'package:thinktank_mobile/models/findanounymous_assets.dart';
 
 class FindAnonymous {
   const FindAnonymous({
@@ -8,6 +8,6 @@ class FindAnonymous {
   });
 
   final int level;
-  final List<AnswerAnonymous> listAnswer;
+  final List<FindAnonymousAsset> listAnswer;
   final int time;
 }
