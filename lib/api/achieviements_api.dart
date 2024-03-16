@@ -53,7 +53,7 @@ class ApiAchieviements {
     }
   }
 
-  static Future<void> getAchieviements(int accountId, String authToken) async {
+  static Future<void> getLevelOfUser(int accountId, String authToken) async {
     final response = await http.get(
       Uri.parse(
           'https://thinktank-sep490.azurewebsites.net/api/accounts/game-level-of-account?accountId=$accountId'),
@@ -66,15 +66,22 @@ class ApiAchieviements {
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       int? musicPasswordLevel;
+      int? flipCardLevel;
       for (var element in jsonData) {
         switch (element['gameId']) {
+          case 1:
+            flipCardLevel = element['level'] + 1;
+            print('level $jsonData');
+            break;
+
           case 2:
             musicPasswordLevel = element['level'] + 1;
             print('level $jsonData');
+            SharedPreferencesHelper.saveMusicPasswordLevel(
+                musicPasswordLevel ?? 1);
             break;
         }
       }
-      SharedPreferencesHelper.saveMusicPasswordLevel(musicPasswordLevel ?? 1);
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account = await SharedPreferencesHelper.getInfo();
       Account? account2 = await ApiAuthentication.refreshToken(

@@ -100,7 +100,7 @@ class LoginScreenState extends State<LoginScreen> {
                             _isIncorrect = false;
                           });
                           await SharedPreferencesHelper.saveInfo(acc);
-                          await ApiAchieviements.getAchieviements(
+                          await ApiAchieviements.getLevelOfUser(
                               acc.id, acc.accessToken!);
                           await ApiNotification.getNotifications(
                               acc.id, acc.accessToken!);
