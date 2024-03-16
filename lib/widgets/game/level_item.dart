@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/findanonymous.dart';
+import 'package:thinktank_mobile/models/findanounymous_assets.dart';
 
 import 'package:thinktank_mobile/models/level.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
@@ -10,6 +11,7 @@ import 'package:thinktank_mobile/models/musicpasssource.dart';
 import 'package:thinktank_mobile/models/account.dart';
 
 import 'package:thinktank_mobile/models/musicpassword.dart';
+import 'package:thinktank_mobile/screens/findanonymous/findanonymous_game.dart';
 import 'package:thinktank_mobile/screens/flipcard/flipcard_game.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/game_mainscreen.dart';
 import 'package:thinktank_mobile/screens/musicpassword/musicpassgame.dart';
@@ -101,14 +103,19 @@ class LevelItem extends StatelessWidget {
                       );
                       break;
                     case 'Find The Anonymous':
-                      var data = await getMusicPassword(levelNumber);
+                      var data = await geFindAnonymous(levelNumber);
+                      int m = levelNumber ~/ 10 + 1;
 
                       // ignore: use_build_context_synchronously
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MusicPasswordGamePlay(
-                              info: data, account: account!),
+                          builder: (context) => FindAnonymousGame(
+                              avt: account!.avatar!,
+                              listAnswer: data.listAnswer,
+                              level: levelNumber,
+                              numberOfAnswer: m,
+                              time: data.time),
                         ),
                       );
                       break;
@@ -194,17 +201,14 @@ Future<double> getTimeAnonymous(int level) async {
         (3.15 - 0.48) / pow(2, c) / 10 * m);
   }
 }
-// Future<FindAnonymous> geFindAnonymous(int level) async {
 
-// int time = (await getTimeAnonymous(level)).toInt() + 20;
-// //20s để cộng vào thời gian xem hình;
-//   List<MusicPasswordSource> listSource =
-//       await SharedPreferencesHelper.getMusicPasswordSources();
-//   List<MusicPasswordSource> listSource2 = listSource
-//       .where((element) =>
-//           element.answer.length == (((level / 10) + 4) * 2).toInt())
-//       .toList();
-//   listSource2.shuffle();
-//   MusicPasswordSource source = listSource2.first;
-//   return FindAnonymous(level: level, listAnswer: listAnswer, time: time);
-// }
+Future<FindAnonymous> geFindAnonymous(int level) async {
+  int time = (await getTimeAnonymous(level)).toInt() + 20;
+  int total = 10 + (level ~/ 10) * 5;
+//20s để cộng vào thời gian xem hình;
+  List<FindAnonymousAsset> listSource =
+      await SharedPreferencesHelper.getAnonymousAssets();
+  listSource.shuffle();
+  List<FindAnonymousAsset> listSource2 = listSource.getRange(0, total).toList();
+  return FindAnonymous(level: level, listAnswer: listSource2, time: time);
+}
