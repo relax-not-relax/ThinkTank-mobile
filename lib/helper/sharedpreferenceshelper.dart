@@ -12,6 +12,7 @@ class SharedPreferencesHelper {
   static const String accInfoKey = 'accInfo';
   static const String firstUse = 'fisrtUse';
   static const String musicPassSource = 'musicPassSource';
+  static const String imageResourceKey = 'imageVersion';
   static const String musicPasswordLevel = 'musicPassLevel';
   static const String resourceVersionKey = 'resourceVersion';
 
@@ -27,22 +28,19 @@ class SharedPreferencesHelper {
     prefs.setString(accInfoKey, accountJson);
   }
 
-  static Future<void> saveResourceVersion(
-      ResourceVersion resourceVersion) async {
+  static Future<void> saveResourceVersion(int resourceVersion) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String resourceVerisonJson = jsonEncode(resourceVersion.toJson());
-    prefs.setString(resourceVersionKey, resourceVerisonJson);
+    prefs.setInt(resourceVersionKey, resourceVersion);
   }
 
-  static Future<ResourceVersion?> getResourceVersion() async {
+  static Future<int> getResourceVersion() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? resourceVerisonJson = prefs.getString(resourceVersionKey);
+    int? resourceVerisonJson = prefs.getInt(resourceVersionKey);
 
     if (resourceVerisonJson != null) {
-      Map<String, dynamic> versionMap = jsonDecode(resourceVerisonJson);
-      return ResourceVersion.fromJson(versionMap);
+      return resourceVerisonJson;
     } else {
-      return null;
+      return 0;
     }
   }
 
@@ -97,6 +95,24 @@ class SharedPreferencesHelper {
         notifications.map((notification) => notification.toJson()).toList();
     String notificationsString = json.encode(jsonList);
     await prefs.setString('notifications', notificationsString);
+  }
+
+  static Future<void> saveImageResoure(List<String> flipcardResource) async {
+    if (flipcardResource.isEmpty) return;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? result = prefs.getStringList(imageResourceKey);
+    if (result != null && result.isNotEmpty) {
+      result.addAll(flipcardResource);
+      await prefs.setStringList(imageResourceKey, result);
+    } else {
+      await prefs.setStringList(imageResourceKey, flipcardResource);
+    }
+  }
+
+  static Future<List<String>> getImageResource() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? result = prefs.getStringList(imageResourceKey);
+    return result ?? [];
   }
 
   static Future<List<NotificationItem>> getNotifications() async {

@@ -81,6 +81,7 @@ class StartScreenState extends State<StartScreen>
     //   await updateMusicPasswordSource();
     // }
     // await SharedPreferencesHelper.saveResourceVersion(resourceVersion!);
+
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         wait = false;

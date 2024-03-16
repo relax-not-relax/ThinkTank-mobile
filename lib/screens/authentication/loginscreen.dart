@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
+import 'package:thinktank_mobile/api/assets_api.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/api/notification_api.dart';
@@ -103,6 +104,10 @@ class LoginScreenState extends State<LoginScreen> {
                               acc.id, acc.accessToken!);
                           await ApiNotification.getNotifications(
                               acc.id, acc.accessToken!);
+
+                          int version = await SharedPreferencesHelper
+                              .getResourceVersion();
+                          await AssetsAPI.addAssets(version, acc.accessToken!);
                           // ignore: use_build_context_synchronously
                           _closeDialog(context);
 
