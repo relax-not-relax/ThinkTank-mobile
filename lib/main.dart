@@ -73,25 +73,26 @@ class _MyAppState extends State<MyApp> {
           ),
           useMaterial3: true,
         ),
-        home: FindAnonymousGame(
-          avt: 'asdv',
-          listAnswer: [
-            AnswerAnonymous(
-                imageLink:
-                    'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Farticle-1359443-0D2418FE000005DC-509_306x449.jpg?alt=media&token=e53b3a59-61a0-48ce-a941-cb86c596d15a',
-                description: '- Williem'),
-            AnswerAnonymous(
-                imageLink:
-                    'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Fbatistuta.jpg?alt=media&token=0b9374d1-5e2e-4d61-a3be-fce6ffb20552',
-                description: '- Batistuta'),
-          ],
-          listAvt: const [
-            'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Fbatistuta.jpg?alt=media&token=0b9374d1-5e2e-4d61-a3be-fce6ffb20552',
-            'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Farticle-1359443-0D2418FE000005DC-509_306x449.jpg?alt=media&token=e53b3a59-61a0-48ce-a941-cb86c596d15a',
-            'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Fmaradona.jpg?alt=media&token=b61a55b6-90c5-4777-afbc-0a85e9e4ac4a',
-            'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Fthanhluong.jpg?alt=media&token=9413ea91-a12a-4476-85f1-080f8ba8f9c6',
-          ],
-        ),
+        home: StartScreen(),
+        // home: FindAnonymousGame(
+        //   avt: 'asdv',
+        //   listAnswer: [
+        //     AnswerAnonymous(
+        //         imageLink:
+        //             'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Farticle-1359443-0D2418FE000005DC-509_306x449.jpg?alt=media&token=e53b3a59-61a0-48ce-a941-cb86c596d15a',
+        //         description: '- Williem'),
+        //     AnswerAnonymous(
+        //         imageLink:
+        //             'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Fbatistuta.jpg?alt=media&token=0b9374d1-5e2e-4d61-a3be-fce6ffb20552',
+        //         description: '- Batistuta'),
+        //   ],
+        //   listAvt: const [
+        //     'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Fbatistuta.jpg?alt=media&token=0b9374d1-5e2e-4d61-a3be-fce6ffb20552',
+        //     'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Farticle-1359443-0D2418FE000005DC-509_306x449.jpg?alt=media&token=e53b3a59-61a0-48ce-a941-cb86c596d15a',
+        //     'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Fmaradona.jpg?alt=media&token=b61a55b6-90c5-4777-afbc-0a85e9e4ac4a',
+        //     'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Fthanhluong.jpg?alt=media&token=9413ea91-a12a-4476-85f1-080f8ba8f9c6',
+        //   ],
+        // ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
@@ -70,15 +71,23 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
     });
   }
 
+  late Future _intitResource;
+  Future<void> initResource() async {
+    await _game.initGame();
+  }
+
   @override
   void initState() {
     super.initState();
     _game = FlipCardGame();
-    _game.initGame();
+    _game.initGameImg();
     cardKeys = List<GlobalKey<FlipCardState>>.generate(
       _game.gameImg!.length,
       (index) => GlobalKey<FlipCardState>(),
     );
+    _intitResource = initResource();
+    _intitResource.then((value) => {});
+
     setState(() {
       remainingTime = widget.maxTime;
       total = (_game.cardCount ~/ 2).toInt();
@@ -163,7 +172,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
                         width: 100.0,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: AssetImage(_game.gameImg![index]),
+                            image: FileImage(File(_game.gameImg![index])),
                             fit: BoxFit.cover,
                           ),
                           borderRadius: const BorderRadius.all(
