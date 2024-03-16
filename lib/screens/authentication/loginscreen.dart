@@ -108,7 +108,6 @@ class LoginScreenState extends State<LoginScreen> {
                           int version = await SharedPreferencesHelper
                               .getResourceVersion();
                           await AssetsAPI.addAssets(version, acc.accessToken!);
-                          // ignore: use_build_context_synchronously
                           _closeDialog(context);
 
                           // ignore: use_build_context_synchronously

@@ -21,10 +21,12 @@ class AssetsAPI {
     }
   }
 
-  Future<FindAnonymousAsset> ConvertToFindAnonymousAssets(
+  static Future<FindAnonymousAsset> ConvertToFindAnonymousAssets(
       dynamic element) async {
-    int id = int.parse(element['id']);
+    print(element['value'].toString() + "Lukaku");
+    int id = int.parse(element['id'].toString());
     List<String> des = element['value'].toString().split(';');
+
     String description = des[0];
     String imgLink = des[1];
     int numberOfDescription = description.split(',').length + 1;
@@ -46,6 +48,8 @@ class AssetsAPI {
         'Authorization': 'Bearer $authToken',
       },
     );
+    print("Version" + version.toString());
+    int maxVersion = 0;
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
@@ -53,7 +57,9 @@ class AssetsAPI {
       List<FindAnonymousAsset> listAnomymous = [];
       List<String> listPathImageSource = [];
       for (var element in jsonList) {
-        print(element.toString() + "ecec");
+        if (int.parse(element['version'].toString()) > maxVersion) {
+          maxVersion = int.parse(element['version'].toString());
+        }
         switch (int.parse(element['gameId'].toString())) {
           case 1:
             String path = await saveImageToDevice(
@@ -62,18 +68,22 @@ class AssetsAPI {
             listPathImageSource.add(path);
             break;
           case 2:
-            String path = await saveImageToDevice(
-                element['value'], element['id'].toString());
-            print(path);
-            listPathImageSource.add(path);
             break;
           case 4:
+            String path = await saveImageToDevice(
+                element['value'], element['id'].toString());
+            listPathImageSource.add(path);
             break;
           case 5:
+            FindAnonymousAsset asset =
+                await ConvertToFindAnonymousAssets(element);
+            listAnomymous.add(asset);
             break;
         }
       }
       await SharedPreferencesHelper.saveImageResoure(listPathImageSource);
+      await SharedPreferencesHelper.saveAnonymousResoure(listAnomymous);
+      await SharedPreferencesHelper.saveResourceVersion(maxVersion);
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account = await SharedPreferencesHelper.getInfo();
       Account? account2 = await ApiAuthentication.refreshToken(
@@ -93,7 +103,10 @@ class AssetsAPI {
         List<FindAnonymousAsset> listAnomymous = [];
         List<String> listPathImageSource = [];
         for (var element in jsonList) {
-          switch (int.parse(element['gameId'])) {
+          if (int.parse(element['version'].toString()) > maxVersion) {
+            maxVersion = int.parse(element['version'].toString());
+          }
+          switch (int.parse(element['gameId'].toString())) {
             case 1:
               String path = await saveImageToDevice(
                   element['value'], element['id'].toString());
@@ -101,18 +114,22 @@ class AssetsAPI {
               listPathImageSource.add(path);
               break;
             case 2:
-              String path = await saveImageToDevice(
-                  element['value'], element['id'].toString());
-              print(path);
-              listPathImageSource.add(path);
               break;
             case 4:
+              String path = await saveImageToDevice(
+                  element['value'], element['id'].toString());
+              listPathImageSource.add(path);
               break;
             case 5:
+              FindAnonymousAsset asset =
+                  await ConvertToFindAnonymousAssets(element);
+              listAnomymous.add(asset);
               break;
           }
         }
         await SharedPreferencesHelper.saveImageResoure(listPathImageSource);
+        await SharedPreferencesHelper.saveAnonymousResoure(listAnomymous);
+        await SharedPreferencesHelper.saveResourceVersion(maxVersion);
       } else {
         print(response2.body);
       }

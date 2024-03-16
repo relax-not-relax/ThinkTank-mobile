@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/findanounymous_assets.dart';
 import 'package:thinktank_mobile/models/logininfo.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
 import 'package:thinktank_mobile/models/notification_item.dart';
@@ -15,6 +16,7 @@ class SharedPreferencesHelper {
   static const String imageResourceKey = 'imageVersion';
   static const String musicPasswordLevel = 'musicPassLevel';
   static const String resourceVersionKey = 'resourceVersion';
+  static const String anonymousResourcenKey = 'anonymousResourcenKey';
 
   static Future<void> saveAccount(LoginInfo account) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -106,6 +108,50 @@ class SharedPreferencesHelper {
       await prefs.setStringList(imageResourceKey, result);
     } else {
       await prefs.setStringList(imageResourceKey, flipcardResource);
+    }
+  }
+
+  static Future<void> saveAnonymousResoure(
+      List<FindAnonymousAsset> resource) async {
+    if (resource.isEmpty) return;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? anonymousString = prefs.getString(anonymousResourcenKey);
+    List<dynamic> jsonList;
+    List<FindAnonymousAsset> anonymousAssets = [];
+    if (anonymousString != null) {
+      jsonList = json.decode(anonymousString) as List<dynamic>;
+      anonymousAssets = jsonList
+          .map((jsonItem) =>
+              FindAnonymousAsset.fromJson(jsonItem as Map<String, dynamic>))
+          .toList();
+    }
+
+    anonymousAssets.addAll(resource);
+    List<Map<String, dynamic>> jsonList2 =
+        anonymousAssets.map((assets) => assets.toJson()).toList();
+    String assets = json.encode(jsonList2);
+    await prefs.setString(anonymousResourcenKey, assets);
+  }
+
+  static Future<List<FindAnonymousAsset>> getAnonymousAssets() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? assetString = prefs.getString(anonymousResourcenKey);
+    if (assetString != null) {
+      try {
+        List<dynamic> jsonList = json.decode(assetString) as List<dynamic>;
+
+        List<FindAnonymousAsset> assets = jsonList
+            .map((jsonItem) =>
+                FindAnonymousAsset.fromJson(jsonItem as Map<String, dynamic>))
+            .toList();
+        return assets;
+      } catch (e) {
+        print('Error parsing notifications from SharedPreferences: $e');
+        return [];
+      }
+    } else {
+      return [];
     }
   }
 
