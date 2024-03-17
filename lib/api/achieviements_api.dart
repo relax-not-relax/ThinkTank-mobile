@@ -5,14 +5,23 @@ import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 
 class ApiAchieviements {
-  static Future<void> addAchieviements(double duration, int mark, int level,
-      int gameId, int accountId, String authToken) async {
+  static Future<void> addAchieviements(
+      double duration,
+      int mark,
+      int level,
+      int gameId,
+      // int topicId,
+      // int pieceOfInformation,
+      int accountId,
+      String authToken) async {
     Map<String, dynamic> data = {
       "duration": duration,
       "mark": mark,
       "level": level,
       "gameId": gameId,
       "accountId": accountId,
+      // "topicId": 0,
+      // "pieceOfInformation": 0
     };
     String jsonBody = jsonEncode(data);
 
@@ -71,7 +80,7 @@ class ApiAchieviements {
         switch (element['gameId']) {
           case 1:
             flipCardLevel = element['level'] + 1;
-            print('level $jsonData');
+            SharedPreferencesHelper.saveFLipCardLevel(flipCardLevel ?? 1);
             break;
 
           case 2:
@@ -98,14 +107,21 @@ class ApiAchieviements {
       if (response2.statusCode == 200) {
         final jsonData = json.decode(response2.body);
         int? musicPasswordLevel;
+        int? flipCardLevel;
         for (var element in jsonData) {
           switch (element['gameId']) {
+            case 1:
+              flipCardLevel = element['level'] + 1;
+              SharedPreferencesHelper.saveFLipCardLevel(flipCardLevel ?? 1);
+              break;
+
             case 2:
               musicPasswordLevel = element['level'] + 1;
+              SharedPreferencesHelper.saveMusicPasswordLevel(
+                  musicPasswordLevel ?? 1);
               break;
           }
         }
-        SharedPreferencesHelper.saveMusicPasswordLevel(musicPasswordLevel ?? 1);
       } else {
         print(response2.body);
       }

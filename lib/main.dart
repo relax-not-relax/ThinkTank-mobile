@@ -31,6 +31,7 @@ void main() async {
       : await Firebase.initializeApp();
   await FirebaseMessageAPI().initNotification();
   await SharedPreferencesHelper.saveMusicPasswordLevel(1);
+  await SharedPreferencesHelper.saveFLipCardLevel(1);
 
   runApp(const MyApp());
 }

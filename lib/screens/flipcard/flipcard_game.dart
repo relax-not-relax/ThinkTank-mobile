@@ -4,24 +4,26 @@ import 'dart:io';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/flipcard.dart';
 import 'package:thinktank_mobile/models/logininfo.dart';
 import 'package:thinktank_mobile/widgets/appbar/game_appbar.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
+import 'package:thinktank_mobile/widgets/others/winscreen.dart';
 
 class FlipCardGamePlay extends StatefulWidget {
   const FlipCardGamePlay({
     super.key,
-    required this.maxTime,
     required this.account,
     required this.gameName,
+    required this.level,
   });
 
-  final Duration maxTime;
   final Account account;
   final String gameName;
+  final int level;
 
   @override
   State<FlipCardGamePlay> createState() => _FlipCardGamePlayState();
@@ -29,7 +31,13 @@ class FlipCardGamePlay extends StatefulWidget {
 
 class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
   Timer? timer;
-  late Duration remainingTime;
+  late int levelNow;
+  Duration remainingTime = Duration(
+    seconds: 0,
+  );
+  Duration maxTime = Duration(
+    seconds: 0,
+  );
   late FlipCardGame _game;
   List<GlobalKey<FlipCardState>> cardKeys = [];
   List<GlobalKey<FlipCardState>> checkCardKeys = [];
@@ -42,6 +50,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
   bool continueVisible = false;
   bool isLosed = false;
   bool _isCheckingCards = false;
+  bool _isLoading = true;
 
   bool _areAllCardsFlipped() {
     print(_game.matchedCards.every((isFlipped) => false));
@@ -65,7 +74,17 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
     });
   }
 
-  void win() {
+  void win() async {
+    double points = (remainingTime.inMilliseconds / 1000);
+    await SharedPreferencesHelper.saveFLipCardLevel(widget.level + 1);
+    await ApiAchieviements.addAchieviements(
+      (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() / 1000,
+      (points * 100).toInt(),
+      levelNow,
+      1,
+      widget.account.id,
+      widget.account.accessToken!,
+    );
     setState(() {
       continueVisible = true;
     });
@@ -73,28 +92,69 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
 
   late Future _intitResource;
   Future<void> initResource() async {
-    await _game.initGame();
+    levelNow = widget.level;
+    await _game.initGame(levelNow);
+    _game.gameImg = await _game.initGameImg(levelNow);
+    cardKeys = List<GlobalKey<FlipCardState>>.generate(
+      _game.gameImg.length,
+      (index) => GlobalKey<FlipCardState>(),
+    );
+    print(_game.gameImg.length.toString() + "abc");
+
+    print(cardKeys);
+  }
+
+  void _continue() {
+    double points = (remainingTime.inMilliseconds / 1000);
+    if (isLosed == false) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WinScreen(
+            haveTime: true,
+            points: (points * 100).toInt(),
+            time: (maxTime.inMilliseconds - remainingTime.inMilliseconds)
+                    .toDouble() /
+                1000,
+            isWin: true,
+            gameName: widget.gameName,
+          ),
+        ),
+        (route) => false,
+      );
+    } else {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WinScreen(
+            haveTime: false,
+            points: 0,
+            time: 0,
+            isWin: false,
+            gameName: widget.gameName,
+          ),
+        ),
+        (route) => false,
+      );
+    }
   }
 
   @override
   void initState() {
     super.initState();
     _game = FlipCardGame();
-    _game.initGameImg();
-    cardKeys = List<GlobalKey<FlipCardState>>.generate(
-      _game.gameImg!.length,
-      (index) => GlobalKey<FlipCardState>(),
-    );
     _intitResource = initResource();
-    _intitResource.then((value) => {});
 
-    setState(() {
-      remainingTime = widget.maxTime;
-      total = (_game.cardCount ~/ 2).toInt();
-      pair = (count ~/ 2).toInt();
-      percent = pair / total;
-    });
-    //startTimer();
+    _intitResource.then((value) => {
+          setState(() {
+            maxTime = Duration(seconds: _game.time.round());
+            remainingTime = maxTime;
+            total = (_game.cardCount ~/ 2).toInt();
+            pair = (count ~/ 2).toInt();
+            percent = pair / total;
+            _isLoading = false;
+          })
+        });
   }
 
   @override
@@ -120,107 +180,109 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
         progressTitle: "Flipped",
         progressMessage: "$pair/$total",
       ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        color: const Color.fromARGB(255, 255, 240, 199),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height * 0.54,
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0),
-              child: GridView.builder(
-                itemCount: _game.gameImg!.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 8.0,
-                  mainAxisSpacing: 8.0,
-                ),
-                itemBuilder: (context, index) {
-                  bool isMatched = _game.matchedCards[index];
-
-                  return FlipCard(
-                    key: cardKeys[index],
-                    flipOnTouch: !isMatched && !_isCheckingCards && !isLosed,
-                    onFlip: () {
-                      if (!isMatched && !_isCheckingCards && !isLosed) {
-                        _handleCardFlip(index, cardKeys[index]);
-                      }
-                    },
-                    front: Card(
-                      child: Container(
-                        height: 100.0,
-                        width: 100.0,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image:
-                                AssetImage("assets/pics/flipHidden_test.png"),
-                            fit: BoxFit.cover,
-                          ),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                    back: Card(
-                      child: Container(
-                        height: 100.0,
-                        width: 100.0,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: FileImage(File(_game.gameImg![index])),
-                            fit: BoxFit.cover,
-                          ),
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(10.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            Visibility(
-              visible: continueVisible,
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.2,
+      body: Visibility(
+        visible: !_isLoading,
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          color: const Color.fromARGB(255, 255, 240, 199),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.54,
                 width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.only(
-                  bottom: 30.0,
-                ),
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: SizedBox(
-                    height: 76,
-                    width: 336,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(100),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color.fromARGB(255, 132, 53, 13),
-                            blurRadius: 0,
-                            offset: Offset(0, 8),
+                padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0),
+                child: GridView.builder(
+                  itemCount: _game.gameImg.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 8.0,
+                    mainAxisSpacing: 8.0,
+                  ),
+                  itemBuilder: (context, index) {
+                    bool isMatched = _game.matchedCards[index];
+
+                    return FlipCard(
+                      key: cardKeys[index],
+                      flipOnTouch: !isMatched && !_isCheckingCards && !isLosed,
+                      onFlip: () {
+                        if (!isMatched && !_isCheckingCards && !isLosed) {
+                          _handleCardFlip(index, cardKeys[index]);
+                        }
+                      },
+                      front: Card(
+                        child: Container(
+                          height: 100.0,
+                          width: 100.0,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage("assets/pics/logo_2.png"),
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10.0),
+                            ),
                           ),
-                        ],
+                        ),
                       ),
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: button1v1,
-                        child: const Text(
-                          'CONTINUE',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30,
-                            fontWeight: FontWeight.w900,
-                            fontFamily: 'ButtonCustomFont',
+                      back: Card(
+                        child: Container(
+                          height: 100.0,
+                          width: 100.0,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: FileImage(File(_game.gameImg[index])),
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(10.0),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Visibility(
+                visible: continueVisible,
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.only(
+                    bottom: 30.0,
+                  ),
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: SizedBox(
+                      height: 76,
+                      width: 336,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(100),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color.fromARGB(255, 132, 53, 13),
+                              blurRadius: 0,
+                              offset: Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          onPressed: _continue,
+                          style: button1v1,
+                          child: const Text(
+                            'CONTINUE',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 30,
+                              fontWeight: FontWeight.w900,
+                              fontFamily: 'ButtonCustomFont',
+                            ),
                           ),
                         ),
                       ),
@@ -228,8 +290,8 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -246,7 +308,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
     _areAllCardsFlipped();
 
     setState(() {
-      _game.gameImg![index] = _game.duplicatedCardList![index];
+      _game.gameImg[index] = _game.duplicatedCardList![index];
       _game.matchCheck.add({index: _game.duplicatedCardList![index]});
       checkCardKeys.add(cardKey);
     });

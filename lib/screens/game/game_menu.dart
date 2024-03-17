@@ -373,6 +373,10 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                               onPressed: () async {
                                 int level = 1;
                                 switch (widget.game.id) {
+                                  case 1:
+                                    level = await SharedPreferencesHelper
+                                        .getFLipCardLevel();
+                                    break;
                                   case 2:
                                     level = await SharedPreferencesHelper
                                         .getMusicPasswordLevel();

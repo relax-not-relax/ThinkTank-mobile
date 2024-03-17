@@ -16,10 +16,15 @@ import 'package:thinktank_mobile/widgets/others/textstroke.dart';
 import 'package:thinktank_mobile/widgets/others/winscreen.dart';
 
 class MusicPasswordGamePlay extends StatefulWidget {
-  const MusicPasswordGamePlay(
-      {super.key, required this.info, required this.account});
+  const MusicPasswordGamePlay({
+    super.key,
+    required this.info,
+    required this.account,
+    required this.gameName,
+  });
   final MusicPassword info;
   final Account account;
+  final String gameName;
 
   @override
   State<StatefulWidget> createState() {
@@ -232,6 +237,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                     .toDouble() /
                 1000,
             isWin: true,
+            gameName: widget.gameName,
           ),
         ),
         (route) => false,
@@ -240,11 +246,12 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
-          builder: (context) => const WinScreen(
+          builder: (context) => WinScreen(
             haveTime: false,
             points: 0,
             time: 0,
             isWin: false,
+            gameName: widget.gameName,
           ),
         ),
         (route) => false,
