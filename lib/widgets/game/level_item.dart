@@ -98,7 +98,7 @@ class LevelItem extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => MusicPasswordGamePlay(
-                              info: data, account: account!),
+                              info: data, account: account!, gameName: game),
                         ),
                       );
                       break;
@@ -125,9 +125,9 @@ class LevelItem extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => FlipCardGamePlay(
-                            maxTime: const Duration(seconds: 10),
                             account: account!,
                             gameName: game,
+                            level: levelNumber,
                           ),
                         ),
                       );

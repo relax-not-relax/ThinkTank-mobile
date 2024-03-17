@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/findanounymous_assets.dart';
+import 'package:thinktank_mobile/models/image_resource.dart';
 import 'package:thinktank_mobile/models/logininfo.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
 import 'package:thinktank_mobile/models/notification_item.dart';
@@ -15,6 +16,9 @@ class SharedPreferencesHelper {
   static const String musicPassSource = 'musicPassSource';
   static const String imageResourceKey = 'imageVersion';
   static const String musicPasswordLevel = 'musicPassLevel';
+  static const String flipCardLevel = 'flipCardLevel';
+  static const String flipCardTime = 'flipCardTime';
+  static const String imageSource = 'imageSource';
   static const String resourceVersionKey = 'resourceVersion';
   static const String anonymousResourcenKey = 'anonymousResourcenKey';
 
@@ -86,6 +90,88 @@ class SharedPreferencesHelper {
       return musicPasswordSources;
     } else {
       return [];
+    }
+  }
+
+  static Future<void> saveMusicPasswordSources(
+      List<MusicPasswordSource> sources) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<Map<String, dynamic>> jsonList =
+        sources.map((source) => source.toJson()).toList();
+
+    String jsonString = jsonEncode(jsonList);
+
+    await prefs.setStringList(musicPassSource, [jsonString]);
+  }
+
+  static Future<void> saveMusicPasswordLevel(int level) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(musicPasswordLevel, level.toString());
+  }
+
+  static Future<int> getMusicPasswordLevel() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? json = prefs.getString(musicPasswordLevel);
+    if (json != null) {
+      return int.parse(json);
+    } else {
+      return 0;
+    }
+  }
+
+  static Future<List<ImageResource>> getImagesSources() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? jsonString = prefs.getStringList(imageSource)?.first;
+
+    if (jsonString != null) {
+      List<dynamic> jsonList = jsonDecode(jsonString);
+      List<ImageResource> imageSources =
+          jsonList.map((json) => ImageResource.fromJson(json)).toList();
+      return imageSources;
+    } else {
+      return [];
+    }
+  }
+
+  static Future<void> saveImageSources(List<ImageResource> sources) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<Map<String, dynamic>> jsonList =
+        sources.map((source) => source.toJson()).toList();
+
+    String jsonString = jsonEncode(jsonList);
+
+    await prefs.setStringList(imageSource, [jsonString]);
+  }
+
+  static Future<void> saveFLipCardLevel(int level) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(flipCardLevel, level.toString());
+  }
+
+  static Future<int> getFLipCardLevel() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? json = prefs.getString(flipCardLevel);
+    if (json != null) {
+      return int.parse(json);
+    } else {
+      return 0;
+    }
+  }
+
+  static Future<void> saveFlipCardTime(double time) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(flipCardTime, time.toString());
+  }
+
+  static Future<double> getFLipCardTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? json = prefs.getString(flipCardTime);
+    if (json != null) {
+      return double.parse(json);
+    } else {
+      return 0;
     }
   }
 
@@ -180,33 +266,6 @@ class SharedPreferencesHelper {
       }
     } else {
       return [];
-    }
-  }
-
-  static Future<void> saveMusicPasswordSources(
-      List<MusicPasswordSource> sources) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    List<Map<String, dynamic>> jsonList =
-        sources.map((source) => source.toJson()).toList();
-
-    String jsonString = jsonEncode(jsonList);
-
-    await prefs.setStringList(musicPassSource, [jsonString]);
-  }
-
-  static Future<void> saveMusicPasswordLevel(int level) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(musicPasswordLevel, level.toString());
-  }
-
-  static Future<int> getMusicPasswordLevel() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? json = prefs.getString(musicPasswordLevel);
-    if (json != null) {
-      return int.parse(json);
-    } else {
-      return 0;
     }
   }
 

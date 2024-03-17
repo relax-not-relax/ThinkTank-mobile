@@ -9,16 +9,19 @@ import 'package:thinktank_mobile/screens/game/level_select.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
 class WinScreen extends StatefulWidget {
-  const WinScreen(
-      {super.key,
-      required this.points,
-      required this.haveTime,
-      this.time,
-      required this.isWin});
+  const WinScreen({
+    super.key,
+    required this.points,
+    required this.haveTime,
+    this.time,
+    required this.isWin,
+    required this.gameName,
+  });
   final int points;
   final bool haveTime;
   final double? time;
   final bool isWin;
+  final String gameName;
 
   @override
   State<StatefulWidget> createState() {
@@ -40,6 +43,47 @@ class WinScreenState extends State<WinScreen> {
       winSound.play(AssetSource('sound/win.mp3'));
     } else {
       loseSound.play(AssetSource('sound/lose.mp3'));
+    }
+  }
+
+  void _continue() async {
+    switch (widget.gameName) {
+      case 'Flip Card Challenge':
+        int levelCompleted = await SharedPreferencesHelper.getFLipCardLevel();
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LevelSelectScreen(
+                    level: Level(
+                        totalLevel: 100,
+                        levelCompleted: levelCompleted,
+                        game: games[0]),
+                  )),
+          (route) => true,
+        );
+        break;
+      case 'Music Password':
+        int levelCompleted =
+            await SharedPreferencesHelper.getMusicPasswordLevel();
+        Account? account = await SharedPreferencesHelper.getInfo();
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LevelSelectScreen(
+                    level: Level(
+                        totalLevel: 100,
+                        levelCompleted: levelCompleted,
+                        game: games[1]),
+                  )),
+          (route) => true,
+        );
+        break;
+      case 'Find The Anonymous':
+        break;
+      case 'Images Walkthrough':
+        break;
     }
   }
 
@@ -127,24 +171,7 @@ class WinScreenState extends State<WinScreen> {
                       ],
                     ),
                     child: ElevatedButton(
-                      onPressed: () async {
-                        int levelCompleted = await SharedPreferencesHelper
-                            .getMusicPasswordLevel();
-                        Account? account =
-                            await SharedPreferencesHelper.getInfo();
-                        // ignore: use_build_context_synchronously
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LevelSelectScreen(
-                                    level: Level(
-                                        totalLevel: 100,
-                                        levelCompleted: levelCompleted,
-                                        game: games[1]),
-                                  )),
-                          (route) => true,
-                        );
-                      },
+                      onPressed: _continue,
                       style: widget.isWin ? buttonWin : buttonLose,
                       child: const Text(
                         'CONTINUE',
