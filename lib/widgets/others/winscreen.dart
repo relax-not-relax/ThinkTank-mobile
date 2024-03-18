@@ -9,19 +9,20 @@ import 'package:thinktank_mobile/screens/game/level_select.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
 class WinScreen extends StatefulWidget {
-  const WinScreen({
-    super.key,
-    required this.points,
-    required this.haveTime,
-    this.time,
-    required this.isWin,
-    required this.gameName,
-  });
+  const WinScreen(
+      {super.key,
+      required this.points,
+      required this.haveTime,
+      this.time,
+      required this.isWin,
+      required this.gameId,
+      required this.gameName});
   final int points;
   final bool haveTime;
   final double? time;
   final bool isWin;
   final String gameName;
+  final int gameId;
 
   @override
   State<StatefulWidget> createState() {
@@ -59,6 +60,7 @@ class WinScreenState extends State<WinScreen> {
                         totalLevel: 100,
                         levelCompleted: levelCompleted,
                         game: games[0]),
+                    gmaeId: widget.gameId,
                   )),
           (route) => true,
         );
@@ -76,6 +78,7 @@ class WinScreenState extends State<WinScreen> {
                         totalLevel: 100,
                         levelCompleted: levelCompleted,
                         game: games[1]),
+                    gmaeId: widget.gameId,
                   )),
           (route) => true,
         );
@@ -171,7 +174,41 @@ class WinScreenState extends State<WinScreen> {
                       ],
                     ),
                     child: ElevatedButton(
-                      onPressed: _continue,
+                      onPressed: () async {
+                        int levelCompleted = 0;
+                        Game game = games[0];
+                        switch (widget.gameId) {
+                          case 2:
+                            levelCompleted = await SharedPreferencesHelper
+                                .getMusicPasswordLevel();
+                            game = games[1];
+                            break;
+                          case 5:
+                            levelCompleted = await SharedPreferencesHelper
+                                .getAnonymousLevel();
+                            game = games[2];
+                            break;
+                        }
+                        print("level complete" + levelCompleted.toString());
+                        print("game" +
+                            game.name +
+                            " - " +
+                            game.id.toString() +
+                            " - " +
+                            widget.gameId.toString());
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LevelSelectScreen(
+                                      level: Level(
+                                        totalLevel: 100,
+                                        levelCompleted: levelCompleted,
+                                        game: game,
+                                      ),
+                                      gmaeId: widget.gameId,
+                                    )));
+                      },
                       style: widget.isWin ? buttonWin : buttonLose,
                       child: const Text(
                         'CONTINUE',

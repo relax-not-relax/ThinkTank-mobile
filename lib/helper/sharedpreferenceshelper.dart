@@ -19,6 +19,7 @@ class SharedPreferencesHelper {
   static const String flipCardLevel = 'flipCardLevel';
   static const String flipCardTime = 'flipCardTime';
   static const String imageSource = 'imageSource';
+  static const String anonymousLevel = 'anonymousLevel';
   static const String resourceVersionKey = 'resourceVersion';
   static const String anonymousResourcenKey = 'anonymousResourcenKey';
 
@@ -90,33 +91,6 @@ class SharedPreferencesHelper {
       return musicPasswordSources;
     } else {
       return [];
-    }
-  }
-
-  static Future<void> saveMusicPasswordSources(
-      List<MusicPasswordSource> sources) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    List<Map<String, dynamic>> jsonList =
-        sources.map((source) => source.toJson()).toList();
-
-    String jsonString = jsonEncode(jsonList);
-
-    await prefs.setStringList(musicPassSource, [jsonString]);
-  }
-
-  static Future<void> saveMusicPasswordLevel(int level) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(musicPasswordLevel, level.toString());
-  }
-
-  static Future<int> getMusicPasswordLevel() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? json = prefs.getString(musicPasswordLevel);
-    if (json != null) {
-      return int.parse(json);
-    } else {
-      return 0;
     }
   }
 
@@ -266,6 +240,48 @@ class SharedPreferencesHelper {
       }
     } else {
       return [];
+    }
+  }
+
+  static Future<void> saveMusicPasswordSources(
+      List<MusicPasswordSource> sources) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<Map<String, dynamic>> jsonList =
+        sources.map((source) => source.toJson()).toList();
+
+    String jsonString = jsonEncode(jsonList);
+
+    await prefs.setStringList(musicPassSource, [jsonString]);
+  }
+
+  static Future<void> saveMusicPasswordLevel(int level) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(musicPasswordLevel, level.toString());
+  }
+
+  static Future<void> saveAnonymousLevel(int level) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(anonymousLevel, level.toString());
+  }
+
+  static Future<int> getAnonymousLevel() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? json = prefs.getString(anonymousLevel);
+    if (json != null) {
+      return int.parse(json);
+    } else {
+      return 0;
+    }
+  }
+
+  static Future<int> getMusicPasswordLevel() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? json = prefs.getString(musicPasswordLevel);
+    if (json != null) {
+      return int.parse(json);
+    } else {
+      return 0;
     }
   }
 

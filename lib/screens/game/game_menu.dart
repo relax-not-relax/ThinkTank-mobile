@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/game.dart';
 import 'package:thinktank_mobile/models/level.dart';
 import 'package:thinktank_mobile/screens/game/level_select.dart';
+import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/widgets/game/memory_type.dart';
 import 'package:unicons/unicons.dart';
 
@@ -24,7 +26,8 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => LevelSelectScreen(level: level),
+        builder: (context) =>
+            LevelSelectScreen(level: level, gmaeId: widget.game.id),
       ),
     );
   }
@@ -524,6 +527,23 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () async {
+            Account? account = await SharedPreferencesHelper.getInfo();
+            // ignore: use_build_context_synchronously
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomeScreen(account: account!),
+              ),
+              (route) => false,
+            );
+          },
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+        ),
         backgroundColor: const Color.fromARGB(0, 255, 255, 255),
         elevation: 0,
         iconTheme: const IconThemeData(

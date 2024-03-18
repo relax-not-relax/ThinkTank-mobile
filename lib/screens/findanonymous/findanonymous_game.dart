@@ -1,14 +1,21 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:thinktank_mobile/api/achieviements_api.dart';
+import 'package:thinktank_mobile/data/data.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/findanounymous_assets.dart';
 import 'package:thinktank_mobile/screens/findanonymous/cardprovider.dart';
 import 'package:thinktank_mobile/widgets/appbar/game_appbar.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:thinktank_mobile/widgets/others/textstroke.dart';
+import 'package:thinktank_mobile/widgets/others/winscreen.dart';
 
 class AnonymousCard extends StatefulWidget {
   const AnonymousCard(
@@ -77,10 +84,7 @@ class _AnonymousCardState extends State<AnonymousCard> {
         ),
         child: ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(10)),
-          child: Image.network(
-            widget.avtlink,
-            fit: BoxFit.cover,
-          ),
+          child: Image.file(File(widget.avtlink), fit: BoxFit.cover),
         ),
       );
 }
@@ -121,6 +125,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
   bool findVisible = false;
   bool cardVisible = false;
   bool finishVisible = false;
+  bool continueVisible = false;
   bool isWin = false;
   String description = '';
   String bgFinish = '';
@@ -136,31 +141,38 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
 
   List<String> modifyList(List<String> inputList, List<String> listTmp) {
     List<String> modifiedList = List.from(inputList);
-
-    while (areAdjacent(modifiedList, listTmp)) {
+    modifiedList.shuffle();
+    while (areAdjacent(modifiedList, listTmp) && widget.numberOfAnswer > 1) {
       modifiedList.shuffle();
+      print('ec ec');
     }
-
     return modifiedList;
   }
 
   @override
   void initState() {
+    print('vao vao');
     List<String> listTmp = [];
     setState(() {
       remainingTime = Duration(seconds: widget.time);
       for (var element in widget.listAnswer) {
         lisAvt.add(element.imgPath);
       }
+      print('vao vao 1');
       for (int i = 1; i <= widget.numberOfAnswer; i++) {
         listAnswer.add(widget.listAnswer[i - 1]);
       }
+      print('vao vao 2');
       for (var element in listAnswer) {
         description += '${element.description}\n';
         listTmp.add(element.imgPath);
       }
+      print('vao vao 3');
     });
+
     lisAvt = modifyList(lisAvt, listTmp);
+
+    print('vao vao 4');
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
@@ -196,19 +208,71 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
   void lose() {
     setState(() {
       finishVisible = true;
+      continueVisible = true;
       tryAgainVisible = true;
       bgFinish = 'assets/pics/boo.png';
       timer?.cancel();
+      isWin = false;
     });
   }
 
-  void win() {
-    double points = (remainingTime.inMilliseconds / 1000);
+  void continueFinish() async {
+    if (isWin) {
+      double points = (remainingTime.inMilliseconds / 1000);
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WinScreen(
+            haveTime: true,
+            points: (points * 100).toInt(),
+            time:
+                (widget.time * 1000 - remainingTime.inMilliseconds).toDouble() /
+                    1000,
+            isWin: true,
+            gameId: 5,
+            gameName: games[2].name,
+          ),
+        ),
+        (route) => false,
+      );
+    } else {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WinScreen(
+            haveTime: false,
+            points: 0,
+            time: 0,
+            isWin: false,
+            gameId: 5,
+            gameName: games[2].name,
+          ),
+        ),
+        (route) => false,
+      );
+    }
+  }
+
+  void win() async {
     setState(() {
       isWin = true;
       finishVisible = true;
       bgFinish = 'assets/pics/cg.png';
       timer?.cancel();
+    });
+    double points = (remainingTime.inMilliseconds / 1000);
+    await SharedPreferencesHelper.saveAnonymousLevel(widget.level + 1);
+    Account? account = await SharedPreferencesHelper.getInfo();
+    await ApiAchieviements.addAchieviements(
+      (widget.time * 1000 - remainingTime.inMilliseconds).toDouble() / 1000,
+      (points * 100).toInt(),
+      widget.level,
+      5,
+      account!.id,
+      account.accessToken!,
+    );
+    setState(() {
+      continueVisible = true;
     });
   }
 
@@ -235,6 +299,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
       findVisible = false;
       cardVisible = false;
       finishVisible = false;
+      continueVisible = false;
       description = '';
       bgFinish = '';
       btnContentFinish = '';
@@ -244,7 +309,6 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
       showBG = true;
       listAnswer = [];
       lisAvt = [];
-      remainingTime = const Duration(seconds: 10);
       timer;
       List<String> listTmp = [];
       setState(() {
@@ -312,16 +376,15 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
   bool areAdjacent(List<String> objects, List<String> targetObjects) {
     int targetLength = targetObjects.length;
     for (int i = 0; i <= objects.length - targetLength; i++) {
-      bool match = true;
+      int n = 0;
       for (int j = 0; j < targetLength; j++) {
         if (targetObjects.contains(objects[i + j])) {
-          match = false;
+          n++;
+        } else {
           break;
         }
       }
-      if (match) {
-        return true;
-      }
+      if (n >= targetLength) return true;
     }
     return false;
   }
@@ -566,33 +629,38 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
                           const SizedBox(
                             height: 20,
                           ),
-                          SizedBox(
-                            height: 76,
-                            width: 336,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.amber,
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(100),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.8),
-                                    blurRadius: 7,
-                                    offset: const Offset(0, 5),
+                          Visibility(
+                            visible: continueVisible,
+                            child: SizedBox(
+                              height: 76,
+                              width: 336,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.amber,
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(100),
                                   ),
-                                ],
-                              ),
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                style: button1v1,
-                                child: const Text(
-                                  'CONTINUE',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.w900,
-                                    fontFamily: 'ButtonCustomFont',
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.8),
+                                      blurRadius: 7,
+                                      offset: const Offset(0, 5),
+                                    ),
+                                  ],
+                                ),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    continueFinish();
+                                  },
+                                  style: button1v1,
+                                  child: const Text(
+                                    'CONTINUE',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w900,
+                                      fontFamily: 'ButtonCustomFont',
+                                    ),
                                   ),
                                 ),
                               ),
