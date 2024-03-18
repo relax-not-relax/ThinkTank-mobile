@@ -1,20 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-//import 'package:thinktank_mobile/data/imageswalkthrough_data.dart';
-import 'package:thinktank_mobile/models/imageswalkthrough.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
-class StartGameScreen extends StatelessWidget {
-  const StartGameScreen({
-    super.key,
-    required this.startImage,
-    required this.source,
-  });
-
-  final void Function() startImage;
-
-  final List<ImagesWalkthrough> source;
+class EndGameScreen extends StatelessWidget {
+  const EndGameScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,19 +12,18 @@ class StartGameScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            height: 300,
-            width: 300,
-            decoration: BoxDecoration(
+            height: 320,
+            width: 320,
+            decoration: const BoxDecoration(
               image: DecorationImage(
-                image: FileImage(File(source[0].bigImgPath)),
+                image: AssetImage("assets/pics/walkthrough_lose.png"),
                 fit: BoxFit.cover,
               ),
-              borderRadius: const BorderRadius.all(
+              borderRadius: BorderRadius.all(
                 Radius.circular(20.0),
               ),
             ),
           ),
-          //
           Container(
             height: MediaQuery.of(context).size.height * 0.2,
             width: MediaQuery.of(context).size.width,
@@ -46,7 +34,7 @@ class StartGameScreen extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               child: SizedBox(
                 height: 76,
-                width: 300,
+                width: 336,
                 child: Container(
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(
@@ -54,15 +42,15 @@ class StartGameScreen extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Color.fromARGB(255, 132, 53, 13),
+                        color: Color.fromARGB(255, 40, 52, 68),
                         blurRadius: 0,
                         offset: Offset(0, 8),
                       ),
                     ],
                   ),
                   child: ElevatedButton(
-                    onPressed: startImage,
-                    style: button1v1,
+                    onPressed: () {},
+                    style: button1v1_2,
                     child: const Text(
                       'CONTINUE',
                       style: TextStyle(

@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:thinktank_mobile/data/imageswalkthrough_data.dart';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+//import 'package:thinktank_mobile/data/imageswalkthrough_data.dart';
+import 'package:thinktank_mobile/models/imageswalkthrough.dart';
 import 'package:thinktank_mobile/widgets/game/walkthrough_item.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
@@ -11,12 +13,18 @@ class ImagesWalkthroughGameScreen extends StatefulWidget {
     required this.onCorrectAnswer,
     required this.onEndGame,
     required this.onInCorrectAnswer,
+    required this.source,
+    required this.onEndTime,
+    required this.isEnd,
   });
 
   final void Function(String imgAnswer) onSelectImage;
   final void Function() onCorrectAnswer;
   final void Function() onInCorrectAnswer;
   final void Function() onEndGame;
+  final List<ImagesWalkthrough> source;
+  final void Function() onEndTime;
+  final bool isEnd;
 
   @override
   State<ImagesWalkthroughGameScreen> createState() =>
@@ -30,33 +38,38 @@ class _ImagesWalkthroughGameScreenState
   Widget? content;
 
   void answerQuestion(String selectedAnswer) {
-    if (selectedAnswer == walkthroughs[currentQuestionIndex - 1].bigImgPath) {
-      widget.onCorrectAnswer();
-    } else if (selectedAnswer !=
-        walkthroughs[currentQuestionIndex - 1].bigImgPath) {
-      widget.onInCorrectAnswer();
+    if (widget.isEnd == false) {
+      if (selectedAnswer ==
+          widget.source[currentQuestionIndex - 1].bigImgPath) {
+        widget.onCorrectAnswer();
+      } else if (selectedAnswer !=
+          widget.source[currentQuestionIndex - 1].bigImgPath) {
+        widget.onInCorrectAnswer();
+        setState(() {
+          currentQuestionIndex = 1;
+        });
+      }
+
+      widget.onSelectImage(selectedAnswer);
       setState(() {
-        currentQuestionIndex = 1;
+        currentQuestionIndex++;
       });
-    }
 
-    widget.onSelectImage(selectedAnswer);
-    setState(() {
-      currentQuestionIndex++;
-    });
-
-    if (currentQuestionIndex == walkthroughs.length) {
-      widget.onEndGame();
+      if (currentQuestionIndex == widget.source.length) {
+        widget.onEndGame();
+      } else {
+        shuffle = List.from(widget.source[currentQuestionIndex].answerImgPath);
+        shuffle!.shuffle();
+      }
     } else {
-      shuffle = List.from(walkthroughs[currentQuestionIndex].answerImgPath);
-      shuffle!.shuffle();
+      widget.onEndTime();
     }
   }
 
   @override
   void initState() {
     super.initState();
-    shuffle = List.from(walkthroughs[currentQuestionIndex].answerImgPath);
+    shuffle = List.from(widget.source[currentQuestionIndex].answerImgPath);
     shuffle!.shuffle();
   }
 
@@ -64,11 +77,12 @@ class _ImagesWalkthroughGameScreenState
   Widget build(BuildContext context) {
     double itemHeight = 170;
     double itemWidth = MediaQuery.of(context).size.width / 2;
-    int itemCount = walkthroughs[0].answerImgPath.length;
+    int itemCount = widget.source[0].answerImgPath.length;
+    print(itemCount);
 
     double gridViewHeight = (itemCount / 2).ceil() * (itemHeight + 8);
 
-    content = (currentQuestionIndex == walkthroughs.length)
+    content = (currentQuestionIndex == widget.source.length)
         ? Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -139,8 +153,10 @@ class _ImagesWalkthroughGameScreenState
                   width: 200,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage(
-                          walkthroughs[currentQuestionIndex].bigImgPath),
+                      // image: AssetImage(
+                      //     widget.source[currentQuestionIndex].bigImgPath),
+                      image: FileImage(
+                          File(widget.source[currentQuestionIndex].bigImgPath)),
                       fit: BoxFit.cover,
                     ),
                     borderRadius: const BorderRadius.all(

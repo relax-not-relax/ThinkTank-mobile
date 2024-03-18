@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class WalkThroughItem extends StatelessWidget {
@@ -52,7 +54,8 @@ class WalkThroughItem extends StatelessWidget {
                 height: 100.0,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage(imgPath),
+                    // image: AssetImage(imgPath),
+                    image: FileImage(File(imgPath)),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: const BorderRadius.all(

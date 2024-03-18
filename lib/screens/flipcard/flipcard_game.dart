@@ -90,7 +90,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
     });
   }
 
-  late Future _intitResource;
+  late Future _initResource;
   Future<void> initResource() async {
     levelNow = widget.level;
     await _game.initGame(levelNow);
@@ -145,9 +145,9 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
   void initState() {
     super.initState();
     _game = FlipCardGame();
-    _intitResource = initResource();
+    _initResource = initResource();
 
-    _intitResource.then((value) => {
+    _initResource.then((value) => {
           setState(() {
             maxTime = Duration(seconds: _game.time.round());
             remainingTime = maxTime;

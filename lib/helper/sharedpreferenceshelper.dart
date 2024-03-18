@@ -18,6 +18,8 @@ class SharedPreferencesHelper {
   static const String musicPasswordLevel = 'musicPassLevel';
   static const String flipCardLevel = 'flipCardLevel';
   static const String flipCardTime = 'flipCardTime';
+  static const String imagesWalkthroughLevel = 'imagesWalkthroughLevel';
+  static const String imagesWalkthroughTime = 'imagesWalkthroughTime';
   static const String imageSource = 'imageSource';
   static const String anonymousLevel = 'anonymousLevel';
   static const String resourceVersionKey = 'resourceVersion';
@@ -142,6 +144,36 @@ class SharedPreferencesHelper {
   static Future<double> getFLipCardTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? json = prefs.getString(flipCardTime);
+    if (json != null) {
+      return double.parse(json);
+    } else {
+      return 0;
+    }
+  }
+
+  static Future<void> saveImagesWalkthroughLevel(int level) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(imagesWalkthroughLevel, level.toString());
+  }
+
+  static Future<int> getImagesWalkthroughLevel() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? json = prefs.getString(imagesWalkthroughLevel);
+    if (json != null) {
+      return int.parse(json);
+    } else {
+      return 0;
+    }
+  }
+
+  static Future<void> saveImagesWalkthroughTime(double time) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(imagesWalkthroughTime, time.toString());
+  }
+
+  static Future<double> getImagesWalkthroughTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? json = prefs.getString(imagesWalkthroughTime);
     if (json != null) {
       return double.parse(json);
     } else {

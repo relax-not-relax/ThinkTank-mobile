@@ -37,13 +37,4 @@ const walkthroughs = [
       'assets/pics/fruit_4.png'
     ],
   ),
-  // ImagesWalkthrough(
-  //   'assets/pics/fruit_5.png',
-  //   [
-  //     'assets/pics/fruit_1.png',
-  //     'assets/pics/fruit_5.png',
-  //     'assets/pics/fruit_3.png',
-  //     'assets/pics/fruit_4.png'
-  //   ],
-  // ),
 ];
