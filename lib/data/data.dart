@@ -22,7 +22,7 @@ const games = [
     color: Color.fromARGB(255, 245, 171, 43),
   ),
   Game(
-    id: 3,
+    id: 5,
     imageUrl: "assets/pics/game_3.png",
     name: "Find The Anonymous",
     description:
@@ -40,7 +40,7 @@ const games = [
     color: Color.fromARGB(255, 85, 125, 176),
   ),
   Game(
-    id: 5,
+    id: 6,
     imageUrl: "assets/pics/game_5.png",
     name: "Room Party",
     description:

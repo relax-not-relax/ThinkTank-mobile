@@ -71,24 +71,36 @@ class ApiAchieviements {
         'Authorization': 'Bearer $authToken',
       },
     );
+    print("get level status: " + response.statusCode.toString());
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       int? musicPasswordLevel;
+      int? anonymousLEvel;
       int? flipCardLevel;
-      for (var element in jsonData) {
-        switch (element['gameId']) {
-          case 1:
-            flipCardLevel = element['level'] + 1;
-            SharedPreferencesHelper.saveFLipCardLevel(flipCardLevel ?? 1);
-            break;
+      if (jsonData.toString() == '[]') {
+        SharedPreferencesHelper.saveAnonymousLevel(1);
+        SharedPreferencesHelper.saveMusicPasswordLevel(1);
+      } else {
+        for (var element in jsonData) {
+          switch (element['gameId']) {
+            case 1:
+              flipCardLevel = element['level'] + 1;
+              print('level $jsonData');
+              break;
 
-          case 2:
-            musicPasswordLevel = element['level'] + 1;
-            print('level $jsonData');
-            SharedPreferencesHelper.saveMusicPasswordLevel(
-                musicPasswordLevel ?? 1);
-            break;
+            case 2:
+              musicPasswordLevel = element['level'] + 1;
+              print('level $jsonData');
+              SharedPreferencesHelper.saveMusicPasswordLevel(
+                  musicPasswordLevel ?? 1);
+              break;
+            case 5:
+              anonymousLEvel = element['level'] + 1;
+              print('level $jsonData');
+              SharedPreferencesHelper.saveAnonymousLevel(anonymousLEvel ?? 1);
+              break;
+          }
         }
       }
     } else if (response.statusCode == 401 || response.statusCode == 403) {
@@ -101,25 +113,37 @@ class ApiAchieviements {
             'https://thinktank-sep490.azurewebsites.net/api/accounts/game-level-of-account?accountId=$accountId'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $authToken',
+          'Authorization': 'Bearer ${account2.accessToken}',
         },
       );
       if (response2.statusCode == 200) {
         final jsonData = json.decode(response2.body);
         int? musicPasswordLevel;
+        int? anonymousLEvel;
         int? flipCardLevel;
-        for (var element in jsonData) {
-          switch (element['gameId']) {
-            case 1:
-              flipCardLevel = element['level'] + 1;
-              SharedPreferencesHelper.saveFLipCardLevel(flipCardLevel ?? 1);
-              break;
+        if (jsonData.toString() == '[]') {
+          SharedPreferencesHelper.saveAnonymousLevel(1);
+          SharedPreferencesHelper.saveMusicPasswordLevel(1);
+        } else {
+          for (var element in jsonData) {
+            switch (element['gameId']) {
+              case 1:
+                flipCardLevel = element['level'] + 1;
+                print('level $jsonData');
+                break;
 
-            case 2:
-              musicPasswordLevel = element['level'] + 1;
-              SharedPreferencesHelper.saveMusicPasswordLevel(
-                  musicPasswordLevel ?? 1);
-              break;
+              case 2:
+                musicPasswordLevel = element['level'] + 1;
+                print('level $jsonData');
+                SharedPreferencesHelper.saveMusicPasswordLevel(
+                    musicPasswordLevel ?? 1);
+                break;
+              case 5:
+                anonymousLEvel = element['level'] + 1;
+                print('level $jsonData');
+                SharedPreferencesHelper.saveAnonymousLevel(anonymousLEvel ?? 1);
+                break;
+            }
           }
         }
       } else {

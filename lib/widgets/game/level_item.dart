@@ -104,7 +104,8 @@ class LevelItem extends StatelessWidget {
                       break;
                     case 'Find The Anonymous':
                       var data = await geFindAnonymous(levelNumber);
-                      int m = levelNumber ~/ 10 + 1;
+                      int m = levelNumber ~/ 10 + 2;
+                      print('longlong');
 
                       // ignore: use_build_context_synchronously
                       Navigator.push(
@@ -118,6 +119,16 @@ class LevelItem extends StatelessWidget {
                               time: data.time),
                         ),
                       );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => FlipCardGamePlay(
+                      //       maxTime: const Duration(seconds: 10),
+                      //       account: account!,
+                      //       gameName: game,
+                      //     ),
+                      //   ),
+                      // );
                       break;
                     case 'Flip Card Challenge':
                       // ignore: use_build_context_synchronously
@@ -192,7 +203,7 @@ Future<MusicPassword> getMusicPassword(int level) async {
 }
 
 Future<double> getTimeAnonymous(int level) async {
-  int m = level ~/ 10 + 1;
+  int m = level ~/ 10 + 2;
   int c = (level % 10 <= 1) ? level ~/ 10 : ((level ~/ 10) + 1);
   if (level == 1)
     return (3.15 * m);
@@ -203,8 +214,8 @@ Future<double> getTimeAnonymous(int level) async {
 }
 
 Future<FindAnonymous> geFindAnonymous(int level) async {
-  int time = (await getTimeAnonymous(level)).toInt() + 20;
-  int total = 10 + (level ~/ 10) * 5;
+  int total = 15 + (level ~/ 10) * 5;
+  int time = (await getTimeAnonymous(level)).toInt() + 3 * total;
 //20s để cộng vào thời gian xem hình;
   List<FindAnonymousAsset> listSource =
       await SharedPreferencesHelper.getAnonymousAssets();
