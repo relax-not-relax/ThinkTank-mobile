@@ -105,6 +105,21 @@ final ButtonStyle button1v1 = ElevatedButton.styleFrom(
     ),
   ),
 );
+
+final ButtonStyle button1v1_2 = ElevatedButton.styleFrom(
+  backgroundColor: const Color.fromRGBO(45, 64, 89, 1),
+  elevation: 0,
+  shape: const RoundedRectangleBorder(
+    side: BorderSide(
+      color: Colors.white,
+      width: 3.8,
+    ),
+    borderRadius: BorderRadius.all(
+      Radius.circular(100),
+    ),
+  ),
+);
+
 final ButtonStyle buttonWin = ElevatedButton.styleFrom(
   backgroundColor: const Color.fromRGBO(255, 212, 96, 1),
   elevation: 0,

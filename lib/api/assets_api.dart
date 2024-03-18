@@ -42,7 +42,7 @@ class AssetsAPI {
   static Future<void> addAssets(int version, String authToken) async {
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/assets?PageSize=1000000&Version=$version'),
+          'https://thinktank-sep490.azurewebsites.net/api/assets?PageSize=20&Version=$version'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $authToken',
@@ -75,10 +75,10 @@ class AssetsAPI {
             listPathImageSource.add(path);
             break;
           case 5:
-            FindAnonymousAsset asset =
-                await ConvertToFindAnonymousAssets(element);
-            listAnomymous.add(asset);
-            break;
+          // FindAnonymousAsset asset =
+          //     await ConvertToFindAnonymousAssets(element);
+          // listAnomymous.add(asset);
+          // break;
         }
       }
       await SharedPreferencesHelper.saveImageResoure(listPathImageSource);

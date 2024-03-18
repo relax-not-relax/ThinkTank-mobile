@@ -149,7 +149,7 @@ class LevelItem extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => GameMainScreen(
-                            maxTime: const Duration(seconds: 120),
+                            levelNumber: levelNumber,
                             account: account!,
                             gameName: game,
                           ),
