@@ -86,6 +86,21 @@ class WinScreenState extends State<WinScreen> {
       case 'Find The Anonymous':
         break;
       case 'Images Walkthrough':
+        int levelCompleted =
+            await SharedPreferencesHelper.getImagesWalkthroughLevel();
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LevelSelectScreen(
+                    level: Level(
+                        totalLevel: 100,
+                        levelCompleted: levelCompleted,
+                        game: games[4]),
+                    gmaeId: widget.gameId,
+                  )),
+          (route) => true,
+        );
         break;
     }
   }
@@ -187,6 +202,11 @@ class WinScreenState extends State<WinScreen> {
                             levelCompleted = await SharedPreferencesHelper
                                 .getAnonymousLevel();
                             game = games[2];
+                            break;
+                          case 4:
+                            levelCompleted = await SharedPreferencesHelper
+                                .getImagesWalkthroughLevel();
+                            game = games[3];
                             break;
                         }
                         print("level complete" + levelCompleted.toString());

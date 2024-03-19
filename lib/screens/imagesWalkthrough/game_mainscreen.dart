@@ -2,6 +2,7 @@ import 'dart:async';
 // import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 // import 'package:thinktank_mobile/data/imageswalkthrough_data.dart';
 // import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
@@ -11,6 +12,7 @@ import 'package:thinktank_mobile/screens/imagesWalkthrough/endgame_screen.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/imageswalkthroughgame_screen.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/startgame_screen.dart';
 import 'package:thinktank_mobile/widgets/appbar/game_appbar.dart';
+import 'package:thinktank_mobile/widgets/others/winscreen.dart';
 
 class GameMainScreen extends StatefulWidget {
   const GameMainScreen({
@@ -103,6 +105,49 @@ class _GameMainScreenState extends State<GameMainScreen> {
     // });
   }
 
+  void win() async {
+    double points = (remainingTime.inMilliseconds / 1000);
+    await SharedPreferencesHelper.saveImagesWalkthroughLevel(
+        widget.levelNumber + 1);
+  }
+
+  void _continue() {
+    double points = (remainingTime.inMilliseconds / 1000);
+    if (isLosed == false) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WinScreen(
+            haveTime: true,
+            points: (points * 100).toInt(),
+            time: (maxTime.inMilliseconds - remainingTime.inMilliseconds)
+                    .toDouble() /
+                1000,
+            isWin: true,
+            gameName: widget.gameName,
+            gameId: 4,
+          ),
+        ),
+        (route) => false,
+      );
+    } else {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WinScreen(
+            haveTime: false,
+            points: 0,
+            time: 0,
+            isWin: false,
+            gameName: widget.gameName,
+            gameId: 4,
+          ),
+        ),
+        (route) => false,
+      );
+    }
+  }
+
   void switchScreen() {
     if (isLosed == false) {
       setState(() {
@@ -183,11 +228,12 @@ class _GameMainScreenState extends State<GameMainScreen> {
             percent = correct / total;
           });
         },
-        onEndGame: () {
+        onEndGame: () async {
           timer?.cancel();
           setState(() {
             timer = null;
           });
+          win();
         },
         onInCorrectAnswer: () {
           incorrectSelect();
@@ -197,6 +243,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
         onEndTime: () {
           onTimeIsEnd();
         },
+        onDone: _continue,
       );
     }
 

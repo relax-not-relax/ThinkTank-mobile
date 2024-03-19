@@ -16,12 +16,14 @@ class ImagesWalkthroughGameScreen extends StatefulWidget {
     required this.source,
     required this.onEndTime,
     required this.isEnd,
+    required this.onDone,
   });
 
   final void Function(String imgAnswer) onSelectImage;
   final void Function() onCorrectAnswer;
   final void Function() onInCorrectAnswer;
   final void Function() onEndGame;
+  final void Function() onDone;
   final List<ImagesWalkthrough> source;
   final void Function() onEndTime;
   final bool isEnd;
@@ -125,7 +127,9 @@ class _ImagesWalkthroughGameScreenState
                           ],
                         ),
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            widget.onDone();
+                          },
                           style: button1v1,
                           child: const Text(
                             'CONTINUE',
