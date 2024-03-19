@@ -47,10 +47,12 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
   final progressTitle = "Flipped";
   int total = 0;
   int pair = 0;
+  int indexCheck = -1;
   bool continueVisible = false;
   bool isLosed = false;
   bool _isCheckingCards = false;
   bool _isLoading = true;
+  bool _isFree = true;
 
   bool _areAllCardsFlipped() {
     print(_game.matchedCards.every((isFlipped) => false));
@@ -213,23 +215,43 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
 
                     return FlipCard(
                       key: cardKeys[index],
-                      flipOnTouch: !isMatched && !_isCheckingCards && !isLosed,
-                      onFlip: () {
-                        if (!isMatched && !_isCheckingCards && !isLosed) {
-                          _handleCardFlip(index, cardKeys[index]);
-                        }
-                      },
-                      front: Card(
-                        child: Container(
-                          height: 100.0,
-                          width: 100.0,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage("assets/pics/logo_2.png"),
-                              fit: BoxFit.cover,
-                            ),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10.0),
+                      // flipOnTouch: !isMatched &&
+                      //     !_isCheckingCards &&
+                      //     !isLosed &&
+                      //     index != indexCheck &&
+                      //     _isFree,
+                      flipOnTouch: false,
+                      // onFlip: () async {
+                      //   if (!isMatched &&
+                      //       !_isCheckingCards &&
+                      //       !isLosed &&
+                      //       index != indexCheck &&
+                      //       _isFree) {
+                      //     await _handleCardFlip(index, cardKeys[index]);
+                      //   }
+                      // },
+                      front: InkWell(
+                        onTap: () async {
+                          if (!isMatched &&
+                              !_isCheckingCards &&
+                              !isLosed &&
+                              index != indexCheck &&
+                              _isFree) {
+                            await _handleCardFlip(index, cardKeys[index]);
+                          }
+                        },
+                        child: Card(
+                          child: Container(
+                            height: 100.0,
+                            width: 100.0,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage("assets/pics/logo_2.png"),
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10.0),
+                              ),
                             ),
                           ),
                         ),
@@ -304,7 +326,10 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
     );
   }
 
-  void _handleCardFlip(int index, GlobalKey<FlipCardState> cardKey) {
+  Future _handleCardFlip(int index, GlobalKey<FlipCardState> cardKey) async {
+    setState(() {
+      _isFree = false;
+    });
     if (!_timerStarted) {
       startTimer();
       _timerStarted = true;
@@ -314,6 +339,8 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
       return;
     }
 
+    cardKey.currentState!.toggleCard();
+
     // if (checkCardKeys.isNotEmpty && checkCardKeys.contains(cardKey)) {
     //   return;
     // }
@@ -322,6 +349,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
     if (mounted)
       // ignore: curly_braces_in_flow_control_structures
       setState(() {
+        indexCheck = index;
         _game.gameImg[index] = _game.duplicatedCardList![index];
         _game.matchCheck.add({index: _game.duplicatedCardList![index]});
         checkCardKeys.add(cardKey);
@@ -334,6 +362,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
         // ignore: curly_braces_in_flow_control_structures
         setState(() {
           _isCheckingCards = true;
+          indexCheck = -1;
         });
 
       //double points = (remainingTime.inMilliseconds / 1000);
@@ -344,39 +373,36 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
         int secondCardIndex = _game.matchCheck[1].keys.first;
         _game.matchedCards[firstCardIndex] = true;
         _game.matchedCards[secondCardIndex] = true;
+        print(_game.matchedCards);
         if (mounted)
           // ignore: curly_braces_in_flow_control_structures
           setState(() {
             count += 2;
             _isCheckingCards = false;
+            total = (_game.cardCount ~/ 2).toInt();
+            pair = (count ~/ 2).toInt();
+            percent = pair / total;
           });
 
         checkCardKeys.clear();
         _game.matchCheck.clear();
-      } else if (_game.matchCheck[0].values.first ==
-              _game.matchCheck[1].values.first &&
-          _game.matchCheck[0].keys.first == _game.matchCheck[1].keys.first) {
-        if (mounted)
-          // ignore: curly_braces_in_flow_control_structures
-          setState(() {
-            _isCheckingCards = false;
-          });
-        _game.matchCheck.remove(_game.matchCheck[1]);
-        checkCardKeys.remove(checkCardKeys[1]);
-        print(_game.matchCheck);
-        print(checkCardKeys);
       } else {
-        Future.delayed(Duration(milliseconds: 550), () {
+        await Future.delayed(Duration(milliseconds: 550), () {
           if (mounted)
             // ignore: curly_braces_in_flow_control_structures
             setState(() {
               checkCardKeys[0].currentState?.toggleCard();
               checkCardKeys[1].currentState?.toggleCard();
+              setState(() {
+                _isFree = true;
+              });
               _isCheckingCards = false;
             });
           checkCardKeys.clear();
           _game.matchCheck.clear();
+          print(_game.matchedCards);
         });
+        print("lat lai");
       }
     }
 
@@ -387,5 +413,11 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
       timer?.cancel();
       win();
     }
+
+    setState(() {
+      _isFree = true;
+    });
+
+    print(indexCheck);
   }
 }
