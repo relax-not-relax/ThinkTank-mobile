@@ -309,25 +309,34 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
       startTimer();
       _timerStarted = true;
     }
+
     if (_game.matchedCards[index] || _isCheckingCards) {
       return;
     }
-    _areAllCardsFlipped();
+
+    // if (checkCardKeys.isNotEmpty && checkCardKeys.contains(cardKey)) {
+    //   return;
+    // }
+    //_areAllCardsFlipped();
 
     if (mounted)
+      // ignore: curly_braces_in_flow_control_structures
       setState(() {
         _game.gameImg[index] = _game.duplicatedCardList![index];
         _game.matchCheck.add({index: _game.duplicatedCardList![index]});
         checkCardKeys.add(cardKey);
+        print(_game.matchCheck);
+        print(checkCardKeys);
       });
 
     if (_game.matchCheck.length == 2) {
       if (mounted)
+        // ignore: curly_braces_in_flow_control_structures
         setState(() {
           _isCheckingCards = true;
         });
 
-      double points = (remainingTime.inMilliseconds / 1000);
+      //double points = (remainingTime.inMilliseconds / 1000);
       if (_game.matchCheck[0].values.first ==
               _game.matchCheck[1].values.first &&
           _game.matchCheck[0].keys.first != _game.matchCheck[1].keys.first) {
@@ -336,6 +345,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
         _game.matchedCards[firstCardIndex] = true;
         _game.matchedCards[secondCardIndex] = true;
         if (mounted)
+          // ignore: curly_braces_in_flow_control_structures
           setState(() {
             count += 2;
             _isCheckingCards = false;
@@ -343,9 +353,22 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
 
         checkCardKeys.clear();
         _game.matchCheck.clear();
+      } else if (_game.matchCheck[0].values.first ==
+              _game.matchCheck[1].values.first &&
+          _game.matchCheck[0].keys.first == _game.matchCheck[1].keys.first) {
+        if (mounted)
+          // ignore: curly_braces_in_flow_control_structures
+          setState(() {
+            _isCheckingCards = false;
+          });
+        _game.matchCheck.remove(_game.matchCheck[1]);
+        checkCardKeys.remove(checkCardKeys[1]);
+        print(_game.matchCheck);
+        print(checkCardKeys);
       } else {
-        Future.delayed(Duration(milliseconds: 600), () {
+        Future.delayed(Duration(milliseconds: 550), () {
           if (mounted)
+            // ignore: curly_braces_in_flow_control_structures
             setState(() {
               checkCardKeys[0].currentState?.toggleCard();
               checkCardKeys[1].currentState?.toggleCard();
