@@ -13,6 +13,7 @@ import 'package:thinktank_mobile/screens/findanonymous/findanonymous_game.dart';
 
 import 'package:thinktank_mobile/screens/friend/addfriend_screen.dart';
 import 'package:thinktank_mobile/screens/friend/friend_screen.dart';
+import 'package:thinktank_mobile/screens/game/leaderboard.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/game_mainscreen.dart';
 
 import 'package:thinktank_mobile/screens/introscreen.dart';
@@ -93,6 +94,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           useMaterial3: true,
         ),
         home: StartScreen(),
+        //home: LeaderBoardScreen(),
         // home: FindAnonymousGame(
         //   avt: 'asdv',
         //   listAnswer: [
