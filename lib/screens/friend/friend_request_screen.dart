@@ -37,8 +37,7 @@ class FriendRequestScreenState extends State<FriendRequestScreen> {
 
   Future<List<Friendship>> getListRequest() async {
     Account? account = await SharedPreferencesHelper.getInfo();
-    listTmp = await ApiFriends.searchRequest(
-        1, 1000, account!.id, "", account.accessToken!);
+    listTmp = await ApiFriends.searchRequest(1, 1000, account!.id, "");
     return listTmp.where((element) => element.accountId1 != null).toList();
   }
 
@@ -55,7 +54,7 @@ class FriendRequestScreenState extends State<FriendRequestScreen> {
               element.userName1!.contains(_codeController.text))
           .toList();
     });
-    await ApiFriends.acceptFriend(friendShipId, account!.accessToken!);
+    await ApiFriends.acceptFriend(friendShipId);
     // ignore: use_build_context_synchronously
     LoadingCustom.loaded(context);
   }
@@ -71,7 +70,7 @@ class FriendRequestScreenState extends State<FriendRequestScreen> {
               element.userName1!.contains(_codeController.text))
           .toList();
     });
-    await ApiFriends.deleteFriend(friendShipId, account!.accessToken!);
+    await ApiFriends.deleteFriend(friendShipId);
     // ignore: use_build_context_synchronously
     LoadingCustom.loaded(context);
   }

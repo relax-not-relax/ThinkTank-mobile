@@ -545,7 +545,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
                                 cardVisible = true;
                                 loadingVisible = true;
                               });
-                              Future.delayed(const Duration(seconds: 5), () {
+                              Future.delayed(const Duration(seconds: 3), () {
                                 setState(() {
                                   loadingVisible = false;
                                   startTimer();

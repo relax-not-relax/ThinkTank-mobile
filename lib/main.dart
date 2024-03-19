@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
 import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/screens/achievement/challenges_screen.dart';
@@ -17,6 +18,7 @@ import 'package:thinktank_mobile/screens/imagesWalkthrough/game_mainscreen.dart'
 import 'package:thinktank_mobile/screens/introscreen.dart';
 import 'package:thinktank_mobile/screens/startscreen.dart';
 import 'package:thinktank_mobile/widgets/game/walkthrough_item.dart';
+import 'package:thinktank_mobile/widgets/others/applifecycleobserver%20.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,8 +32,6 @@ void main() async {
         )
       : await Firebase.initializeApp();
   await FirebaseMessageAPI().initNotification();
-  await SharedPreferencesHelper.saveMusicPasswordLevel(1);
-  await SharedPreferencesHelper.saveFLipCardLevel(1);
 
   runApp(const MyApp());
 }
@@ -42,11 +42,29 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget startscreen = const CircularProgressIndicator();
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    if (state == AppLifecycleState.paused && account != null) {
+      FirebaseRealTime.setOnline(account.id, false);
+    }
+    if (state == AppLifecycleState.resumed && account != null) {
+      FirebaseRealTime.setOnline(account.id, true);
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     SharedPreferencesHelper.getFirstUse().then((value) {
       if (value) {
         setState(() {

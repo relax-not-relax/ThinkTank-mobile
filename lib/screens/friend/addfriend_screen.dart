@@ -8,7 +8,6 @@ import 'package:thinktank_mobile/models/friendship.dart';
 import 'package:thinktank_mobile/widgets/others/loadingcustom.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
-import 'package:unicons/unicons.dart';
 
 class AddFriendScreen extends StatefulWidget {
   const AddFriendScreen({super.key});
@@ -30,8 +29,8 @@ class AddFriendScreenState extends State<AddFriendScreen> {
         _isLoading = true;
       });
       Account? account = await SharedPreferencesHelper.getInfo();
-      List<Friendship> listTmp = await ApiFriends.searchFriends(
-          1, 1000, account!.id, code, account.accessToken!);
+      List<Friendship> listTmp =
+          await ApiFriends.searchFriends(1, 1000, account!.id, code);
       setState(() {
         list = listTmp;
         _isLoading = false;
@@ -45,8 +44,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
     setState(() {
       list[index].status = false;
     });
-    await ApiFriends.addFriend(
-        account!.id, list[index].accountId2!, account.accessToken!);
+    await ApiFriends.addFriend(account!.id, list[index].accountId2!);
     LoadingCustom.loaded(context);
   }
 
@@ -56,7 +54,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
     setState(() {
       list[index].status = null;
     });
-    await ApiFriends.deleteFriend(friendShipId, account!.accessToken!);
+    await ApiFriends.deleteFriend(friendShipId);
     LoadingCustom.loaded(context);
   }
 
@@ -66,7 +64,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
     setState(() {
       list[index].status = true;
     });
-    await ApiFriends.acceptFriend(friendShipId, account!.accessToken!);
+    await ApiFriends.acceptFriend(friendShipId);
     LoadingCustom.loaded(context);
   }
 

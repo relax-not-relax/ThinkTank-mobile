@@ -61,15 +61,14 @@ class FriendScreenState extends State<FriendScreen> {
           .toList();
       countFriend = listTmp.length;
     });
-    await ApiFriends.deleteFriend(friendShipId, account!.accessToken!);
+    await ApiFriends.deleteFriend(friendShipId);
     LoadingCustom.loaded(context);
     Navigator.pop(context);
   }
 
   Future<List<Friendship>> getFriendShip() async {
     Account? account = await SharedPreferencesHelper.getInfo();
-    hasRequest = (await ApiFriends.searchRequest(
-            1, 1000, account!.id, "", account.accessToken!))
+    hasRequest = (await ApiFriends.searchRequest(1, 1000, account!.id, ""))
         .where((element) => element.userName1 != null)
         .isNotEmpty;
     if (mounted) {
@@ -81,7 +80,6 @@ class FriendScreenState extends State<FriendScreen> {
       1,
       1000,
       account!.id,
-      account.accessToken!,
     );
   }
 
@@ -151,24 +149,21 @@ class FriendScreenState extends State<FriendScreen> {
                       Account? account =
                           await SharedPreferencesHelper.getInfo();
                       hasRequest = (await ApiFriends.searchRequest(
-                              1, 1000, account!.id, "", account.accessToken!))
+                              1, 1000, account!.id, ""))
                           .where((element) => element.userName1 != null)
                           .isNotEmpty;
                       setState(() {
                         hasRequest = hasRequest;
                       });
-                      _getFriensship = ApiFriends.getFriends(
-                        1,
-                        1000,
-                        account!.id,
-                        account.accessToken!,
-                      );
+                      _getFriensship = getFriendShip();
                       _getFriensship.then((listFriend) {
                         if (mounted) {
                           setState(() {
-                            list = listFriend;
-                            listTmp = listFriend;
-                            countFriend = listTmp.length;
+                            if (listFriend.isNotEmpty) {
+                              list = listFriend;
+                              listTmp = listFriend;
+                              countFriend = listTmp.length;
+                            }
                             _isLoading = false;
                           });
                         }
@@ -284,19 +279,15 @@ class FriendScreenState extends State<FriendScreen> {
 
                           Account? account =
                               await SharedPreferencesHelper.getInfo();
-                          hasRequest = (await ApiFriends.searchRequest(1, 1000,
-                                  account!.id, "", account.accessToken!))
+                          hasRequest = (await ApiFriends.searchRequest(
+                                  1, 1000, account!.id, ""))
                               .where((element) => element.userName1 != null)
                               .isNotEmpty;
                           setState(() {
                             hasRequest = hasRequest;
                           });
-                          _getFriensship = ApiFriends.getFriends(
-                            1,
-                            1000,
-                            account!.id,
-                            account.accessToken!,
-                          );
+                          _getFriensship =
+                              ApiFriends.getFriends(1, 1000, account!.id);
                           _getFriensship.then((listFriend) {
                             if (mounted) {
                               setState(() {
