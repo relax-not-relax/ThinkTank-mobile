@@ -32,9 +32,10 @@ class _OptionScreenState extends State<OptionScreen> {
     int _currentPage;
     _currentPage = 0;
     _pageController.addListener(() {
-      setState(() {
-        _currentPage = _pageController.page!.toInt();
-      });
+      if (mounted)
+        setState(() {
+          _currentPage = _pageController.page!.toInt();
+        });
     });
     _pageController.addListener(() {
       timer = Timer.periodic(const Duration(seconds: 3), (timer) {
@@ -54,6 +55,14 @@ class _OptionScreenState extends State<OptionScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    if (timer != null) {
+      timer!.cancel();
+    }
+  }
+
   void selectGame(BuildContext context, Game game) {
     Navigator.push(
       context,
@@ -70,9 +79,10 @@ class _OptionScreenState extends State<OptionScreen> {
       SharedPreferencesHelper.getNotifications();
 
   void pushNotification() {
-    setState(() {
-      amount++;
-    });
+    if (mounted)
+      setState(() {
+        amount++;
+      });
   }
 
   @override
@@ -110,9 +120,10 @@ class _OptionScreenState extends State<OptionScreen> {
     int notiAmountNotRead = notifications
         .where((notification) => notification.status == false)
         .length;
-    setState(() {
-      amount = notiAmountNotRead;
-    });
+    if (mounted)
+      setState(() {
+        amount = notiAmountNotRead;
+      });
     SharedPreferencesHelper.saveNotifications(notifications);
   }
 
@@ -130,9 +141,10 @@ class _OptionScreenState extends State<OptionScreen> {
         int notiAmountNotRead = notifications
             .where((notification) => notification.status == false)
             .length;
-        setState(() {
-          amount = notiAmountNotRead;
-        });
+        if (mounted)
+          setState(() {
+            amount = notiAmountNotRead;
+          });
         SharedPreferencesHelper.saveNotifications(notifications);
       },
     );
@@ -336,9 +348,10 @@ class _OptionScreenState extends State<OptionScreen> {
                       controller: _pageController,
                       itemCount: contest.length,
                       onPageChanged: (value) {
-                        setState(() {
-                          _activePage = value;
-                        });
+                        if (mounted)
+                          setState(() {
+                            _activePage = value;
+                          });
                       },
                       itemBuilder: (context, index) {
                         return _pages[index];

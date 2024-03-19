@@ -31,78 +31,20 @@ class WinScreen extends StatefulWidget {
 }
 
 class WinScreenState extends State<WinScreen> {
-  final winSound = AudioPlayer();
-  final loseSound = AudioPlayer();
+  // final winSound = AudioPlayer();
+  // final loseSound = AudioPlayer();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    winSound.setSourceAsset('sound/win.mp3');
-    loseSound.setSourceAsset('sound/lose.mp3');
-    if (widget.isWin) {
-      winSound.play(AssetSource('sound/win.mp3'));
-    } else {
-      loseSound.play(AssetSource('sound/lose.mp3'));
-    }
-  }
-
-  void _continue() async {
-    switch (widget.gameName) {
-      case 'Flip Card Challenge':
-        int levelCompleted = await SharedPreferencesHelper.getFLipCardLevel();
-        // ignore: use_build_context_synchronously
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => LevelSelectScreen(
-                    level: Level(
-                        totalLevel: 100,
-                        levelCompleted: levelCompleted,
-                        game: games[0]),
-                    gmaeId: widget.gameId,
-                  )),
-          (route) => true,
-        );
-        break;
-      case 'Music Password':
-        int levelCompleted =
-            await SharedPreferencesHelper.getMusicPasswordLevel();
-        Account? account = await SharedPreferencesHelper.getInfo();
-        // ignore: use_build_context_synchronously
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => LevelSelectScreen(
-                    level: Level(
-                        totalLevel: 100,
-                        levelCompleted: levelCompleted,
-                        game: games[1]),
-                    gmaeId: widget.gameId,
-                  )),
-          (route) => true,
-        );
-        break;
-      case 'Find The Anonymous':
-        break;
-      case 'Images Walkthrough':
-        int levelCompleted =
-            await SharedPreferencesHelper.getImagesWalkthroughLevel();
-        // ignore: use_build_context_synchronously
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => LevelSelectScreen(
-                    level: Level(
-                        totalLevel: 100,
-                        levelCompleted: levelCompleted,
-                        game: games[4]),
-                    gmaeId: widget.gameId,
-                  )),
-          (route) => true,
-        );
-        break;
-    }
+    // winSound.setSourceAsset('sound/win.mp3');
+    // loseSound.setSourceAsset('sound/lose.mp3');
+    // if (widget.isWin) {
+    //   winSound.play(AssetSource('sound/win.mp3'));
+    // } else {
+    //   loseSound.play(AssetSource('sound/lose.mp3'));
+    // }
   }
 
   @override
@@ -193,6 +135,11 @@ class WinScreenState extends State<WinScreen> {
                         int levelCompleted = 0;
                         Game game = games[0];
                         switch (widget.gameId) {
+                          case 1:
+                            levelCompleted = await SharedPreferencesHelper
+                                .getFLipCardLevel();
+                            game = games[0];
+                            break;
                           case 2:
                             levelCompleted = await SharedPreferencesHelper
                                 .getMusicPasswordLevel();
@@ -209,13 +156,6 @@ class WinScreenState extends State<WinScreen> {
                             game = games[3];
                             break;
                         }
-                        print("level complete" + levelCompleted.toString());
-                        print("game" +
-                            game.name +
-                            " - " +
-                            game.id.toString() +
-                            " - " +
-                            widget.gameId.toString());
                         // ignore: use_build_context_synchronously
                         Navigator.pushReplacement(
                             context,

@@ -156,12 +156,32 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                             ],
                           ),
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              int level = 1;
+                              switch (widget.game.id) {
+                                case 1:
+                                  level = await SharedPreferencesHelper
+                                      .getFLipCardLevel();
+                                  break;
+                                case 2:
+                                  level = await SharedPreferencesHelper
+                                      .getMusicPasswordLevel();
+                                  break;
+                                case 4:
+                                  level = await SharedPreferencesHelper
+                                      .getImagesWalkthroughLevel();
+                                  break;
+                                case 5:
+                                  level = await SharedPreferencesHelper
+                                      .getAnonymousLevel();
+                                  break;
+                              }
+                              // ignore: use_build_context_synchronously
                               onPlay(
                                 context,
                                 Level(
-                                  totalLevel: 6,
-                                  levelCompleted: 1,
+                                  totalLevel: 100,
+                                  levelCompleted: level,
                                   game: widget.game,
                                 ),
                               );
@@ -384,8 +404,19 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                                     level = await SharedPreferencesHelper
                                         .getMusicPasswordLevel();
                                     break;
+                                  case 4:
+                                    level = await SharedPreferencesHelper
+                                        .getImagesWalkthroughLevel();
+                                    break;
+                                  case 5:
+                                    level = await SharedPreferencesHelper
+                                        .getAnonymousLevel();
+                                    break;
                                 }
                                 // ignore: use_build_context_synchronously
+                                print(level);
+                                print(widget.game.name);
+                                print(widget.game.id);
                                 onPlay(
                                   context,
                                   Level(

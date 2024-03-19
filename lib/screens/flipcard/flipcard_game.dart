@@ -59,18 +59,20 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
 
   void startTimer() {
     timer = Timer.periodic(const Duration(milliseconds: 500), (_) {
-      setState(() {
-        final newTime = remainingTime - const Duration(milliseconds: 500);
-        if (newTime.isNegative) {
-          timer!.cancel();
-          setState(() {
-            isLosed = true;
-            continueVisible = true;
-          });
-        } else {
-          remainingTime = newTime;
-        }
-      });
+      if (mounted)
+        setState(() {
+          final newTime = remainingTime - const Duration(milliseconds: 500);
+          if (newTime.isNegative) {
+            timer!.cancel();
+            if (mounted)
+              setState(() {
+                isLosed = true;
+                continueVisible = true;
+              });
+          } else {
+            remainingTime = newTime;
+          }
+        });
     });
   }
 
@@ -78,16 +80,18 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
     double points = (remainingTime.inMilliseconds / 1000);
     await SharedPreferencesHelper.saveFLipCardLevel(widget.level + 1);
     await ApiAchieviements.addAchieviements(
-      (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() / 1000,
-      (points * 100).toInt(),
-      levelNow,
-      1,
-      widget.account.id,
-      widget.account.accessToken!,
-    );
-    setState(() {
-      continueVisible = true;
-    });
+        (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
+            1000,
+        (points * 100).toInt(),
+        levelNow,
+        1,
+        widget.account.id,
+        widget.account.accessToken!,
+        _game.cardCount ~/ 2);
+    if (mounted)
+      setState(() {
+        continueVisible = true;
+      });
   }
 
   late Future _initResource;
@@ -148,25 +152,26 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
     _initResource = initResource();
 
     _initResource.then((value) => {
-          setState(() {
-            maxTime = Duration(seconds: _game.time.round());
-            remainingTime = maxTime;
-            total = (_game.cardCount ~/ 2).toInt();
-            pair = (count ~/ 2).toInt();
-            percent = pair / total;
-            _isLoading = false;
-          })
+          if (mounted)
+            setState(() {
+              maxTime = Duration(seconds: _game.time.round());
+              remainingTime = maxTime;
+              total = (_game.cardCount ~/ 2).toInt();
+              pair = (count ~/ 2).toInt();
+              percent = pair / total;
+              _isLoading = false;
+            })
         });
   }
 
-  @override
-  void setState(VoidCallback fn) {
-    // TODO: implement setState
-    super.setState(fn);
-    total = (_game.cardCount ~/ 2).toInt();
-    pair = (count ~/ 2).toInt();
-    percent = pair / total;
-  }
+  // @override
+  // void if (mounted) setState(VoidCallback fn) {
+  //   // TODO: implement if (mounted) setState
+  //   super.if (mounted) setState(fn);
+  //   total = (_game.cardCount ~/ 2).toInt();
+  //   pair = (count ~/ 2).toInt();
+  //   percent = pair / total;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -309,16 +314,18 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
     }
     _areAllCardsFlipped();
 
-    setState(() {
-      _game.gameImg[index] = _game.duplicatedCardList![index];
-      _game.matchCheck.add({index: _game.duplicatedCardList![index]});
-      checkCardKeys.add(cardKey);
-    });
+    if (mounted)
+      setState(() {
+        _game.gameImg[index] = _game.duplicatedCardList![index];
+        _game.matchCheck.add({index: _game.duplicatedCardList![index]});
+        checkCardKeys.add(cardKey);
+      });
 
     if (_game.matchCheck.length == 2) {
-      setState(() {
-        _isCheckingCards = true;
-      });
+      if (mounted)
+        setState(() {
+          _isCheckingCards = true;
+        });
 
       double points = (remainingTime.inMilliseconds / 1000);
       if (_game.matchCheck[0].values.first ==
@@ -328,20 +335,22 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
         int secondCardIndex = _game.matchCheck[1].keys.first;
         _game.matchedCards[firstCardIndex] = true;
         _game.matchedCards[secondCardIndex] = true;
-        setState(() {
-          count += 2;
-          _isCheckingCards = false;
-        });
+        if (mounted)
+          setState(() {
+            count += 2;
+            _isCheckingCards = false;
+          });
 
         checkCardKeys.clear();
         _game.matchCheck.clear();
       } else {
         Future.delayed(Duration(milliseconds: 600), () {
-          setState(() {
-            checkCardKeys[0].currentState?.toggleCard();
-            checkCardKeys[1].currentState?.toggleCard();
-            _isCheckingCards = false;
-          });
+          if (mounted)
+            setState(() {
+              checkCardKeys[0].currentState?.toggleCard();
+              checkCardKeys[1].currentState?.toggleCard();
+              _isCheckingCards = false;
+            });
           checkCardKeys.clear();
           _game.matchCheck.clear();
         });
