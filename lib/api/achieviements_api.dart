@@ -13,7 +13,8 @@ class ApiAchieviements {
       // int topicId,
       // int pieceOfInformation,
       int accountId,
-      String authToken) async {
+      String authToken,
+      int pieceOfInformation) async {
     Map<String, dynamic> data = {
       "duration": duration,
       "mark": mark,
@@ -21,7 +22,7 @@ class ApiAchieviements {
       "gameId": gameId,
       "accountId": accountId,
       // "topicId": 0,
-      // "pieceOfInformation": 0
+      "pieceOfInformation": pieceOfInformation
     };
     String jsonBody = jsonEncode(data);
 
@@ -78,22 +79,36 @@ class ApiAchieviements {
       int? musicPasswordLevel;
       int? anonymousLEvel;
       int? flipCardLevel;
+      int? imgWalkthrougLevel;
+      print(jsonData.toString());
+      SharedPreferencesHelper.saveAnonymousLevel(1);
+      SharedPreferencesHelper.saveMusicPasswordLevel(1);
+      SharedPreferencesHelper.saveFLipCardLevel(1);
+      SharedPreferencesHelper.saveImagesWalkthroughLevel(1);
       if (jsonData.toString() == '[]') {
         SharedPreferencesHelper.saveAnonymousLevel(1);
         SharedPreferencesHelper.saveMusicPasswordLevel(1);
+        SharedPreferencesHelper.saveFLipCardLevel(1);
+        SharedPreferencesHelper.saveImagesWalkthroughLevel(1);
       } else {
         for (var element in jsonData) {
           switch (element['gameId']) {
             case 1:
               flipCardLevel = element['level'] + 1;
               print('level $jsonData');
+              SharedPreferencesHelper.saveFLipCardLevel(flipCardLevel ?? 1);
               break;
-
             case 2:
               musicPasswordLevel = element['level'] + 1;
               print('level $jsonData');
               SharedPreferencesHelper.saveMusicPasswordLevel(
                   musicPasswordLevel ?? 1);
+              break;
+            case 4:
+              imgWalkthrougLevel = element['level'] + 1;
+              print('level $jsonData');
+              SharedPreferencesHelper.saveImagesWalkthroughLevel(
+                  imgWalkthrougLevel ?? 1);
               break;
             case 5:
               anonymousLEvel = element['level'] + 1;
@@ -121,22 +136,35 @@ class ApiAchieviements {
         int? musicPasswordLevel;
         int? anonymousLEvel;
         int? flipCardLevel;
+        int? imgWalkthrougLevel;
+        SharedPreferencesHelper.saveAnonymousLevel(1);
+        SharedPreferencesHelper.saveMusicPasswordLevel(1);
+        SharedPreferencesHelper.saveFLipCardLevel(1);
+        SharedPreferencesHelper.saveImagesWalkthroughLevel(1);
         if (jsonData.toString() == '[]') {
           SharedPreferencesHelper.saveAnonymousLevel(1);
           SharedPreferencesHelper.saveMusicPasswordLevel(1);
+          SharedPreferencesHelper.saveFLipCardLevel(1);
+          SharedPreferencesHelper.saveImagesWalkthroughLevel(1);
         } else {
           for (var element in jsonData) {
             switch (element['gameId']) {
               case 1:
                 flipCardLevel = element['level'] + 1;
                 print('level $jsonData');
+                SharedPreferencesHelper.saveFLipCardLevel(flipCardLevel ?? 1);
                 break;
-
               case 2:
                 musicPasswordLevel = element['level'] + 1;
                 print('level $jsonData');
                 SharedPreferencesHelper.saveMusicPasswordLevel(
                     musicPasswordLevel ?? 1);
+                break;
+              case 4:
+                imgWalkthrougLevel = element['level'] + 1;
+                print('level $jsonData');
+                SharedPreferencesHelper.saveImagesWalkthroughLevel(
+                    imgWalkthrougLevel ?? 1);
                 break;
               case 5:
                 anonymousLEvel = element['level'] + 1;

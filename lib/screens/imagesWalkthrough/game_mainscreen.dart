@@ -2,6 +2,7 @@ import 'dart:async';
 // import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 // import 'package:thinktank_mobile/data/imageswalkthrough_data.dart';
 // import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
@@ -109,6 +110,15 @@ class _GameMainScreenState extends State<GameMainScreen> {
     double points = (remainingTime.inMilliseconds / 1000);
     await SharedPreferencesHelper.saveImagesWalkthroughLevel(
         widget.levelNumber + 1);
+    await ApiAchieviements.addAchieviements(
+        (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
+            1000,
+        (points * 100).toInt(),
+        widget.levelNumber,
+        4,
+        widget.account.id,
+        widget.account.accessToken!,
+        _game.gameData.length - 1);
   }
 
   void _continue() {

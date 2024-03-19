@@ -162,13 +162,14 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
     double points = (remainingTime.inMilliseconds / 1000);
     await SharedPreferencesHelper.saveMusicPasswordLevel(widget.info.level + 1);
     await ApiAchieviements.addAchieviements(
-      (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() / 1000,
-      (points * 100).toInt(),
-      widget.info.level,
-      2,
-      widget.account.id,
-      widget.account.accessToken!,
-    );
+        (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
+            1000,
+        (points * 100).toInt(),
+        widget.info.level,
+        2,
+        widget.account.id,
+        widget.account.accessToken!,
+        widget.info.answer.length ~/ 2);
     setState(() {
       bg = 'assets/pics/winmuisc.png';
       checkVisible = false;

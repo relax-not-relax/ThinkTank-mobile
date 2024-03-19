@@ -264,13 +264,13 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
     await SharedPreferencesHelper.saveAnonymousLevel(widget.level + 1);
     Account? account = await SharedPreferencesHelper.getInfo();
     await ApiAchieviements.addAchieviements(
-      (widget.time * 1000 - remainingTime.inMilliseconds).toDouble() / 1000,
-      (points * 100).toInt(),
-      widget.level,
-      5,
-      account!.id,
-      account.accessToken!,
-    );
+        (widget.time * 1000 - remainingTime.inMilliseconds).toDouble() / 1000,
+        (points * 100).toInt(),
+        widget.level,
+        5,
+        account!.id,
+        account.accessToken!,
+        widget.numberOfAnswer);
     setState(() {
       continueVisible = true;
     });
