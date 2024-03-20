@@ -8,6 +8,7 @@ import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
 import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/screens/achievement/challenges_screen.dart';
+import 'package:thinktank_mobile/screens/achievement/missioncomplete_screen.dart';
 import 'package:thinktank_mobile/screens/findanonymous/cardprovider.dart';
 import 'package:thinktank_mobile/screens/findanonymous/findanonymous_game.dart';
 
@@ -93,8 +94,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           ),
           useMaterial3: true,
         ),
-        home: StartScreen(),
-        //home: LeaderBoardScreen(),
+        //home: StartScreen(),
+        home: MissionCompleteScreen(),
         // home: FindAnonymousGame(
         //   avt: 'asdv',
         //   listAnswer: [
