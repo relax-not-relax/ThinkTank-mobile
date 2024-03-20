@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/api/achieviements_api.dart';
+import 'package:thinktank_mobile/api/assets_api.dart';
+import 'package:thinktank_mobile/api/authentication_api.dart';
+import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/api/init_api.dart';
+import 'package:thinktank_mobile/api/notification_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
 import 'package:thinktank_mobile/models/resourceversion.dart';
 import 'package:thinktank_mobile/screens/authentication/loginscreen.dart';
+import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/screens/introscreen.dart';
+import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
@@ -72,23 +80,31 @@ class StartScreenState extends State<StartScreen>
   }
 
   void displaybutton() async {
-    // ResourceVersion? resourceVersion = await ApiInit.getResourceVersion();
-    // ResourceVersion? resourceVersionInApp =
-    //     await SharedPreferencesHelper.getResourceVersion();
-    // if (resourceVersionInApp == null ||
-    //     resourceVersionInApp.musicPasswordVersion !=
-    //         resourceVersion!.musicPasswordVersion) {
-    //   await updateMusicPasswordSource();
-    // }
-    // await SharedPreferencesHelper.saveResourceVersion(resourceVersion!);
+    Account? acc = await ApiAuthentication.reLogin();
+    if (acc != null) {
+      await ApiAchieviements.getLevelOfUser(acc.id, acc.accessToken!);
+      await ApiNotification.getNotifications(acc.id, acc.accessToken!);
+      int version = await SharedPreferencesHelper.getResourceVersion();
+      await AssetsAPI.addAssets(version, acc.accessToken!);
 
-    Future.delayed(const Duration(seconds: 2), () {
+      // ignore: use_build_context_synchronously
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HomeScreen(
+                  account: acc,
+                  inputScreen: OptionScreen(account: acc),
+                  screenIndex: 0,
+                )),
+        (route) => false,
+      );
+    } else {
       setState(() {
         wait = false;
         visibleButton = true;
       });
       _controller2.forward();
-    });
+    }
   }
 
   @override
