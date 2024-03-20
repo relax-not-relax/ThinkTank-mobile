@@ -266,7 +266,7 @@ class _OptionScreenState extends State<OptionScreen> {
                     Container(
                       margin: const EdgeInsets.fromLTRB(14, 0, 14, 20),
                       child: SizedBox(
-                        width: 383.0,
+                        width: MediaQuery.of(context).size.width - 50,
                         child: Text(
                           "Mini-games designed to exercise and enhance your memory. Through challenging gameplay, push your memory skills to the limit.",
                           style: GoogleFonts.inter(
@@ -323,7 +323,7 @@ class _OptionScreenState extends State<OptionScreen> {
                     Container(
                       margin: const EdgeInsets.fromLTRB(14, 0, 14, 30),
                       child: SizedBox(
-                        width: 383.0,
+                        width: MediaQuery.of(context).size.width - 50,
                         child: Text(
                           "Exciting competitions to challenge yourself against opponents in memory recall. This is an engaging arena to accelerate on the journey to becoming a “Memory master”.",
                           style: GoogleFonts.inter(

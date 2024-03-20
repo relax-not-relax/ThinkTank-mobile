@@ -69,7 +69,7 @@ class StatisticalItem extends StatelessWidget {
                     description,
                     style: GoogleFonts.roboto(
                       color: Colors.white,
-                      fontSize: 14,
+                      fontSize: 12,
                       fontWeight: FontWeight.w300,
                     ),
                   ),

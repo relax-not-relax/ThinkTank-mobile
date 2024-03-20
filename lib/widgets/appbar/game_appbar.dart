@@ -320,7 +320,7 @@ class _TGameAppBarState extends State<TGameAppBar> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14.0),
                 child: LinearPercentIndicator(
-                  width: MediaQuery.of(context).size.width * 0.93,
+                  //width: MediaQuery.of(context).size.width * 0.9,
                   animation: true,
                   lineHeight: 25.0,
                   animationDuration: 1000,

@@ -17,9 +17,16 @@ import 'package:thinktank_mobile/widgets/others/loadingcustom.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.account});
+  const HomeScreen({
+    super.key,
+    required this.account,
+    required this.inputScreen,
+    required this.screenIndex,
+  });
 
   final Account account;
+  final Widget inputScreen;
+  final int screenIndex;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -27,6 +34,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedPageIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedPageIndex = widget.screenIndex;
+  }
 
   void _selectPage(int index) async {
     setState(() {
@@ -36,11 +49,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget activePage = OptionScreen(
-      account: widget.account,
-    );
+    Widget activePage = widget.inputScreen;
 
     switch (_selectedPageIndex) {
+      case 0:
+        activePage = OptionScreen(account: widget.account);
+        break;
       case 4:
         activePage = const FriendScreen();
         break;
@@ -87,6 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             BottomNavigationBarItem(
               icon: Icon(IconlyLight.star),
+              activeIcon: Icon(IconlyBold.star),
               label: 'Achieve',
             ),
             BottomNavigationBarItem(

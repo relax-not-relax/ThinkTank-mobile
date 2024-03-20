@@ -9,6 +9,7 @@ import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/logininfo.dart';
 import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
 import 'package:thinktank_mobile/screens/home.dart';
+import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:flutter/material.dart';
@@ -116,6 +117,10 @@ class LoginScreenState extends State<LoginScreen> {
                             MaterialPageRoute(
                                 builder: (context) => HomeScreen(
                                       account: acc,
+                                      inputScreen: OptionScreen(
+                                        account: acc,
+                                      ),
+                                      screenIndex: 0,
                                     )),
                             (route) => false,
                           );
