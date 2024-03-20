@@ -50,6 +50,8 @@ dependencies:
   percent_indicator: ^4.2.3
   firebase_database: ^10.4.8
   image_picker: ^1.0.7
+  google_sign_in: 5.0.7
+  
 
 dev_dependencies:
   flutter_test:

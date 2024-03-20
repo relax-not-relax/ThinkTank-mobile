@@ -323,7 +323,40 @@ class LoginScreenState extends State<LoginScreen> {
                       ),
                       child: ElevatedButton(
                         style: buttonGoogle,
-                        onPressed: () {},
+                        onPressed: () async {
+                          _showResizableDialog(context);
+                          Account? acc =
+                              await ApiAuthentication.loginWithGoogle();
+                          if (acc == null) {
+                            _closeDialog(context);
+                          } else {
+                            setState(() {
+                              _isIncorrect = false;
+                            });
+                            await SharedPreferencesHelper.saveInfo(acc);
+                            await ApiAchieviements.getLevelOfUser(
+                                acc.id, acc.accessToken!);
+                            await ApiNotification.getNotifications(
+                                acc.id, acc.accessToken!);
+                            int version = await SharedPreferencesHelper
+                                .getResourceVersion();
+                            await AssetsAPI.addAssets(
+                                version, acc.accessToken!);
+                            _closeDialog(context);
+
+                            // ignore: use_build_context_synchronously
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeScreen(
+                                        account: acc,
+                                        inputScreen: OptionScreen(account: acc),
+                                        screenIndex: 0,
+                                      )),
+                              (route) => false,
+                            );
+                          }
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
