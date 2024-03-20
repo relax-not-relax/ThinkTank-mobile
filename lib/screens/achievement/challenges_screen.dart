@@ -114,14 +114,16 @@ class ChallengesScreenState extends State<ChallengesScreen>
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: AvhievementAppBar(
-          coins: 2998,
-          progress: list
-              .where((element) =>
-                  ((element.completedLevel == null)
-                      ? 0
-                      : element.completedLevel! / element.completedMilestone) ==
-                  1)
-              .length),
+        coins: 2998,
+        progress: list
+            .where((element) =>
+                ((element.completedLevel == null)
+                    ? 0
+                    : element.completedLevel! / element.completedMilestone) ==
+                1)
+            .length,
+        appBarHeight: MediaQuery.of(context).size.height * 0.45,
+      ),
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
@@ -267,7 +269,7 @@ class ItemAchieve extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 130,
+      height: 150,
       padding: const EdgeInsets.all(15),
       child: Row(
         children: [
@@ -312,8 +314,8 @@ class ItemAchieve extends StatelessWidget {
                       title,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 25,
-                        fontWeight: FontWeight.w400,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -469,7 +471,7 @@ class ItemBadge extends StatelessWidget {
                       title,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 25,
+                        fontSize: 18,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -503,138 +505,147 @@ class AvhievementAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.coins,
     required this.progress,
+    required this.appBarHeight,
   });
   final int coins;
   final int progress;
+  final double appBarHeight;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        bottomLeft: Radius.circular(20.0),
-        bottomRight: Radius.circular(20.0),
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        width: MediaQuery.of(context).size.width,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/pics/achi_bg.png'), fit: BoxFit.cover),
+    return PreferredSize(
+      preferredSize: Size.fromHeight(appBarHeight),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(20.0),
+          bottomRight: Radius.circular(20.0),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 50,
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width / 2,
-              child: const Text(
-                'Your memory treasure chest has',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.5,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/pics/achi_bg.png'),
+                fit: BoxFit.cover),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width / 2,
+                child: const Text(
+                  'Your memory treasure chest has',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            ClipRRect(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(10),
+              const SizedBox(
+                height: 10,
               ),
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                height: 55,
-                decoration: const BoxDecoration(color: Colors.white),
-                child: Stack(
-                  children: [
-                    Image.asset(
-                      'assets/pics/coin.png',
-                      height: 40,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(
-                            left: 40,
+              ClipRRect(
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  height: 55,
+                  decoration: const BoxDecoration(color: Colors.white),
+                  child: Stack(
+                    children: [
+                      Image.asset(
+                        'assets/pics/coin.png',
+                        height: 40,
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(
+                              left: 40,
+                            ),
+                            child: Text(
+                              '$coins ThinkTank coins',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              ClipRRect(
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  width: MediaQuery.of(context).size.width,
+                  height: 180,
+                  decoration: const BoxDecoration(
+                    color: Color.fromRGBO(0, 0, 0, 0.58),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Expanded(
+                        flex: 1,
+                        child: Align(
+                          alignment: Alignment.topLeft,
                           child: Text(
-                            '$coins ThinkTank coins',
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                            'Complete 10 missions',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            ClipRRect(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(10),
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                width: MediaQuery.of(context).size.width - 10,
-                decoration: const BoxDecoration(
-                  color: Color.fromRGBO(0, 0, 0, 0.58),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        'Complete 10 missions',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Expanded(
+                        flex: 2,
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            'Complete 10 missions to become “The Master of Memory” ',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        'Complete 10 missions to become “The Master of Memory” ',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      children: [
-                        Image.asset(
-                          'assets/pics/logoBage.png',
-                          height: 60,
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 14.0),
-                              child: Stack(
-                                children: [
-                                  LinearPercentIndicator(
+                      Expanded(
+                        flex: 2,
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              'assets/pics/logoBage.png',
+                              height: 50,
+                            ),
+                            Expanded(
+                              child: Center(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 14.0),
+                                  child: LinearPercentIndicator(
                                     animation: true,
                                     lineHeight: 25.0,
                                     animationDuration: 1000,
@@ -645,38 +656,32 @@ class AvhievementAppBar extends StatelessWidget implements PreferredSizeWidget {
                                         const Color.fromRGBO(255, 212, 96, 1),
                                     backgroundColor:
                                         const Color.fromRGBO(0, 0, 0, 0.26),
-                                  ),
-                                  SizedBox(
-                                    height: 25,
-                                    child: Center(
-                                      child: Text(
-                                        '$progress/10',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color:
-                                              Color.fromRGBO(171, 171, 171, 1),
-                                        ),
+                                    center: Text(
+                                      '$progress/10',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color.fromRGBO(171, 171, 171, 1),
                                       ),
                                     ),
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
-                        )
-                      ],
-                    )
-                  ],
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
-            )
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(360);
+  Size get preferredSize => Size.fromHeight(appBarHeight);
 }

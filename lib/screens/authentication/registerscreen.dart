@@ -8,6 +8,7 @@ import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/screens/game/game_menu.dart';
 import 'package:thinktank_mobile/screens/home.dart';
+import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
@@ -134,6 +135,8 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
           MaterialPageRoute(
               builder: (context) => HomeScreen(
                     account: account,
+                    inputScreen: OptionScreen(account: account),
+                    screenIndex: 0,
                   )),
           (route) => false,
         );

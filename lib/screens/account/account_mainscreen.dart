@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
+import 'package:thinktank_mobile/api/challenges_api.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/achievement.dart';
 import 'package:thinktank_mobile/screens/account/editaccount_screen.dart';
+import 'package:thinktank_mobile/screens/achievement/challenges_screen.dart';
+import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/widgets/appbar/normal_appbar.dart';
+import 'package:thinktank_mobile/widgets/others/itemachieve.dart';
 import 'package:thinktank_mobile/widgets/others/statistical_item.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
@@ -23,12 +29,29 @@ class AccountMainScreen extends StatefulWidget {
 class _AccountMainScreenState extends State<AccountMainScreen> {
   late DateTime registrationDate;
   late String formattedRegistration;
+  List<Challenge> list = [];
+  List<Challenge> listOfThree = [];
+  late Future<void> _getChallenges;
+
+  Future<void> getChallenges() async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    list = await ApiChallenges.getChallenges(account!.id, account.accessToken!);
+    if (mounted) {
+      setState(() {
+        list;
+        list.shuffle();
+        listOfThree = list.take(3).toList();
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     registrationDate = DateTime.parse(widget.account.registrationDate!);
     formattedRegistration = DateFormat('MMMM yyyy').format(registrationDate);
+    _getChallenges = getChallenges();
+    _getChallenges.then((value) => {});
   }
 
   void editAccount() {
@@ -39,6 +62,31 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
       ),
     );
   }
+
+  List<Color> backgroundColors = [
+    const Color.fromRGBO(250, 205, 67, 1),
+    const Color.fromRGBO(189, 155, 255, 1),
+    const Color.fromRGBO(255, 176, 176, 1),
+    const Color.fromRGBO(219, 255, 191, 1),
+    const Color.fromRGBO(118, 195, 223, 1),
+    const Color.fromRGBO(155, 85, 154, 1),
+    const Color.fromRGBO(248, 171, 127, 1),
+    const Color.fromRGBO(203, 91, 91, 1),
+    const Color.fromRGBO(146, 166, 250, 1),
+    const Color.fromRGBO(89, 205, 209, 1)
+  ];
+  List<Color> shadowColors = [
+    const Color.fromRGBO(235, 165, 0, 1),
+    const Color.fromRGBO(152, 102, 250, 1),
+    const Color.fromRGBO(255, 122, 122, 1),
+    const Color.fromRGBO(186, 255, 133, 1),
+    const Color.fromRGBO(89, 177, 209, 1),
+    const Color.fromRGBO(137, 52, 136, 1),
+    const Color.fromRGBO(255, 140, 75, 1),
+    const Color.fromRGBO(175, 48, 48, 1),
+    const Color.fromRGBO(114, 135, 225, 1),
+    const Color.fromARGB(255, 68, 190, 194),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -134,18 +182,18 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
                           ),
                         ),
                       ),
+                      const SizedBox(
+                        width: 5,
+                      ),
                       Expanded(
                         flex: 2,
-                        child: Container(
-                          margin: const EdgeInsets.only(left: 20.0),
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: buttonLogout,
-                            child: const Icon(
-                              IconlyLight.logout,
-                              color: Colors.white,
-                              size: 22,
-                            ),
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: buttonLogout,
+                          child: const Icon(
+                            IconlyLight.logout,
+                            color: Colors.white,
+                            size: 22,
                           ),
                         ),
                       ),
@@ -219,6 +267,103 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
                         color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20.0,
+                ),
+                Container(
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                  padding: const EdgeInsets.all(10),
+                  child: SingleChildScrollView(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: const Color.fromRGBO(116, 116, 116, 1),
+                          width: 0.8,
+                        ),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(30),
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          ...listOfThree
+                              .map(
+                                (e) => ItemAchieveAccount(
+                                  imgLink: e.missionsImg,
+                                  backgroundColor:
+                                      backgroundColors[listOfThree.indexOf(e)],
+                                  shadowColor:
+                                      shadowColors[listOfThree.indexOf(e)],
+                                  title: e.name,
+                                  description: e.description,
+                                  progress: (e.completedLevel == null)
+                                      ? 0
+                                      : e.completedLevel!,
+                                  total: e.completedMilestone,
+                                  recived:
+                                      (e.status == null) ? false : e.status!,
+                                ),
+                              )
+                              .toList(),
+                          list.isNotEmpty
+                              ? Container(
+                                  height: 1,
+                                  width: MediaQuery.of(context).size.width,
+                                  color: const Color.fromRGBO(116, 116, 116, 1),
+                                )
+                              : Container(),
+                          InkWell(
+                            onTap: () {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomeScreen(
+                                    account: widget.account,
+                                    inputScreen: ChallengesScreen(),
+                                    screenIndex: 3,
+                                  ),
+                                ),
+                                (route) => false,
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 20,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  list.isNotEmpty
+                                      ? Text(
+                                          "${list.length - 3} other missons",
+                                          style: GoogleFonts.roboto(
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : Text(
+                                          "0 other missons",
+                                          style: GoogleFonts.roboto(
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                  const Icon(
+                                    IconlyLight.arrow_right_2,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

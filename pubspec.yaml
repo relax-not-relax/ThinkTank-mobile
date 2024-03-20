@@ -94,6 +94,9 @@ flutter:
     - family: ButtonCustomFont
       fonts:
         - asset: fonts/SVN-Cookies.ttf
+    - family: CustomProFont
+      fonts:
+        - asset: fonts/SVN-Adam_Gorry.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
