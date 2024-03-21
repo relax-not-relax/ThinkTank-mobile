@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/models/contest.dart';
 import 'package:thinktank_mobile/models/game.dart';
 import 'package:thinktank_mobile/models/notification_item.dart';
 
@@ -67,4 +68,25 @@ const usersTest = [
   "Tram Bao",
   "Pham Ha Vi",
   "Hieu Bui"
+];
+
+var contestsTest = [
+  Contest(
+    id: 122,
+    thumbnail: "assets/pics/contest_1.png",
+    startTime: "2024-03-18T15:50:00",
+    endTime: "2024-03-22T15:50:00",
+    coinBetting: 100,
+    name: "Tinh thần sáng tạo 2024",
+    gameName: games[0].name,
+  ),
+  Contest(
+    id: 123,
+    thumbnail: "assets/pics/contest_2.png",
+    startTime: "2024-03-17T07:17:00",
+    endTime: "2024-03-24T19:19:00",
+    coinBetting: 300,
+    name: "Tâm hồn ăn uống",
+    gameName: games[1].name,
+  ),
 ];

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/api/assets_api.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
@@ -60,10 +61,251 @@ class LoginScreenState extends State<LoginScreen> {
               const BoxDecoration(color: Color.fromRGBO(255, 255, 255, 1)),
           child: Stack(
             children: [
+              Container(
+                margin: const EdgeInsets.all(14),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.arrow_back),
+                      ),
+                    ),
+                    Image.asset('assets/pics/hello1.png', width: 200),
+                    const Align(
+                      alignment: Alignment.topLeft,
+                      child: Row(
+                        children: [
+                          Text(
+                            'Username',
+                            style: titleMini,
+                            textAlign: TextAlign.left,
+                          ),
+                          Text(
+                            ' *',
+                            style: TextStyle(color: Colors.red, fontSize: 25),
+                            textAlign: TextAlign.left,
+                          ),
+                        ],
+                      ),
+                    ),
+                    TextField(
+                      controller: _usernameController,
+                      style: const TextStyle(fontSize: 16, color: Colors.black),
+                      decoration: const InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.amber),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.amber),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Align(
+                      alignment: Alignment.topLeft,
+                      child: Row(
+                        children: [
+                          Text(
+                            'Password',
+                            style: titleMini,
+                            textAlign: TextAlign.left,
+                          ),
+                          Text(
+                            ' *',
+                            style: TextStyle(color: Colors.red, fontSize: 25),
+                            textAlign: TextAlign.left,
+                          ),
+                        ],
+                      ),
+                    ),
+                    TextField(
+                      controller: _passwordController,
+                      obscureText: _isObscured,
+                      style: const TextStyle(fontSize: 16, color: Colors.black),
+                      decoration: InputDecoration(
+                        focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.amber),
+                        ),
+                        enabledBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.amber),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isObscured
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isObscured = !_isObscured;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: _isIncorrect,
+                      child: const Text(
+                        'Incorrect username or password!',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                height: 18,
+                                width: 18,
+                                child: Checkbox(
+                                  checkColor:
+                                      const Color.fromARGB(255, 255, 255, 255),
+                                  activeColor:
+                                      const Color.fromRGBO(234, 84, 85, 1),
+                                  value: isRemember,
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      isRemember = value!;
+                                    });
+                                    if (isRemember == false) {
+                                      SharedPreferencesHelper.removeAccount();
+                                    }
+                                  },
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                'Remember me',
+                                style: GoogleFonts.roboto(
+                                  fontSize: 14,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Text(
+                            'Forgot password?',
+                            style: GoogleFonts.roboto(
+                              color: Color.fromRGBO(240, 123, 63, 1),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 1,
+                            width: 100,
+                            color: const Color.fromRGBO(217, 217, 217, 1),
+                          ),
+                          const Text(
+                            '   or   ',
+                            style: TextStyle(
+                              color: Color.fromRGBO(217, 217, 217, 1),
+                            ),
+                          ),
+                          Container(
+                            height: 1,
+                            width: 100,
+                            color: const Color.fromRGBO(217, 217, 217, 1),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 20),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color.fromARGB(1, 202, 202, 202)
+                                .withOpacity(0.2),
+                            spreadRadius: 4,
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
+                          )
+                        ],
+                      ),
+                      child: ElevatedButton(
+                        style: buttonGoogleVer2(context),
+                        onPressed: () async {
+                          _showResizableDialog(context);
+                          Account? acc =
+                              await ApiAuthentication.loginWithGoogle();
+                          if (acc == null) {
+                            _closeDialog(context);
+                          } else {
+                            setState(() {
+                              _isIncorrect = false;
+                            });
+                            await SharedPreferencesHelper.saveInfo(acc);
+                            await ApiAchieviements.getLevelOfUser(
+                                acc.id, acc.accessToken!);
+                            await ApiNotification.getNotifications(
+                                acc.id, acc.accessToken!);
+                            int version = await SharedPreferencesHelper
+                                .getResourceVersion();
+                            await AssetsAPI.addAssets(
+                                version, acc.accessToken!);
+                            _closeDialog(context);
+
+                            // ignore: use_build_context_synchronously
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeScreen(
+                                        account: acc,
+                                        inputScreen: OptionScreen(account: acc),
+                                        screenIndex: 0,
+                                      )),
+                              (route) => false,
+                            );
+                          }
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset('assets/pics/google.png', height: 25),
+                            const Text(
+                              '   Continue with Google',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  height: 150,
+                  height: MediaQuery.of(context).size.height * 0.15,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: [
@@ -126,7 +368,7 @@ class LoginScreenState extends State<LoginScreen> {
                           );
                         }
                       },
-                      style: buttonPrimaryPink,
+                      style: buttonPrimaryPinkVer2(context),
                       child: const Text(
                         'Sign in',
                         style: TextStyle(
@@ -136,240 +378,6 @@ class LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.all(14),
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: const Icon(Icons.arrow_back),
-                      ),
-                    ),
-                    Image.asset('assets/pics/hello1.png', width: 230),
-                    const Align(
-                      alignment: Alignment.topLeft,
-                      child: Row(
-                        children: [
-                          Text(
-                            'Username',
-                            style: titleMini,
-                            textAlign: TextAlign.left,
-                          ),
-                          Text(
-                            ' *',
-                            style: TextStyle(color: Colors.red, fontSize: 25),
-                            textAlign: TextAlign.left,
-                          ),
-                        ],
-                      ),
-                    ),
-                    TextField(
-                      controller: _usernameController,
-                      style: const TextStyle(fontSize: 20, color: Colors.black),
-                      decoration: const InputDecoration(
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.amber),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.amber),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    const Align(
-                      alignment: Alignment.topLeft,
-                      child: Row(
-                        children: [
-                          Text(
-                            'Password',
-                            style: titleMini,
-                            textAlign: TextAlign.left,
-                          ),
-                          Text(
-                            ' *',
-                            style: TextStyle(color: Colors.red, fontSize: 25),
-                            textAlign: TextAlign.left,
-                          ),
-                        ],
-                      ),
-                    ),
-                    TextField(
-                      controller: _passwordController,
-                      obscureText: _isObscured,
-                      style: const TextStyle(fontSize: 20, color: Colors.black),
-                      decoration: InputDecoration(
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.amber),
-                        ),
-                        enabledBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.amber),
-                        ),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _isObscured
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isObscured = !_isObscured;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                    Visibility(
-                      visible: _isIncorrect,
-                      child: const Text(
-                        'Incorrect username or password!',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                height: 18,
-                                width: 18,
-                                child: Checkbox(
-                                  checkColor:
-                                      const Color.fromARGB(255, 255, 255, 255),
-                                  activeColor:
-                                      const Color.fromRGBO(234, 84, 85, 1),
-                                  value: isRemember,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      isRemember = value!;
-                                    });
-                                    if (isRemember == false) {
-                                      SharedPreferencesHelper.removeAccount();
-                                    }
-                                  },
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              const Text('Remember me')
-                            ],
-                          ),
-                        ),
-                        const Align(
-                          alignment: Alignment.topRight,
-                          child: Text(
-                            'Forgot password?',
-                            style: TextStyle(
-                                color: Color.fromRGBO(240, 123, 63, 1)),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            height: 1,
-                            width: 100,
-                            color: const Color.fromRGBO(217, 217, 217, 1),
-                          ),
-                          const Text(
-                            '   or   ',
-                            style: TextStyle(
-                              color: Color.fromRGBO(217, 217, 217, 1),
-                            ),
-                          ),
-                          Container(
-                            height: 1,
-                            width: 100,
-                            color: const Color.fromRGBO(217, 217, 217, 1),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 20),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 255, 255, 255),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color.fromARGB(1, 202, 202, 202)
-                                .withOpacity(0.2),
-                            spreadRadius: 4,
-                            blurRadius: 10,
-                            offset: const Offset(0, 3),
-                          )
-                        ],
-                      ),
-                      child: ElevatedButton(
-                        style: buttonGoogle,
-                        onPressed: () async {
-                          _showResizableDialog(context);
-                          Account? acc =
-                              await ApiAuthentication.loginWithGoogle();
-                          if (acc == null) {
-                            _closeDialog(context);
-                          } else {
-                            setState(() {
-                              _isIncorrect = false;
-                            });
-                            await SharedPreferencesHelper.saveInfo(acc);
-                            await ApiAchieviements.getLevelOfUser(
-                                acc.id, acc.accessToken!);
-                            await ApiNotification.getNotifications(
-                                acc.id, acc.accessToken!);
-                            int version = await SharedPreferencesHelper
-                                .getResourceVersion();
-                            await AssetsAPI.addAssets(
-                                version, acc.accessToken!);
-                            _closeDialog(context);
-
-                            // ignore: use_build_context_synchronously
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomeScreen(
-                                        account: acc,
-                                        inputScreen: OptionScreen(account: acc),
-                                        screenIndex: 0,
-                                      )),
-                              (route) => false,
-                            );
-                          }
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset('assets/pics/google.png', height: 25),
-                            const Text(
-                              '   Continue with Google',
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ],

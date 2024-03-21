@@ -197,7 +197,7 @@ class IntroScreenState extends State<IntroScreen> {
                               //(route) => false,
                             );
                           },
-                          style: buttonPrimaryPink,
+                          style: buttonPrimaryPinkVer2(context),
                           child: const Text(
                             'Continue',
                             style: TextStyle(color: Colors.white, fontSize: 18),

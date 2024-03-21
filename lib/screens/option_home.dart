@@ -12,6 +12,7 @@ import 'package:thinktank_mobile/models/notification_item.dart';
 import 'package:thinktank_mobile/screens/game/game_menu.dart';
 import 'package:thinktank_mobile/screens/notification/notiscreen.dart';
 import 'package:thinktank_mobile/widgets/appbar/appbar.dart';
+import 'package:thinktank_mobile/widgets/game/contest_thumbnail.dart';
 import 'package:thinktank_mobile/widgets/game/game_item.dart';
 
 final PageController _pageController = PageController();
@@ -338,62 +339,25 @@ class _OptionScreenState extends State<OptionScreen> {
                 ),
               ],
             ),
-            Container(
-              margin: const EdgeInsets.fromLTRB(14, 0, 14, 20),
-              child: Stack(
-                children: [
-                  SizedBox(
-                    height: 210,
-                    child: PageView.builder(
-                      controller: _pageController,
-                      itemCount: contest.length,
-                      onPageChanged: (value) {
-                        if (mounted)
-                          setState(() {
-                            _activePage = value;
-                          });
-                      },
-                      itemBuilder: (context, index) {
-                        return _pages[index];
-                      },
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 10,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      color: Colors.transparent,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List<Widget>.generate(
-                          _pages.length,
-                          (index) => Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 3,
-                            ),
-                            child: InkWell(
-                              onTap: () {
-                                _pageController.animateToPage(
-                                  index,
-                                  duration: const Duration(microseconds: 300),
-                                  curve: Curves.easeIn,
-                                );
-                              },
-                              child: CircleAvatar(
-                                radius: 4,
-                                backgroundColor: _activePage == index
-                                    ? Colors.black
-                                    : const Color.fromARGB(255, 217, 217, 217),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
               ),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: contestsTest.map(
+                    (contest) {
+                      return ContestThumbnail(
+                        contest: contest,
+                      );
+                    },
+                  ).toList(),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 30,
             ),
           ],
         ),

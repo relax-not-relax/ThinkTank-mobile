@@ -136,14 +136,15 @@ class StartScreenState extends State<StartScreen>
                       visible: true,
                       child: Image.asset(
                         'assets/pics/logoText.png',
-                        width: 250,
+                        width: 200,
                       ),
                     ),
                   ),
                   Visibility(
                     visible: wait,
                     child: Container(
-                        margin: const EdgeInsets.only(top: 200),
+                        margin: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * 0.15),
                         child: const CustomLoadingSpinner()),
                   ),
                 ],
@@ -160,7 +161,7 @@ class StartScreenState extends State<StartScreen>
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         ElevatedButton(
-                          style: buttonPrimary,
+                          style: buttonPrimaryVer2(context),
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -180,7 +181,7 @@ class StartScreenState extends State<StartScreen>
                           height: 10,
                         ),
                         ElevatedButton(
-                          style: buttonSecondary,
+                          style: buttonSecondaryVer2(context),
                           onPressed: () {
                             Navigator.push(
                               context,

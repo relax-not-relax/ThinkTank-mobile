@@ -19,12 +19,12 @@ const TextStyle titleCreateAccount = TextStyle(
 );
 const TextStyle titleMini = TextStyle(
   color: Color.fromRGBO(45, 64, 89, 1),
-  fontSize: 16,
+  fontSize: 14,
   fontWeight: FontWeight.w500,
 );
 const TextStyle contentGray = TextStyle(
-  color: Color.fromRGBO(45, 64, 89, 1),
-  fontSize: 14,
+  color: Color.fromARGB(255, 129, 140, 155),
+  fontSize: 13,
   fontWeight: FontWeight.w400,
 );
 
@@ -168,268 +168,288 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
             width: MediaQuery.of(context).size.width,
             decoration:
                 const BoxDecoration(color: Color.fromRGBO(255, 255, 255, 1)),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+            child: Stack(
               children: [
-                Container(
-                  margin: const EdgeInsets.all(14),
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      const Text(
-                        'Create an account',
-                        style: titleCreateAccount,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text(
-                        'Please enter your full name, username, email address and password.',
-                        style: contentGray,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      const Align(
-                        alignment: Alignment.topLeft,
-                        child: Row(
-                          children: [
-                            Text(
-                              'Full Name',
-                              style: titleMini,
-                              textAlign: TextAlign.left,
-                            ),
-                            Text(
-                              ' *',
-                              style: TextStyle(color: Colors.red, fontSize: 25),
-                              textAlign: TextAlign.left,
-                            ),
-                          ],
-                        ),
-                      ),
-                      TextField(
-                        controller: _fullnameController,
-                        style:
-                            const TextStyle(fontSize: 20, color: Colors.black),
-                        decoration: const InputDecoration(
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.amber),
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.amber),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      const Align(
-                        alignment: Alignment.topLeft,
-                        child: Row(
-                          children: [
-                            Text(
-                              'Username',
-                              style: titleMini,
-                              textAlign: TextAlign.left,
-                            ),
-                            Text(
-                              ' *',
-                              style: TextStyle(color: Colors.red, fontSize: 25),
-                              textAlign: TextAlign.left,
-                            ),
-                          ],
-                        ),
-                      ),
-                      TextField(
-                        controller: _usernamewController,
-                        style:
-                            const TextStyle(fontSize: 20, color: Colors.black),
-                        decoration: const InputDecoration(
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.amber),
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.amber),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      const Align(
-                        alignment: Alignment.topLeft,
-                        child: Row(
-                          children: [
-                            Text(
-                              'Email',
-                              style: titleMini,
-                              textAlign: TextAlign.left,
-                            ),
-                            Text(
-                              ' *',
-                              style: TextStyle(color: Colors.red, fontSize: 25),
-                              textAlign: TextAlign.left,
-                            ),
-                          ],
-                        ),
-                      ),
-                      TextField(
-                        controller: _emailController,
-                        style:
-                            const TextStyle(fontSize: 20, color: Colors.black),
-                        decoration: const InputDecoration(
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.amber),
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.amber),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      const Align(
-                        alignment: Alignment.topLeft,
-                        child: Row(
-                          children: [
-                            Text(
-                              'Password',
-                              style: titleMini,
-                              textAlign: TextAlign.left,
-                            ),
-                            Text(
-                              ' *',
-                              style: TextStyle(color: Colors.red, fontSize: 25),
-                              textAlign: TextAlign.left,
-                            ),
-                          ],
-                        ),
-                      ),
-                      TextField(
-                        controller: _passwordController,
-                        obscureText: _isObscured,
-                        style:
-                            const TextStyle(fontSize: 20, color: Colors.black),
-                        decoration: InputDecoration(
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.amber),
-                          ),
-                          enabledBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.amber),
-                          ),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _isObscured
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _isObscured = !_isObscured;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Visibility(
-                            visible: isIncorrect,
-                            child: Text(
-                              error,
-                              style: const TextStyle(color: Colors.red),
-                            )),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 1,
-                              width: 100,
-                              color: const Color.fromRGBO(217, 217, 217, 1),
-                            ),
-                            const Text(
-                              '   or   ',
-                              style: TextStyle(
-                                color: Color.fromRGBO(217, 217, 217, 1),
-                              ),
-                            ),
-                            Container(
-                              height: 1,
-                              width: 100,
-                              color: const Color.fromRGBO(217, 217, 217, 1),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 20),
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color.fromARGB(1, 202, 202, 202)
-                                  .withOpacity(0.2),
-                              spreadRadius: 4,
-                              blurRadius: 10,
-                              offset: const Offset(0, 3),
-                            )
-                          ],
-                        ),
-                        child: ElevatedButton(
-                          style: buttonGoogle,
-                          onPressed: () {
-                            _showResizableDialog(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    const Text(
+                      'Create an account',
+                      style: titleCreateAccount,
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    const Text(
+                      'Please enter your full name, username, email address and password.',
+                      style: contentGray,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.all(14),
+                      child: Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
                             children: [
-                              Image.asset('assets/pics/google.png', height: 25),
-                              const Text(
-                                '   Continue with Google',
-                                style: TextStyle(color: Colors.black),
+                              const Align(
+                                alignment: Alignment.topLeft,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'Full Name',
+                                      style: titleMini,
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    Text(
+                                      ' *',
+                                      style: TextStyle(
+                                          color: Colors.red, fontSize: 25),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              TextField(
+                                controller: _fullnameController,
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.black),
+                                decoration: const InputDecoration(
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.amber),
+                                  ),
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.amber),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              const Align(
+                                alignment: Alignment.topLeft,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'Username',
+                                      style: titleMini,
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    Text(
+                                      ' *',
+                                      style: TextStyle(
+                                          color: Colors.red, fontSize: 25),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              TextField(
+                                controller: _usernamewController,
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.black),
+                                decoration: const InputDecoration(
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.amber),
+                                  ),
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.amber),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              const Align(
+                                alignment: Alignment.topLeft,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'Email',
+                                      style: titleMini,
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    Text(
+                                      ' *',
+                                      style: TextStyle(
+                                          color: Colors.red, fontSize: 25),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              TextField(
+                                controller: _emailController,
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.black),
+                                decoration: const InputDecoration(
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.amber),
+                                  ),
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.amber),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              const Align(
+                                alignment: Alignment.topLeft,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'Password',
+                                      style: titleMini,
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    Text(
+                                      ' *',
+                                      style: TextStyle(
+                                          color: Colors.red, fontSize: 25),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              TextField(
+                                controller: _passwordController,
+                                obscureText: _isObscured,
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.black),
+                                decoration: InputDecoration(
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.amber),
+                                  ),
+                                  enabledBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.amber),
+                                  ),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _isObscured
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _isObscured = !_isObscured;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Visibility(
+                                    visible: isIncorrect,
+                                    child: Text(
+                                      error,
+                                      style: const TextStyle(color: Colors.red),
+                                    )),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(top: 20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      height: 1,
+                                      width: 100,
+                                      color: const Color.fromRGBO(
+                                          217, 217, 217, 1),
+                                    ),
+                                    const Text(
+                                      '   or   ',
+                                      style: TextStyle(
+                                        color: Color.fromRGBO(217, 217, 217, 1),
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 1,
+                                      width: 100,
+                                      color: const Color.fromRGBO(
+                                          217, 217, 217, 1),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(top: 20),
+                                decoration: BoxDecoration(
+                                  color:
+                                      const Color.fromARGB(255, 255, 255, 255),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color:
+                                          const Color.fromARGB(1, 202, 202, 202)
+                                              .withOpacity(0.2),
+                                      spreadRadius: 4,
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 3),
+                                    )
+                                  ],
+                                ),
+                                child: ElevatedButton(
+                                  style: buttonGoogle,
+                                  onPressed: () {
+                                    _showResizableDialog(context);
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset('assets/pics/google.png',
+                                          height: 25),
+                                      const Text(
+                                        '   Continue with Google',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ],
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Container(
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color.fromARGB(1, 156, 156, 156)
-                            .withOpacity(0.2),
-                        spreadRadius: 4,
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
-                      )
-                    ],
-                  ),
-                  child: Center(
-                    child: ElevatedButton(
-                      onPressed: singUp,
-                      style: buttonPrimaryPink,
-                      child: const Text(
-                        'Sign up',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.15,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color.fromARGB(1, 156, 156, 156)
+                              .withOpacity(0.2),
+                          spreadRadius: 4,
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        )
+                      ],
+                    ),
+                    child: Center(
+                      child: ElevatedButton(
+                        onPressed: singUp,
+                        style: buttonPrimaryPinkVer2(context),
+                        child: const Text(
+                          'Sign up',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
                         ),
                       ),
                     ),
