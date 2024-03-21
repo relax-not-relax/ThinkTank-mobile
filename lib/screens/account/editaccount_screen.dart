@@ -277,7 +277,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                           width: 10,
                         ),
                         Expanded(
-                          flex: 6,
+                          flex: 5,
                           child: SelectorForm(
                               genderInput: gender,
                               onGenderChanged: handleGenderChange),

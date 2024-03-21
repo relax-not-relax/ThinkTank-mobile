@@ -21,6 +21,19 @@ final ButtonStyle buttonPrimary = ElevatedButton.styleFrom(
   ),
 );
 
+ButtonStyle buttonPrimaryVer2(BuildContext context) {
+  return ElevatedButton.styleFrom(
+    fixedSize: Size(MediaQuery.of(context).size.width - 50, 70.0),
+    backgroundColor: const Color.fromRGBO(240, 123, 63, 1),
+    elevation: 0,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(10),
+      ),
+    ),
+  );
+}
+
 final ButtonStyle buttonPrimary_2 = ElevatedButton.styleFrom(
   minimumSize: const Size(double.infinity, 40),
   backgroundColor: const Color.fromRGBO(240, 123, 63, 1),
@@ -53,6 +66,7 @@ final ButtonStyle buttonPrimaryPink = ElevatedButton.styleFrom(
     ),
   ),
 );
+
 final ButtonStyle buttonSecondary = ElevatedButton.styleFrom(
   minimumSize: const Size(380, 70),
   backgroundColor: Color.fromARGB(0, 240, 122, 63),
@@ -67,6 +81,37 @@ final ButtonStyle buttonSecondary = ElevatedButton.styleFrom(
     ),
   ),
 );
+
+ButtonStyle buttonSecondaryVer2(BuildContext context) {
+  return ElevatedButton.styleFrom(
+    fixedSize: Size(MediaQuery.of(context).size.width - 50, 70.0),
+    backgroundColor: Color.fromARGB(0, 240, 122, 63),
+    elevation: 0,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(10),
+      ),
+      side: BorderSide(
+        color: const Color.fromRGBO(240, 123, 63, 1),
+        width: 2.0,
+      ),
+    ),
+  );
+}
+
+ButtonStyle buttonPrimaryPinkVer2(BuildContext context) {
+  return ElevatedButton.styleFrom(
+    fixedSize: Size(MediaQuery.of(context).size.width - 50, 70.0),
+    backgroundColor: const Color.fromRGBO(234, 84, 85, 1),
+    elevation: 0,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(10),
+      ),
+    ),
+  );
+}
+
 final ButtonStyle buttonGoogle = ElevatedButton.styleFrom(
   minimumSize: const Size(380, 70),
   backgroundColor: Color.fromARGB(255, 255, 255, 255),
@@ -78,6 +123,19 @@ final ButtonStyle buttonGoogle = ElevatedButton.styleFrom(
     ),
   ),
 );
+
+ButtonStyle buttonGoogleVer2(BuildContext context) {
+  return ElevatedButton.styleFrom(
+    fixedSize: Size(MediaQuery.of(context).size.width - 50, 60.0),
+    backgroundColor: Color.fromARGB(255, 255, 255, 255),
+    elevation: 1,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(10),
+      ),
+    ),
+  );
+}
 
 final ButtonStyle buttonPlay = ElevatedButton.styleFrom(
   backgroundColor: const Color.fromRGBO(234, 67, 53, 1),
