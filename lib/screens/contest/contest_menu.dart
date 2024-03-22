@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/contest.dart';
+import 'package:thinktank_mobile/screens/contest/instruction_screen.dart';
 import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/game/memory_type.dart';
@@ -70,7 +71,16 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
         ),
         actions: [
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return InstructionScreen();
+                  },
+                ),
+              );
+            },
             style: ElevatedButton.styleFrom(
               shape: const CircleBorder(),
               primary: const Color.fromARGB(255, 240, 122, 63),

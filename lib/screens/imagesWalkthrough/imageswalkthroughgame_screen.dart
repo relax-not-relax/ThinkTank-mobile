@@ -148,55 +148,62 @@ class _ImagesWalkthroughGameScreenState
               ],
             ),
           )
-        : Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  height: 200,
-                  width: 200,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      // image: AssetImage(
-                      //     widget.source[currentQuestionIndex].bigImgPath),
-                      image: FileImage(
-                          File(widget.source[currentQuestionIndex].bigImgPath)),
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(20.0),
+        : Container(
+            height: MediaQuery.of(context).size.height * 0.74,
+            width: MediaQuery.of(context).size.width,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // const SizedBox(
+                  //   height: 8,
+                  // ),
+                  Container(
+                    height: 180,
+                    width: 180,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        // image: AssetImage(
+                        //     widget.source[currentQuestionIndex].bigImgPath),
+                        image: FileImage(File(
+                            widget.source[currentQuestionIndex].bigImgPath)),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(20.0),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 25.0,
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 14.0,
+                  const SizedBox(
+                    height: 20.0,
                   ),
-                  height: gridViewHeight,
-                  child: GridView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                      childAspectRatio: itemWidth / itemHeight,
+                  Container(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 14.0,
                     ),
-                    itemCount: itemCount,
-                    itemBuilder: (context, index) {
-                      return WalkThroughItem(
-                        imgPath: shuffle![index],
-                        onSelect: () {
-                          answerQuestion(shuffle![index]);
-                        },
-                        itemIndex: index,
-                      );
-                    },
+                    height: gridViewHeight,
+                    child: GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                        childAspectRatio: itemWidth / itemHeight,
+                      ),
+                      itemCount: itemCount,
+                      itemBuilder: (context, index) {
+                        return WalkThroughItem(
+                          imgPath: shuffle![index],
+                          onSelect: () {
+                            answerQuestion(shuffle![index]);
+                          },
+                          itemIndex: index,
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
 

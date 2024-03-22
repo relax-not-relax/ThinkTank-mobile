@@ -24,6 +24,7 @@ class _DatePickerNormalState extends State<DatePickerNormal> {
   @override
   void initState() {
     super.initState();
+
     dateInput = DateTime.parse(widget.date);
     parsedDate = DateFormat("d-M-y").format(dateInput);
   }

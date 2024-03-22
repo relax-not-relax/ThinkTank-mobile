@@ -51,7 +51,6 @@ class ApiAccount {
 
   static Future<Account?> updateProfile(
     String fullName,
-    String userName,
     String email,
     String gender,
     String dateOfBirth,
@@ -63,7 +62,6 @@ class ApiAccount {
   ) async {
     Map<String, String?> data = {
       "fullName": fullName,
-      "userName": userName,
       "email": email,
       "gender": gender,
       "dateOfBirth": dateOfBirth,

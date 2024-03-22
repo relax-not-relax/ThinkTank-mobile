@@ -42,7 +42,7 @@ class _TGameAppBarState extends State<TGameAppBar> {
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.symmetric(
           horizontal: 14.0,
-          vertical: 20.0,
+          vertical: 15.0,
         ),
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -56,8 +56,8 @@ class _TGameAppBarState extends State<TGameAppBar> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              width: 200.0,
-              height: 200.0,
+              width: 180.0,
+              height: 180.0,
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage("assets/pics/brainCry.png"),
@@ -73,7 +73,7 @@ class _TGameAppBarState extends State<TGameAppBar> {
               ),
             ),
             const SizedBox(
-              height: 7.0,
+              height: 5.0,
             ),
             Expanded(
               child: Text(
@@ -109,7 +109,7 @@ class _TGameAppBarState extends State<TGameAppBar> {
                   "Continue the game",
                   style: TextStyle(
                     fontFamily: 'ButtonCustomFont',
-                    fontSize: 24,
+                    fontSize: 20,
                     color: Colors.white,
                   ),
                 ),
