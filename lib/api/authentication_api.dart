@@ -6,6 +6,23 @@ import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 
 class ApiAuthentication {
+  static Future<bool> logOut() async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    if (account == null) return false;
+    final response = await http.post(
+      Uri.parse(
+          'https://thinktank-sep490.azurewebsites.net/api/accounts/token-revoke?userId=${account.id}'),
+      headers: {'Content-Type': 'application/json'},
+    );
+    if (response.statusCode == 200) {
+      await SharedPreferencesHelper.removeAllofLogout();
+      return true;
+    } else {
+      print("logout loi");
+      return false;
+    }
+  }
+
   static Future<Account?> loginWithGoogle() async {
     GoogleSignIn googleSignIn = GoogleSignIn();
     await googleSignIn.signOut();
@@ -29,6 +46,9 @@ class ApiAuthentication {
           headers: {'Content-Type': 'application/json'},
           body: jsonBody,
         );
+
+        print("Robinho " + jsonBody);
+        print(response.statusCode);
 
         if (response.statusCode == 200) {
           final jsonData = json.decode(response.body);

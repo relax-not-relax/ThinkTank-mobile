@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
+import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/api/challenges_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
@@ -9,8 +10,10 @@ import 'package:thinktank_mobile/models/achievement.dart';
 import 'package:thinktank_mobile/screens/account/editaccount_screen.dart';
 import 'package:thinktank_mobile/screens/achievement/challenges_screen.dart';
 import 'package:thinktank_mobile/screens/home.dart';
+import 'package:thinktank_mobile/screens/startscreen.dart';
 import 'package:thinktank_mobile/widgets/appbar/normal_appbar.dart';
 import 'package:thinktank_mobile/widgets/others/itemachieve.dart';
+import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/statistical_item.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
@@ -188,7 +191,22 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
                       Expanded(
                         flex: 2,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            _showResizableDialog(context);
+                            bool status = await ApiAuthentication.logOut();
+                            if (status) {
+                              // ignore: use_build_context_synchronously
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => StartScreen()),
+                                (route) => false,
+                              );
+                            } else {
+                              print("Loi logout");
+                              _closeDialog(context);
+                            }
+                          },
                           style: buttonLogout,
                           child: const Icon(
                             IconlyLight.logout,
@@ -375,4 +393,57 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
       ),
     );
   }
+}
+
+void _closeDialog(BuildContext context) {
+  Navigator.of(context).pop();
+}
+
+void _showResizableDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 400,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/pics/accOragne.png',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Please wait...',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Text(
+                'Please wait a moment, Logouting...',
+                style: TextStyle(
+                    color: Color.fromRGBO(129, 140, 155, 1),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const CustomLoadingSpinner(),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

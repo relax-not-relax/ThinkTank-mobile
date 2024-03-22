@@ -70,6 +70,15 @@ class SharedPreferencesHelper {
     prefs.remove(accInfoKey);
   }
 
+  static Future<void> removeAllofLogout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove(accInfoKey);
+    prefs.remove(anonymousLevel);
+    prefs.remove(flipCardLevel);
+    prefs.remove(imagesWalkthroughLevel);
+    prefs.remove(musicPasswordLevel);
+  }
+
   static Future<LoginInfo?> getAccount() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? accountJson = prefs.getString(loginInfoKey);
