@@ -85,9 +85,6 @@ class ApiAccount {
       final jsonData = json.decode(response.body);
       print(response.body);
       Account account = Account.fromJson(jsonData);
-      Account? account2 = await SharedPreferencesHelper.getInfo();
-      account.accessToken = account2!.accessToken;
-      account.refreshToken = account2.refreshToken;
       await SharedPreferencesHelper.saveInfo(account);
       return account;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
@@ -107,9 +104,6 @@ class ApiAccount {
       if (response2.statusCode == 200) {
         final jsonData = json.decode(response2.body);
         Account account = Account.fromJson(jsonData);
-        Account? account2 = await SharedPreferencesHelper.getInfo();
-        account.accessToken = account2!.accessToken;
-        account.refreshToken = account2.refreshToken;
         await SharedPreferencesHelper.saveInfo(account);
         return account;
       } else {

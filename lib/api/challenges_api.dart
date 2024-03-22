@@ -21,6 +21,7 @@ class ApiChallenges {
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
+      print("Messi" + jsonData.toString());
       for (var element in jsonData) {
         result.add(Challenge.fromJson(element));
       }
@@ -32,14 +33,14 @@ class ApiChallenges {
       SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/challenges?AccountId=${account!.id}&Status=1'),
+            'https://thinktank-sep490.azurewebsites.net/api/challenges?AccountId=${account2!.id}&Status=1'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2.accessToken}',
         },
       );
       if (response2.statusCode == 200) {
-        final jsonData = json.decode(response.body);
+        final jsonData = json.decode(response2.body);
         for (var element in jsonData) {
           result.add(Challenge.fromJson(element));
         }
