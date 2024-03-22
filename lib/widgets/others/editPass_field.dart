@@ -75,6 +75,7 @@ class _EditPasswordFieldState extends State<EditPasswordField> {
               ),
             ),
             errorText: widget.errorText,
+            errorMaxLines: 3,
             focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(
                 Radius.circular(10.0),

@@ -17,7 +17,7 @@ class TAppBar extends StatefulWidget implements PreferredSizeWidget {
       required this.notiAmount});
 
   final void Function() onSelectNotification;
-  final Account account;
+  final Account? account;
   final int notiAmount;
 
   @override
@@ -29,36 +29,6 @@ class TAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _TAppBarState extends State<TAppBar> {
-  // late int notiAmount = 0;
-  // late Future<List<NotificationItem>> notifications =
-  //     SharedPreferencesHelper.getNotifications();
-
-  // void pushNotification() {
-  //   setState(() {
-  //     notiAmount++;
-  //   });
-  // }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   FirebaseMessageAPI().initNoticationItems(pushNotification);
-  //   updateNotifications();
-  // }
-
-  // Future<void> updateNotifications() async {
-  //   List<NotificationItem> notifications =
-  //       await ApiNotification.getNotifications(
-  //           widget.account.id, widget.account.accessToken!);
-  //   int notiAmountNotRead = notifications
-  //       .where((notification) => notification.status == false)
-  //       .length;
-  //   setState(() {
-  //     notiAmount = notiAmountNotRead;
-  //   });
-  //   SharedPreferencesHelper.saveNotifications(notifications);
-  // }
-
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -102,7 +72,10 @@ class _TAppBarState extends State<TAppBar> {
                 backgroundColor: Colors.transparent,
                 leading: CircleAvatar(
                   radius: 50,
-                  backgroundImage: NetworkImage(widget.account.avatar!),
+                  backgroundImage: widget.account != null
+                      ? NetworkImage(widget.account!.avatar!)
+                      : const NetworkImage(
+                          "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688"),
                 ),
                 title: Padding(
                   padding: const EdgeInsets.fromLTRB(7, 0, 0, 0),
@@ -118,7 +91,7 @@ class _TAppBarState extends State<TAppBar> {
                         ),
                       ),
                       Text(
-                        widget.account.fullName,
+                        widget.account != null ? widget.account!.fullName : "",
                         style: GoogleFonts.roboto(
                           color: Colors.white,
                           fontSize: 20.0,

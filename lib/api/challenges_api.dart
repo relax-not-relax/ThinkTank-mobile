@@ -6,14 +6,14 @@ import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/achievement.dart';
 
 class ApiChallenges {
-  static Future<List<Challenge>> getChallenges(
-      int accountId, String authToken) async {
+  static Future<List<Challenge>> getChallenges() async {
+    Account? account = await SharedPreferencesHelper.getInfo();
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/challenges?AccountId=$accountId&Status=1'),
+          'https://thinktank-sep490.azurewebsites.net/api/challenges?AccountId=${account!.id}&Status=1'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $authToken',
+        'Authorization': 'Bearer ${account.accessToken}',
       },
     );
 
@@ -32,7 +32,7 @@ class ApiChallenges {
       SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/challenges?AccountId=$accountId&Status=1'),
+            'https://thinktank-sep490.azurewebsites.net/api/challenges?AccountId=${account!.id}&Status=1'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2.accessToken}',

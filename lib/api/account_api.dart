@@ -49,7 +49,7 @@ class ApiAccount {
     }
   }
 
-  static Future<Account?> updateProfile(
+  static Future<dynamic> updateProfile(
     String fullName,
     String email,
     String gender,
@@ -88,6 +88,7 @@ class ApiAccount {
       Account? account2 = await SharedPreferencesHelper.getInfo();
       account.accessToken = account2!.accessToken;
       account.refreshToken = account2.refreshToken;
+      await SharedPreferencesHelper.saveInfo(account);
       return account;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account = await SharedPreferencesHelper.getInfo();
@@ -109,12 +110,15 @@ class ApiAccount {
         Account? account2 = await SharedPreferencesHelper.getInfo();
         account.accessToken = account2!.accessToken;
         account.refreshToken = account2.refreshToken;
+        await SharedPreferencesHelper.saveInfo(account);
         return account;
       } else {
-        print("Can not update account!");
+        final error = json.decode(response2.body)['error'];
+        return error;
       }
     } else {
-      return null;
+      final error = json.decode(response.body)['error'];
+      return error;
     }
   }
 }

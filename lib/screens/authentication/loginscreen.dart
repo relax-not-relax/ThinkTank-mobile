@@ -266,8 +266,7 @@ class LoginScreenState extends State<LoginScreen> {
                             await SharedPreferencesHelper.saveInfo(acc);
                             await ApiAchieviements.getLevelOfUser(
                                 acc.id, acc.accessToken!);
-                            await ApiNotification.getNotifications(
-                                acc.id, acc.accessToken!);
+                            await ApiNotification.getNotifications();
                             int version = await SharedPreferencesHelper
                                 .getResourceVersion();
                             await AssetsAPI.addAssets(
@@ -278,9 +277,8 @@ class LoginScreenState extends State<LoginScreen> {
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => HomeScreen(
-                                        account: acc,
-                                        inputScreen: OptionScreen(account: acc),
+                                  builder: (context) => const HomeScreen(
+                                        inputScreen: OptionScreen(),
                                         screenIndex: 0,
                                       )),
                               (route) => false,
@@ -345,8 +343,7 @@ class LoginScreenState extends State<LoginScreen> {
                           await SharedPreferencesHelper.saveInfo(acc);
                           await ApiAchieviements.getLevelOfUser(
                               acc.id, acc.accessToken!);
-                          await ApiNotification.getNotifications(
-                              acc.id, acc.accessToken!);
+                          await ApiNotification.getNotifications();
 
                           int version = await SharedPreferencesHelper
                               .getResourceVersion();
@@ -357,11 +354,8 @@ class LoginScreenState extends State<LoginScreen> {
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => HomeScreen(
-                                      account: acc,
-                                      inputScreen: OptionScreen(
-                                        account: acc,
-                                      ),
+                                builder: (context) => const HomeScreen(
+                                      inputScreen: OptionScreen(),
                                       screenIndex: 0,
                                     )),
                             (route) => false,
