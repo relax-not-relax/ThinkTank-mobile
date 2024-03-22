@@ -261,7 +261,10 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
       timer?.cancel();
     });
     double points = (remainingTime.inMilliseconds / 1000);
-    await SharedPreferencesHelper.saveAnonymousLevel(widget.level + 1);
+    int levelMax = await SharedPreferencesHelper.getAnonymousLevel();
+    if (levelMax == widget.level) {
+      await SharedPreferencesHelper.saveAnonymousLevel(widget.level + 1);
+    }
     Account? account = await SharedPreferencesHelper.getInfo();
     await ApiAchieviements.addAchieviements(
         (widget.time * 1000 - remainingTime.inMilliseconds).toDouble() / 1000,
