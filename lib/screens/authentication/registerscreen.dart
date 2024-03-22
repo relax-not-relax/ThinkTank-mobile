@@ -133,9 +133,8 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (context) => HomeScreen(
-                    account: account,
-                    inputScreen: OptionScreen(account: account),
+              builder: (context) => const HomeScreen(
+                    inputScreen: OptionScreen(),
                     screenIndex: 0,
                   )),
           (route) => false,

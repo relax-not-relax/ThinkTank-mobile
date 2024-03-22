@@ -83,7 +83,7 @@ class StartScreenState extends State<StartScreen>
     Account? acc = await ApiAuthentication.reLogin();
     if (acc != null) {
       await ApiAchieviements.getLevelOfUser(acc.id, acc.accessToken!);
-      await ApiNotification.getNotifications(acc.id, acc.accessToken!);
+      await ApiNotification.getNotifications();
       int version = await SharedPreferencesHelper.getResourceVersion();
       await AssetsAPI.addAssets(version, acc.accessToken!);
 
@@ -91,9 +91,8 @@ class StartScreenState extends State<StartScreen>
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
-            builder: (context) => HomeScreen(
-                  account: acc,
-                  inputScreen: OptionScreen(account: acc),
+            builder: (context) => const HomeScreen(
+                  inputScreen: OptionScreen(),
                   screenIndex: 0,
                 )),
         (route) => false,

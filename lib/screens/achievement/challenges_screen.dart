@@ -61,8 +61,7 @@ class ChallengesScreenState extends State<ChallengesScreen>
   late Future<void> _getChallenges;
 
   Future<void> getChallenges() async {
-    Account? account = await SharedPreferencesHelper.getInfo();
-    list = await ApiChallenges.getChallenges(account!.id, account.accessToken!);
+    list = await ApiChallenges.getChallenges();
     if (mounted) {
       setState(() {
         list;

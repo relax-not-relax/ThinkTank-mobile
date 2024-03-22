@@ -7,15 +7,15 @@ import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/notification_item.dart';
 
 class ApiNotification {
-  static Future<List<NotificationItem>> getNotifications(
-      int id, String authToken) async {
+  static Future<List<NotificationItem>> getNotifications() async {
+    Account? account = await SharedPreferencesHelper.getInfo();
     List<NotificationItem> notifications = [];
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/notifications?AccountId=$id'),
+          'https://thinktank-sep490.azurewebsites.net/api/notifications?AccountId=${account!.id}'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $authToken',
+        'Authorization': 'Bearer ${account.accessToken}',
       },
     );
     print(response.statusCode);
@@ -29,13 +29,12 @@ class ApiNotification {
 
       return notifications;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account = await SharedPreferencesHelper.getInfo();
       Account? account2 = await ApiAuthentication.refreshToken(
-          account!.refreshToken, account.accessToken);
+          account.refreshToken, account.accessToken);
       SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/notifications?AccountId=$id'),
+            'https://thinktank-sep490.azurewebsites.net/api/notifications?AccountId=${account2.id}'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2.accessToken}',

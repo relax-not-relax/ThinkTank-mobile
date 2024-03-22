@@ -20,25 +20,27 @@ import 'package:thinktank_mobile/widgets/others/style_button.dart';
 class AccountMainScreen extends StatefulWidget {
   const AccountMainScreen({
     super.key,
-    required this.account,
   });
-
-  final Account account;
 
   @override
   State<AccountMainScreen> createState() => _AccountMainScreenState();
 }
 
 class _AccountMainScreenState extends State<AccountMainScreen> {
-  late DateTime registrationDate;
-  late String formattedRegistration;
+  DateTime? registrationDate;
+  String? formattedRegistration;
   List<Challenge> list = [];
   List<Challenge> listOfThree = [];
   late Future<void> _getChallenges;
+  Account? account = null;
+  late Future _initAccount;
+
+  Future<Account?> getAccount() async {
+    return await SharedPreferencesHelper.getInfo();
+  }
 
   Future<void> getChallenges() async {
-    Account? account = await SharedPreferencesHelper.getInfo();
-    list = await ApiChallenges.getChallenges(account!.id, account.accessToken!);
+    list = await ApiChallenges.getChallenges();
     if (mounted) {
       setState(() {
         list;
@@ -51,8 +53,16 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
   @override
   void initState() {
     super.initState();
-    registrationDate = DateTime.parse(widget.account.registrationDate!);
-    formattedRegistration = DateFormat('MMMM yyyy').format(registrationDate);
+    _initAccount = getAccount();
+    _initAccount.then((value) {
+      setState(() {
+        account = value;
+        registrationDate = DateTime.parse(account!.registrationDate!);
+        formattedRegistration =
+            DateFormat('MMMM yyyy').format(registrationDate!);
+      });
+    });
+
     _getChallenges = getChallenges();
     _getChallenges.then((value) => {});
   }
@@ -61,9 +71,22 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditAccountScreen(account: widget.account),
+        builder: (context) => EditAccountScreen(account: account!),
       ),
-    );
+    ).then((value) {
+      _initAccount = getAccount();
+      _initAccount.then((value) {
+        setState(() {
+          account = value;
+          registrationDate = DateTime.parse(account!.registrationDate!);
+          formattedRegistration =
+              DateFormat('MMMM yyyy').format(registrationDate!);
+        });
+      });
+
+      _getChallenges = getChallenges();
+      _getChallenges.then((value) => {});
+    });
   }
 
   List<Color> backgroundColors = [
@@ -95,7 +118,9 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: false,
-      appBar: TNormalAppbar(title: "@${widget.account.userName}"),
+      appBar: account != null
+          ? TNormalAppbar(title: "@${account!.userName}")
+          : TNormalAppbar(title: "@"),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -118,7 +143,7 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              widget.account.fullName,
+                              account != null ? account!.fullName : "",
                               style: GoogleFonts.roboto(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -126,7 +151,7 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
                               ),
                             ),
                             Text(
-                              widget.account.code,
+                              account != null ? account!.code : "",
                               style: GoogleFonts.roboto(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -137,7 +162,7 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
                               height: 10.0,
                             ),
                             Text(
-                              "Joined $formattedRegistration",
+                              "Joined ${formattedRegistration ?? ""}",
                               style: GoogleFonts.roboto(
                                 color: Colors.white,
                                 fontSize: 14,
@@ -152,8 +177,11 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(widget.account.avatar!),
+                            backgroundImage: account != null
+                                ? NetworkImage(account!.avatar!)
+                                : const NetworkImage(
+                                    "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688",
+                                  ),
                             radius: 40,
                           ),
                         ),
@@ -341,7 +369,6 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => HomeScreen(
-                                    account: widget.account,
                                     inputScreen: ChallengesScreen(),
                                     screenIndex: 3,
                                   ),

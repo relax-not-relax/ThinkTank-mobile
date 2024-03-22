@@ -38,8 +38,7 @@ class _NotiScreenState extends State<NotiScreen> {
     // }
     Account? loginInfo;
     loginInfo = await SharedPreferencesHelper.getInfo();
-    notifications = await ApiNotification.getNotifications(
-        loginInfo!.id, loginInfo.accessToken!);
+    notifications = await ApiNotification.getNotifications();
     await SharedPreferencesHelper.saveNotifications(notifications);
     setState(() {
       _isLoaded = true;
@@ -50,8 +49,8 @@ class _NotiScreenState extends State<NotiScreen> {
   void handleReadNotification() async {
     Account? loginInfo;
     loginInfo = await SharedPreferencesHelper.getInfo();
-    List<NotificationItem> updatedList = await ApiNotification.getNotifications(
-        loginInfo!.id, loginInfo!.accessToken!);
+    List<NotificationItem> updatedList =
+        await ApiNotification.getNotifications();
     await SharedPreferencesHelper.saveNotifications(updatedList);
   }
 
@@ -61,8 +60,8 @@ class _NotiScreenState extends State<NotiScreen> {
     });
     Account? loginInfo;
     loginInfo = await SharedPreferencesHelper.getInfo();
-    List<NotificationItem> updatedList = await ApiNotification.getNotifications(
-        loginInfo!.id, loginInfo.accessToken!);
+    List<NotificationItem> updatedList =
+        await ApiNotification.getNotifications();
     await SharedPreferencesHelper.saveNotifications(updatedList);
     notifications = await SharedPreferencesHelper.getNotifications();
     setState(() {
@@ -90,8 +89,7 @@ class _NotiScreenState extends State<NotiScreen> {
       }
 
       List<NotificationItem> updatedList =
-          await ApiNotification.getNotifications(
-              loginInfo!.id, loginInfo.accessToken!);
+          await ApiNotification.getNotifications();
       await SharedPreferencesHelper.saveNotifications(updatedList);
       notifications = await SharedPreferencesHelper.getNotifications();
     }
@@ -126,8 +124,7 @@ class _NotiScreenState extends State<NotiScreen> {
       await ApiNotification.deleteAllNotifications(
           notiIds, loginInfo!.accessToken!);
       List<NotificationItem> updatedList =
-          await ApiNotification.getNotifications(
-              loginInfo!.id, loginInfo.accessToken!);
+          await ApiNotification.getNotifications();
       await SharedPreferencesHelper.saveNotifications(updatedList);
       notifications = await SharedPreferencesHelper.getNotifications();
     }

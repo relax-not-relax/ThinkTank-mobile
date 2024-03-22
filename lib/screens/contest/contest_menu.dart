@@ -50,9 +50,8 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => HomeScreen(
-                  account: account!,
-                  inputScreen: OptionScreen(account: account),
+                builder: (context) => const HomeScreen(
+                  inputScreen: OptionScreen(),
                   screenIndex: 0,
                 ),
               ),

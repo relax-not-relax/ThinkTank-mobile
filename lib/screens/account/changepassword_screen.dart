@@ -23,6 +23,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   bool _isPasswordMismatch = false;
   bool _isInCorrectOldPassword = false;
   bool _isUnChecked = false;
+  bool _isValid = false;
+  String errorText = "";
+
   String passCheck = "";
 
   @override
@@ -42,6 +45,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   }
 
   void _validateAndSave() {
+    final passwordRegex =
+        RegExp(r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,12}$');
+
     if (_passwordController.text != passCheck) {
       setState(() {
         _isInCorrectOldPassword = true;
@@ -64,9 +70,23 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       if (_newPasswordController.text.contains(' ')) {
         setState(() {
           _isUnChecked = true;
+          errorText = "Password must not contain spaces!";
         });
       } else {
         _isUnChecked = false;
+      }
+
+      _isValid = passwordRegex.hasMatch(_newPasswordController.text);
+      if (_isValid) {
+        setState(() {
+          _isUnChecked = false;
+        });
+      } else {
+        setState(() {
+          _isUnChecked = true;
+          errorText =
+              "Password must have at least one number, one lowercase letter, one uppercase letter, and be between 8 and 12 characters long";
+        });
       }
     }
 
@@ -76,7 +96,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           _newPasswordController.text = _passwordController.text;
         });
         Navigator.pop(context, _newPasswordController.text);
-      } else if (_newPasswordController.text != "" && _isUnChecked == false) {
+      } else if (_newPasswordController.text != "" &&
+          _isUnChecked == false &&
+          _isValid) {
         Navigator.pop(context, _newPasswordController.text);
       }
     }
@@ -95,36 +117,36 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  EditPasswordField(
-                    controllerPass: _passwordController,
-                    title: "Old password",
-                    errorText: _isInCorrectOldPassword
-                        ? 'Old password is incorrect'
-                        : null,
-                    borderColor: _isInCorrectOldPassword ? Colors.red : null,
-                  ),
-                  const SizedBox(height: 20),
-                  EditPasswordField(
-                    controllerPass: _newPasswordController,
-                    title: "New password",
-                    errorText: _isUnChecked
-                        ? 'Password must not contain spaces!'
-                        : null,
-                    borderColor: _isUnChecked ? Colors.red : null,
-                  ),
-                  const SizedBox(height: 20),
-                  EditPasswordField(
-                    controllerPass: _confirmPasswordController,
-                    title: "Confirm password",
-                    errorText: _isPasswordMismatch
-                        ? 'Confirm password does not match the new password!'
-                        : null,
-                    borderColor: _isPasswordMismatch ? Colors.red : null,
-                  ),
-                ],
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    EditPasswordField(
+                      controllerPass: _passwordController,
+                      title: "Old password",
+                      errorText: _isInCorrectOldPassword
+                          ? 'Old password is incorrect'
+                          : null,
+                      borderColor: _isInCorrectOldPassword ? Colors.red : null,
+                    ),
+                    const SizedBox(height: 20),
+                    EditPasswordField(
+                      controllerPass: _newPasswordController,
+                      title: "New password",
+                      errorText: _isUnChecked ? errorText : null,
+                      borderColor: _isUnChecked ? Colors.red : null,
+                    ),
+                    const SizedBox(height: 20),
+                    EditPasswordField(
+                      controllerPass: _confirmPasswordController,
+                      title: "Confirm password",
+                      errorText: _isPasswordMismatch
+                          ? 'Confirm password does not match the new password!'
+                          : null,
+                      borderColor: _isPasswordMismatch ? Colors.red : null,
+                    ),
+                  ],
+                ),
               ),
             ),
             Align(

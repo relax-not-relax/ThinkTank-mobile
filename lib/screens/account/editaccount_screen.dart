@@ -62,8 +62,8 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     _loginFuture.then((loginInfo) {
       setState(() {
         if (loginInfo != null) {
-          _controller.text = loginInfo.password ?? "";
-          oldPassword = loginInfo.password ?? "";
+          _controller.text = loginInfo.password;
+          oldPassword = loginInfo.password;
         }
       });
     });
@@ -310,7 +310,16 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                   });
                 }
 
-                Account? updatedAccount = await ApiAccount.updateProfile(
+                print(_nameController.text);
+                print(_emailController.text);
+                print(gender);
+                print(birthday);
+                print(avatar);
+
+                print(oldPassword + "old");
+                print(_controller.text + "new");
+
+                dynamic result = await ApiAccount.updateProfile(
                   _nameController.text,
                   _emailController.text,
                   gender,
@@ -322,12 +331,8 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                   id,
                 );
 
-                if (updatedAccount == null) {
-                  print("Can not update!");
-                  // ignore: use_build_context_synchronously
-                  _closeDialog(context);
-                } else {
-                  await SharedPreferencesHelper.saveInfo(updatedAccount);
+                if (result is Account) {
+                  //await SharedPreferencesHelper.saveInfo(result);
 
                   // ignore: use_build_context_synchronously
                   _closeDialog(context);
@@ -335,6 +340,14 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                   Future.delayed(const Duration(seconds: 2), () {
                     // ignore: use_build_context_synchronously
                     _showResizableDialogSuccess(context);
+                  });
+                } else {
+                  print("Error: $result");
+                  // ignore: use_build_context_synchronously
+                  _closeDialog(context);
+                  Future.delayed(const Duration(seconds: 1), () {
+                    // ignore: use_build_context_synchronously
+                    _showResizableDialogError(context, result);
                   });
                 }
               },
@@ -447,6 +460,57 @@ void _showResizableDialogSuccess(BuildContext context) {
                 child: Text(
                   'Let we know more about you.',
                   style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _showResizableDialogError(BuildContext context, String message) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 300,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/pics/error.png',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Oh no!',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 5,
+                ),
+                child: Text(
+                  message,
+                  style: const TextStyle(
                       color: Color.fromRGBO(129, 140, 155, 1),
                       fontSize: 14,
                       fontWeight: FontWeight.w400),

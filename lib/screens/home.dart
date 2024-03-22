@@ -19,12 +19,11 @@ import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
     super.key,
-    required this.account,
     required this.inputScreen,
     required this.screenIndex,
   });
 
-  final Account account;
+  //final Account account;
   final Widget inputScreen;
   final int screenIndex;
 
@@ -53,15 +52,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
     switch (_selectedPageIndex) {
       case 0:
-        activePage = OptionScreen(account: widget.account);
+        activePage = OptionScreen();
         break;
       case 4:
         activePage = const FriendScreen();
         break;
       case 2:
-        activePage = AccountMainScreen(
-          account: widget.account,
-        );
+        activePage = const AccountMainScreen();
         break;
       case 3:
         activePage = ChallengesScreen();

@@ -21,14 +21,17 @@ int _activePage = 0;
 Timer? timer;
 
 class OptionScreen extends StatefulWidget {
-  const OptionScreen({super.key, required this.account});
+  const OptionScreen({super.key});
 
-  final Account account;
+  //final Account account;
   @override
   State<OptionScreen> createState() => _OptionScreenState();
 }
 
 class _OptionScreenState extends State<OptionScreen> {
+  Account? account = null;
+  late Future _initAccount;
+
   void startTimer() {
     int _currentPage;
     _currentPage = 0;
@@ -89,6 +92,12 @@ class _OptionScreenState extends State<OptionScreen> {
   @override
   void initState() {
     super.initState();
+    _initAccount = getAccount();
+    _initAccount.then((value) {
+      setState(() {
+        account = value;
+      });
+    });
     _pages = List.generate(
       contest.length,
       (index) {
@@ -116,8 +125,7 @@ class _OptionScreenState extends State<OptionScreen> {
 
   Future<void> updateNotifications() async {
     List<NotificationItem> notifications =
-        await ApiNotification.getNotifications(
-            widget.account.id, widget.account.accessToken!);
+        await ApiNotification.getNotifications();
     int notiAmountNotRead = notifications
         .where((notification) => notification.status == false)
         .length;
@@ -137,8 +145,7 @@ class _OptionScreenState extends State<OptionScreen> {
     ).then(
       (value) async {
         List<NotificationItem> notifications =
-            await ApiNotification.getNotifications(
-                widget.account.id, widget.account.accessToken!);
+            await ApiNotification.getNotifications();
         int notiAmountNotRead = notifications
             .where((notification) => notification.status == false)
             .length;
@@ -151,13 +158,17 @@ class _OptionScreenState extends State<OptionScreen> {
     );
   }
 
+  Future<Account?> getAccount() async {
+    return await SharedPreferencesHelper.getInfo();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: TAppBar(
         onSelectNotification: () => openNotification(context),
-        account: widget.account,
+        account: account,
         notiAmount: amount,
       ),
       body: Container(
