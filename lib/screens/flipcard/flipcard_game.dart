@@ -80,7 +80,10 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
 
   void win() async {
     double points = (remainingTime.inMilliseconds / 1000);
-    await SharedPreferencesHelper.saveFLipCardLevel(widget.level + 1);
+    int levelMax = await SharedPreferencesHelper.getFLipCardLevel();
+    if (levelMax == widget.level) {
+      await SharedPreferencesHelper.saveFLipCardLevel(widget.level + 1);
+    }
     await ApiAchieviements.addAchieviements(
         (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
             1000,

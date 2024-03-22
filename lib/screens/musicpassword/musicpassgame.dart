@@ -160,7 +160,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
 
   void win() async {
     double points = (remainingTime.inMilliseconds / 1000);
-    await SharedPreferencesHelper.saveMusicPasswordLevel(widget.info.level + 1);
+    int levelMax = await SharedPreferencesHelper.getMusicPasswordLevel();
+    if (levelMax == widget.info.level) {
+      await SharedPreferencesHelper.saveMusicPasswordLevel(
+          widget.info.level + 1);
+    }
     await ApiAchieviements.addAchieviements(
         (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
             1000,

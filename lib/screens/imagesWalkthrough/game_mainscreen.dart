@@ -108,8 +108,11 @@ class _GameMainScreenState extends State<GameMainScreen> {
 
   void win() async {
     double points = (remainingTime.inMilliseconds / 1000);
-    await SharedPreferencesHelper.saveImagesWalkthroughLevel(
-        widget.levelNumber + 1);
+    int levelMax = await SharedPreferencesHelper.getImagesWalkthroughLevel();
+    if (levelMax == widget.levelNumber) {
+      await SharedPreferencesHelper.saveImagesWalkthroughLevel(
+          widget.levelNumber + 1);
+    }
     await ApiAchieviements.addAchieviements(
         (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
             1000,
