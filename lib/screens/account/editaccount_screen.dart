@@ -340,7 +340,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                     // ignore: use_build_context_synchronously
                     _closeDialog(context);
 
-                    Future.delayed(const Duration(seconds: 2), () {
+                    Future.delayed(const Duration(seconds: 0), () {
                       // ignore: use_build_context_synchronously
                       _showResizableDialogSuccess(context);
                     });
@@ -372,7 +372,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                     // ignore: use_build_context_synchronously
                     _closeDialog(context);
 
-                    Future.delayed(const Duration(seconds: 2), () {
+                    Future.delayed(const Duration(seconds: 0), () {
                       // ignore: use_build_context_synchronously
                       _showResizableDialogSuccess(context);
                     });
