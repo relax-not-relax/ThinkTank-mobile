@@ -282,11 +282,13 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    EditAccountPassField(
-                      controllerPass: _controller,
-                      title: "Password",
-                      openChange: _changePassword,
-                    ),
+                    widget.account.googleId == null
+                        ? EditAccountPassField(
+                            controllerPass: _controller,
+                            title: "Password",
+                            openChange: _changePassword,
+                          )
+                        : Container(),
                     const SizedBox(height: 40),
                   ],
                 ),
@@ -319,36 +321,70 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                 print(oldPassword + "old");
                 print(_controller.text + "new");
 
-                dynamic result = await ApiAccount.updateProfile(
-                  _nameController.text,
-                  _emailController.text,
-                  gender,
-                  birthday,
-                  avatar,
-                  oldPassword,
-                  _controller.text,
-                  widget.account.accessToken!,
-                  id,
-                );
+                if (widget.account.googleId == null) {
+                  dynamic result = await ApiAccount.updateProfile(
+                    _nameController.text,
+                    _emailController.text,
+                    gender,
+                    birthday,
+                    avatar,
+                    oldPassword,
+                    _controller.text,
+                    widget.account.accessToken!,
+                    id,
+                  );
 
-                if (result is Account) {
-                  //await SharedPreferencesHelper.saveInfo(result);
+                  if (result is Account) {
+                    //await SharedPreferencesHelper.saveInfo(result);
 
-                  // ignore: use_build_context_synchronously
-                  _closeDialog(context);
-
-                  Future.delayed(const Duration(seconds: 2), () {
                     // ignore: use_build_context_synchronously
-                    _showResizableDialogSuccess(context);
-                  });
+                    _closeDialog(context);
+
+                    Future.delayed(const Duration(seconds: 2), () {
+                      // ignore: use_build_context_synchronously
+                      _showResizableDialogSuccess(context);
+                    });
+                  } else {
+                    print("Error: $result");
+                    // ignore: use_build_context_synchronously
+                    _closeDialog(context);
+                    Future.delayed(const Duration(seconds: 1), () {
+                      // ignore: use_build_context_synchronously
+                      _showResizableDialogError(context, result);
+                    });
+                  }
                 } else {
-                  print("Error: $result");
-                  // ignore: use_build_context_synchronously
-                  _closeDialog(context);
-                  Future.delayed(const Duration(seconds: 1), () {
+                  dynamic result = await ApiAccount.updateProfile(
+                    _nameController.text,
+                    _emailController.text,
+                    gender,
+                    birthday,
+                    avatar,
+                    "",
+                    "",
+                    widget.account.accessToken!,
+                    id,
+                  );
+
+                  if (result is Account) {
+                    //await SharedPreferencesHelper.saveInfo(result);
+
                     // ignore: use_build_context_synchronously
-                    _showResizableDialogError(context, result);
-                  });
+                    _closeDialog(context);
+
+                    Future.delayed(const Duration(seconds: 2), () {
+                      // ignore: use_build_context_synchronously
+                      _showResizableDialogSuccess(context);
+                    });
+                  } else {
+                    print("Error: $result");
+                    // ignore: use_build_context_synchronously
+                    _closeDialog(context);
+                    Future.delayed(const Duration(seconds: 1), () {
+                      // ignore: use_build_context_synchronously
+                      _showResizableDialogError(context, result);
+                    });
+                  }
                 }
               },
               style: buttonPrimary_3,
