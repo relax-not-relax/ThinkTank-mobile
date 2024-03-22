@@ -418,16 +418,22 @@ void _showResizableDialog(BuildContext context) {
                 'Please wait...',
                 style: TextStyle(
                     color: Color.fromRGBO(234, 84, 85, 1),
-                    fontSize: 30,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
-              const Text(
-                'Please wait a moment, we are preparing for you...',
-                style: TextStyle(
-                    color: Color.fromRGBO(129, 140, 155, 1),
-                    fontSize: 18,
-                    fontWeight: FontWeight.w400),
-                textAlign: TextAlign.center,
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 5,
+                ),
+                child: Text(
+                  'Please wait a moment, we are preparing for you...',
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
               ),
               const SizedBox(
                 height: 30,

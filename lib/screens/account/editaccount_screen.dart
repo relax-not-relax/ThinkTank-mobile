@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:thinktank_mobile/api/account_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
@@ -49,9 +50,10 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
   void initState() {
     super.initState();
     _nameController.text = widget.account.fullName;
-    _userNameController.text = widget.account.userName;
+
     _emailController.text = widget.account.email;
-    birthday = widget.account.dateOfBirth!;
+    birthday = widget.account.dateOfBirth ??
+        DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(DateTime.now());
     gender = widget.account.gender ?? "Male";
     avatar = widget.account.avatar ??
         "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/0%2FUntitled%20design%20%281%29.png?alt=media&token=a68548c0-4658-4525-ab56-67516c399b0b";
@@ -60,8 +62,8 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     _loginFuture.then((loginInfo) {
       setState(() {
         if (loginInfo != null) {
-          _controller.text = loginInfo.password;
-          oldPassword = loginInfo.password;
+          _controller.text = loginInfo.password ?? "";
+          oldPassword = loginInfo.password ?? "";
         }
       });
     });
@@ -99,7 +101,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
 
     if (newPassword != null) {
       setState(() {
-        _controller.text = newPassword;
+        _controller.text = newPassword ?? "";
       });
     }
   }
@@ -254,11 +256,6 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                     ),
                     const SizedBox(height: 20),
                     EditAccountField(
-                      controller: _userNameController,
-                      title: "Username",
-                    ),
-                    const SizedBox(height: 20),
-                    EditAccountField(
                       controller: _emailController,
                       title: "Email",
                     ),
@@ -315,7 +312,6 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
 
                 Account? updatedAccount = await ApiAccount.updateProfile(
                   _nameController.text,
-                  _userNameController.text,
                   _emailController.text,
                   gender,
                   birthday,

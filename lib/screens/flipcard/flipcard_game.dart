@@ -181,7 +181,9 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 240, 199),
+      backgroundColor: continueVisible == false
+          ? const Color.fromARGB(255, 255, 240, 199)
+          : Color.fromRGBO(234, 67, 53, 1),
       extendBodyBehindAppBar: false,
       appBar: TGameAppBar(
         preferredHeight: MediaQuery.of(context).size.height * 0.26,
@@ -195,97 +197,108 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
       body: Visibility(
         visible: !_isLoading,
         child: Container(
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height * 0.74,
           width: MediaQuery.of(context).size.width,
           color: const Color.fromARGB(255, 255, 240, 199),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: Stack(
             children: [
-              Container(
-                height: MediaQuery.of(context).size.height * 0.54,
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0),
-                child: GridView.builder(
-                  itemCount: _game.gameImg.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 8.0,
-                    mainAxisSpacing: 8.0,
-                  ),
-                  itemBuilder: (context, index) {
-                    bool isMatched = _game.matchedCards[index];
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.74,
+                    width: MediaQuery.of(context).size.width,
+                    padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0),
+                    child: GridView.builder(
+                      itemCount: _game.gameImg.length,
+                      gridDelegate: _game.cardCount == 6
+                          ? const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 8.0,
+                              mainAxisSpacing: 8.0,
+                            )
+                          : const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 4,
+                              crossAxisSpacing: 2.0,
+                              mainAxisSpacing: 2.0,
+                            ),
+                      itemBuilder: (context, index) {
+                        bool isMatched = _game.matchedCards[index];
 
-                    return FlipCard(
-                      key: cardKeys[index],
-                      // flipOnTouch: !isMatched &&
-                      //     !_isCheckingCards &&
-                      //     !isLosed &&
-                      //     index != indexCheck &&
-                      //     _isFree,
-                      flipOnTouch: false,
-                      // onFlip: () async {
-                      //   if (!isMatched &&
-                      //       !_isCheckingCards &&
-                      //       !isLosed &&
-                      //       index != indexCheck &&
-                      //       _isFree) {
-                      //     await _handleCardFlip(index, cardKeys[index]);
-                      //   }
-                      // },
-                      front: InkWell(
-                        onTap: () async {
-                          if (!isMatched &&
-                              !_isCheckingCards &&
-                              !isLosed &&
-                              index != indexCheck &&
-                              _isFree) {
-                            await _handleCardFlip(index, cardKeys[index]);
-                          }
-                        },
-                        child: Card(
-                          child: Container(
-                            height: 100.0,
-                            width: 100.0,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage("assets/pics/logo_2.png"),
-                                fit: BoxFit.cover,
-                              ),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10.0),
+                        return FlipCard(
+                          key: cardKeys[index],
+                          // flipOnTouch: !isMatched &&
+                          //     !_isCheckingCards &&
+                          //     !isLosed &&
+                          //     index != indexCheck &&
+                          //     _isFree,
+                          flipOnTouch: false,
+                          // onFlip: () async {
+                          //   if (!isMatched &&
+                          //       !_isCheckingCards &&
+                          //       !isLosed &&
+                          //       index != indexCheck &&
+                          //       _isFree) {
+                          //     await _handleCardFlip(index, cardKeys[index]);
+                          //   }
+                          // },
+                          front: InkWell(
+                            onTap: () async {
+                              if (!isMatched &&
+                                  !_isCheckingCards &&
+                                  !isLosed &&
+                                  index != indexCheck &&
+                                  _isFree) {
+                                await _handleCardFlip(index, cardKeys[index]);
+                              }
+                            },
+                            child: Card(
+                              child: Container(
+                                height: 100.0,
+                                width: 100.0,
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage("assets/pics/logo_2.png"),
+                                    fit: BoxFit.cover,
+                                  ),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10.0),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                      back: Card(
-                        child: Container(
-                          height: 100.0,
-                          width: 100.0,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: FileImage(File(_game.gameImg[index])),
-                              fit: BoxFit.cover,
-                            ),
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(10.0),
+                          back: Card(
+                            child: Container(
+                              height: 100.0,
+                              width: 100.0,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: FileImage(File(_game.gameImg[index])),
+                                  fit: BoxFit.cover,
+                                ),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10.0),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
               Visibility(
                 visible: continueVisible,
                 child: Container(
-                  height: MediaQuery.of(context).size.height * 0.2,
+                  height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
                   padding: const EdgeInsets.only(
-                    bottom: 30.0,
+                    bottom: 20,
                   ),
+                  color: const Color.fromARGB(85, 0, 0, 0),
                   child: Align(
                     alignment: Alignment.bottomCenter,
                     child: SizedBox(
