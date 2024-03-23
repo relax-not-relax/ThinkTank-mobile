@@ -197,7 +197,8 @@ class FriendRequestScreenState extends State<FriendRequestScreen> {
               Expanded(
                 child: _isLoading
                     ? const Center(
-                        child: CustomLoadingSpinner(),
+                        child: CustomLoadingSpinner(
+                            color: Color.fromARGB(255, 245, 149, 24)),
                       )
                     : SingleChildScrollView(
                         child: Column(

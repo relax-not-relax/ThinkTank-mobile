@@ -653,7 +653,8 @@ void _showResizableDialog(BuildContext context) {
               const SizedBox(
                 height: 30,
               ),
-              const CustomLoadingSpinner(),
+              const CustomLoadingSpinner(
+                  color: Color.fromARGB(255, 245, 149, 24)),
             ],
           ),
         ),

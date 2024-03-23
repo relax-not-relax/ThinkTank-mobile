@@ -8,7 +8,9 @@ import 'package:thinktank_mobile/models/contest.dart';
 import 'package:thinktank_mobile/screens/contest/instruction_screen.dart';
 import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
+import 'package:thinktank_mobile/widgets/game/coin_div.dart';
 import 'package:thinktank_mobile/widgets/game/memory_type.dart';
+import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:unicons/unicons.dart';
 
 class ContestMenuScreen extends StatefulWidget {
@@ -29,6 +31,10 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
   late String formatStartDate;
   late String formatEndDate;
 
+  bool isWaiting = false;
+  bool isVisible = true;
+  //late Future _waitingToJoin;
+
   @override
   void initState() {
     super.initState();
@@ -36,6 +42,13 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
     endContest = DateTime.parse(widget.contest.endTime);
     formatStartDate = DateFormat('yMd').format(startContest);
     formatEndDate = DateFormat('yMd').format(endContest);
+  }
+
+  void waiting() {
+    setState(() {
+      isVisible = false;
+      isWaiting = true;
+    });
   }
 
   @override
@@ -180,28 +193,9 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(5)),
                                 ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/pics/TTcoin.png",
-                                      width: 20,
-                                      height: 20,
-                                    ),
-                                    const SizedBox(
-                                      width: 7,
-                                    ),
-                                    Text(
-                                      widget.contest.coinBetting.toString(),
-                                      style: GoogleFonts.roboto(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color.fromARGB(255, 40, 52, 68),
-                                      ),
-                                    ),
-                                  ],
+                                child: CoinDiv(
+                                  amount: widget.contest.coinBetting.toString(),
+                                  color: Color.fromARGB(255, 40, 52, 68),
                                 ),
                               ),
                             ],
@@ -268,101 +262,125 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Center(
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(50),
+                    Visibility(
+                      visible: isVisible,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Center(
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(50),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color.fromARGB(183, 0, 0, 0),
+                                    spreadRadius: 1,
+                                    blurRadius: 10,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color.fromARGB(183, 0, 0, 0),
-                                  spreadRadius: 1,
-                                  blurRadius: 10,
-                                  offset: Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              style: ButtonStyle(
-                                fixedSize: MaterialStatePropertyAll(
-                                  Size(MediaQuery.of(context).size.width - 45,
-                                      80.0),
-                                ),
-                                backgroundColor: const MaterialStatePropertyAll(
-                                  Color.fromARGB(255, 234, 67, 53),
-                                ),
-                                side: const MaterialStatePropertyAll(
-                                  BorderSide(
-                                    color: Colors.white,
-                                    width: 5,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  _showJoinDialog(
+                                    context,
+                                    widget.contest.coinBetting.toString(),
+                                    waiting,
+                                  );
+                                },
+                                style: ButtonStyle(
+                                  fixedSize: MaterialStatePropertyAll(
+                                    Size(MediaQuery.of(context).size.width - 45,
+                                        80.0),
+                                  ),
+                                  backgroundColor:
+                                      const MaterialStatePropertyAll(
+                                    Color.fromARGB(255, 234, 67, 53),
+                                  ),
+                                  side: const MaterialStatePropertyAll(
+                                    BorderSide(
+                                      color: Colors.white,
+                                      width: 5,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              child: const Text(
-                                "JOIN",
-                                style: TextStyle(
-                                  fontFamily: 'ButtonCustomFont',
-                                  fontSize: 28,
-                                  color: Colors.white,
+                                child: const Text(
+                                  "JOIN",
+                                  style: TextStyle(
+                                    fontFamily: 'ButtonCustomFont',
+                                    fontSize: 28,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Center(
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(50),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Center(
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(50),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color.fromARGB(183, 0, 0, 0),
+                                    spreadRadius: 1,
+                                    blurRadius: 10,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color.fromARGB(183, 0, 0, 0),
-                                  spreadRadius: 1,
-                                  blurRadius: 10,
-                                  offset: Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              style: ButtonStyle(
-                                fixedSize: MaterialStatePropertyAll(
-                                  Size(MediaQuery.of(context).size.width - 45,
-                                      80.0),
-                                ),
-                                backgroundColor: const MaterialStatePropertyAll(
-                                  Color.fromARGB(255, 85, 125, 176),
-                                ),
-                                side: const MaterialStatePropertyAll(
-                                  BorderSide(
-                                    color: Colors.white,
-                                    width: 5,
+                              child: ElevatedButton(
+                                onPressed: () {},
+                                style: ButtonStyle(
+                                  fixedSize: MaterialStatePropertyAll(
+                                    Size(MediaQuery.of(context).size.width - 45,
+                                        80.0),
+                                  ),
+                                  backgroundColor:
+                                      const MaterialStatePropertyAll(
+                                    Color.fromARGB(255, 85, 125, 176),
+                                  ),
+                                  side: const MaterialStatePropertyAll(
+                                    BorderSide(
+                                      color: Colors.white,
+                                      width: 5,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              child: const Text(
-                                "LEADERBOARD",
-                                style: TextStyle(
-                                  fontFamily: 'ButtonCustomFont',
-                                  fontSize: 28,
-                                  color: Colors.white,
+                                child: const Text(
+                                  "LEADERBOARD",
+                                  style: TextStyle(
+                                    fontFamily: 'ButtonCustomFont',
+                                    fontSize: 28,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
+                  ],
+                ),
+              ),
+            ),
+            Visibility(
+              visible: isWaiting,
+              child: Positioned(
+                top: MediaQuery.of(context).size.height * 0.7,
+                left: 0,
+                right: 0,
+                child: const Column(
+                  children: [
+                    CustomLoadingSpinner(color: Colors.white),
                   ],
                 ),
               ),
@@ -372,4 +390,60 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
       ),
     );
   }
+}
+
+void _showJoinDialog(BuildContext context, String coin, Function accept) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text(
+          'Confirmation',
+          style: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: Text(
+          'Join the contest with $coin ThinkTank coins?',
+          style: GoogleFonts.roboto(
+            fontSize: 14,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Cancel'),
+            child: const Text(
+              'No',
+              style: TextStyle(
+                color: Color.fromARGB(255, 72, 145, 255),
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              accept();
+              _closeDialog(context);
+
+              // ignore: use_build_context_synchronously
+            },
+            child: const Text(
+              'Yes',
+              style: TextStyle(
+                color: Color.fromARGB(255, 72, 145, 255),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void _closeDialog(BuildContext context) {
+  Navigator.of(context).pop();
 }

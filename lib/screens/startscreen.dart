@@ -142,9 +142,12 @@ class StartScreenState extends State<StartScreen>
                   Visibility(
                     visible: wait,
                     child: Container(
-                        margin: EdgeInsets.only(
-                            top: MediaQuery.of(context).size.height * 0.15),
-                        child: const CustomLoadingSpinner()),
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.15),
+                      child: const CustomLoadingSpinner(
+                        color: Color.fromARGB(255, 245, 149, 24),
+                      ),
+                    ),
                   ),
                 ],
               ),

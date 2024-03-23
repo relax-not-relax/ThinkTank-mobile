@@ -192,6 +192,23 @@ final ButtonStyle buttonWin = ElevatedButton.styleFrom(
   ),
 );
 
+ButtonStyle buttonWinVer2(BuildContext context) {
+  return ElevatedButton.styleFrom(
+    backgroundColor: const Color.fromRGBO(255, 212, 96, 1),
+    fixedSize: Size(MediaQuery.of(context).size.width - 50, 70.0),
+    elevation: 0,
+    shape: const RoundedRectangleBorder(
+      side: BorderSide(
+        color: Colors.white,
+        width: 3.8,
+      ),
+      borderRadius: BorderRadius.all(
+        Radius.circular(100),
+      ),
+    ),
+  );
+}
+
 final ButtonStyle buttonLose = ElevatedButton.styleFrom(
   backgroundColor: const Color.fromRGBO(45, 64, 89, 1),
   elevation: 0,

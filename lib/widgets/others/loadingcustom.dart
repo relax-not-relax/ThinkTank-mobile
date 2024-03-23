@@ -23,7 +23,7 @@ class LoadingCustom {
             child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CustomLoadingSpinner(),
+                CustomLoadingSpinner(color: Color.fromARGB(255, 245, 149, 24)),
               ],
             ),
           ),

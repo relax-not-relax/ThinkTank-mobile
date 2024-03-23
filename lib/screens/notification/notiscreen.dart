@@ -168,7 +168,9 @@ class _NotiScreenState extends State<NotiScreen> {
                   ),
                 ),
               )
-        : const Center(child: CustomLoadingSpinner());
+        : const Center(
+            child:
+                CustomLoadingSpinner(color: Color.fromARGB(255, 245, 149, 24)));
   }
 
   @override
