@@ -196,6 +196,8 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
                                 child: CoinDiv(
                                   amount: widget.contest.coinBetting.toString(),
                                   color: Color.fromARGB(255, 40, 52, 68),
+                                  size: 20,
+                                  textSize: 15,
                                 ),
                               ),
                             ],

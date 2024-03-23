@@ -6,10 +6,14 @@ class CoinDiv extends StatelessWidget {
     super.key,
     required this.amount,
     required this.color,
+    required this.size,
+    required this.textSize,
   });
 
   final String amount;
   final Color color;
+  final double size;
+  final double textSize;
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +24,8 @@ class CoinDiv extends StatelessWidget {
       children: [
         Image.asset(
           "assets/pics/TTcoin.png",
-          width: 20,
-          height: 20,
+          width: size,
+          height: size,
         ),
         const SizedBox(
           width: 7,
@@ -29,7 +33,7 @@ class CoinDiv extends StatelessWidget {
         Text(
           amount,
           style: GoogleFonts.roboto(
-            fontSize: 15,
+            fontSize: textSize,
             fontWeight: FontWeight.w700,
             color: color,
           ),
