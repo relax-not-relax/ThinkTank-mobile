@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:thinktank_mobile/data/data.dart';
+import 'package:thinktank_mobile/models/game.dart';
+import 'package:thinktank_mobile/screens/game/game_menu.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:unicons/unicons.dart';
 
@@ -15,6 +18,8 @@ class TGameAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.progressTitle,
     required this.progressMessage,
     required this.percent,
+    required this.onPause,
+    required this.onResume,
   });
 
   final double preferredHeight;
@@ -24,6 +29,8 @@ class TGameAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String progressTitle;
   final String progressMessage;
   final double percent;
+  final void Function() onPause;
+  final void Function() onResume;
 
   @override
   State<TGameAppBar> createState() => _TGameAppBarState();
@@ -34,6 +41,30 @@ class TGameAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _TGameAppBarState extends State<TGameAppBar> {
+  Game? game = null;
+  late Future _initGame;
+
+  Future<Game?> getGame(String name) async {
+    for (Game game in games) {
+      if (game.name == name) {
+        return game;
+      }
+    }
+
+    return null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initGame = getGame(widget.gameName);
+    _initGame.then((value) {
+      setState(() {
+        game = value;
+      });
+    });
+  }
+
   Future displayBottomSheet(BuildContext context) {
     return showModalBottomSheet(
       context: context,
@@ -104,6 +135,7 @@ class _TGameAppBarState extends State<TGameAppBar> {
                 style: buttonYesBottomSheet(context),
                 onPressed: () {
                   Navigator.of(context).pop();
+                  widget.onResume();
                 },
                 child: const Text(
                   "Continue the game",
@@ -119,7 +151,17 @@ class _TGameAppBarState extends State<TGameAppBar> {
               height: 8.0,
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return GameMenuScreen(game: game!);
+                    },
+                  ),
+                  (route) => false,
+                );
+              },
               child: Text(
                 "Quit game",
                 style: GoogleFonts.roboto(
@@ -275,6 +317,7 @@ class _TGameAppBarState extends State<TGameAppBar> {
                     IconButton(
                       onPressed: () {
                         displayBottomSheet(context);
+                        widget.onPause();
                       },
                       icon: const Icon(
                         UniconsLine.ellipsis_v,

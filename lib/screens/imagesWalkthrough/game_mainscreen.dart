@@ -143,7 +143,11 @@ class _GameMainScreenState extends State<GameMainScreen> {
         ),
         (route) => false,
       );
-    } else {
+    }
+  }
+
+  void _continueLosed() {
+    if (isLosed == true) {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -199,6 +203,23 @@ class _GameMainScreenState extends State<GameMainScreen> {
         _timerStarted = false;
       }
     });
+  }
+
+  void pause() {
+    timer?.cancel();
+
+    setState(() {
+      if (_timerStarted) {
+        _timerStarted = false;
+      }
+    });
+  }
+
+  void resume() {
+    if (!_timerStarted) {
+      startTimer();
+      _timerStarted = true;
+    }
   }
 
   void onTimeIsEnd() {
@@ -261,7 +282,9 @@ class _GameMainScreenState extends State<GameMainScreen> {
     }
 
     if (activeScreen == 'end-screen') {
-      screenWidget = EndGameScreen();
+      screenWidget = EndGameScreen(
+        onContinue: _continueLosed,
+      );
     }
 
     return Scaffold(
@@ -276,6 +299,8 @@ class _GameMainScreenState extends State<GameMainScreen> {
         progressTitle: "Image",
         progressMessage: "$correct/$total",
         percent: percent,
+        onPause: pause,
+        onResume: resume,
       ),
       body: Container(
         child: screenWidget,

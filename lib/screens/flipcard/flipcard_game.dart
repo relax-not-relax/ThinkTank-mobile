@@ -169,14 +169,22 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
         });
   }
 
-  // @override
-  // void if (mounted) setState(VoidCallback fn) {
-  //   // TODO: implement if (mounted) setState
-  //   super.if (mounted) setState(fn);
-  //   total = (_game.cardCount ~/ 2).toInt();
-  //   pair = (count ~/ 2).toInt();
-  //   percent = pair / total;
-  // }
+  void pause() {
+    timer?.cancel();
+
+    setState(() {
+      if (_timerStarted) {
+        _timerStarted = false;
+      }
+    });
+  }
+
+  void resume() {
+    if (!_timerStarted) {
+      startTimer();
+      _timerStarted = true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -193,6 +201,8 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
         percent: percent,
         progressTitle: "Flipped",
         progressMessage: "$pair/$total",
+        onPause: pause,
+        onResume: resume,
       ),
       body: Visibility(
         visible: !_isLoading,
