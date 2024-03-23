@@ -50,6 +50,22 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
     }
   }
 
+  Future<void> logOut() async {
+    _showResizableDialog(context);
+    bool status = await ApiAuthentication.logOut();
+    if (status) {
+      // ignore: use_build_context_synchronously
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => StartScreen()),
+        (route) => false,
+      );
+    } else {
+      print("Loi logout");
+      _closeDialog(context);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -220,20 +236,7 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
                         flex: 2,
                         child: ElevatedButton(
                           onPressed: () async {
-                            _showResizableDialog(context);
-                            bool status = await ApiAuthentication.logOut();
-                            if (status) {
-                              // ignore: use_build_context_synchronously
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => StartScreen()),
-                                (route) => false,
-                              );
-                            } else {
-                              print("Loi logout");
-                              _closeDialog(context);
-                            }
+                            _showLogoutDialog(context, logOut);
                           },
                           style: buttonLogout,
                           child: const Icon(
@@ -452,14 +455,14 @@ void _showResizableDialog(BuildContext context) {
                 'Please wait...',
                 style: TextStyle(
                     color: Color.fromRGBO(234, 84, 85, 1),
-                    fontSize: 30,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
               const Text(
                 'Please wait a moment, Logouting...',
                 style: TextStyle(
                     color: Color.fromRGBO(129, 140, 155, 1),
-                    fontSize: 18,
+                    fontSize: 14,
                     fontWeight: FontWeight.w400),
                 textAlign: TextAlign.center,
               ),
@@ -471,6 +474,58 @@ void _showResizableDialog(BuildContext context) {
             ],
           ),
         ),
+      );
+    },
+  );
+}
+
+void _showLogoutDialog(BuildContext context, Function accept) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text(
+          'Confirmation',
+          style: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: Text(
+          'Are you sure to logout?',
+          style: GoogleFonts.roboto(
+            fontSize: 14,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Cancel'),
+            child: const Text(
+              'No',
+              style: TextStyle(
+                color: Color.fromARGB(255, 72, 145, 255),
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              _closeDialog(context);
+              accept();
+
+              // ignore: use_build_context_synchronously
+            },
+            child: const Text(
+              'Yes',
+              style: TextStyle(
+                color: Color.fromARGB(255, 72, 145, 255),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       );
     },
   );

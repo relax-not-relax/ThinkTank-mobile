@@ -97,8 +97,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           ),
           useMaterial3: true,
         ),
-        //home: StartScreen(),
-        home: LeaderBoardContestScreen(),
+        home: StartScreen(),
+        // home: LeaderBoardContestScreen(),
         // home: FindAnonymousGame(
         //   avt: 'asdv',
         //   listAnswer: [
