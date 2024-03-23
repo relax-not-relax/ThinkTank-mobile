@@ -3,7 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
 class EndGameScreen extends StatelessWidget {
-  const EndGameScreen({super.key});
+  const EndGameScreen({
+    super.key,
+    required this.onContinue,
+  });
+
+  final void Function() onContinue;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +54,7 @@ class EndGameScreen extends StatelessWidget {
                     ],
                   ),
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: onContinue,
                     style: button1v1_2,
                     child: const Text(
                       'CONTINUE',

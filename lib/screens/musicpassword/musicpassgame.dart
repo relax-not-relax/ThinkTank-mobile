@@ -62,6 +62,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
   bool isListenAlready = true;
   bool enterPassVisible = false;
   bool roundVisible = true;
+  bool _timerStarted = false;
   String pass = '';
   bool isWin = false;
   AudioPlayer correctSound = AudioPlayer();
@@ -316,6 +317,23 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
     audioPlayer.setSourceUrl(widget.info.soundLink);
   }
 
+  void pause() {
+    timer?.cancel();
+
+    setState(() {
+      if (_timerStarted) {
+        _timerStarted = false;
+      }
+    });
+  }
+
+  void resume() {
+    if (!_timerStarted) {
+      startTimer();
+      _timerStarted = true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -328,6 +346,8 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
         progressTitle: 'Chance',
         progressMessage: '$remainChange/5',
         percent: remainChange / 5,
+        onPause: pause,
+        onResume: resume,
       ),
       body: Container(
         decoration: BoxDecoration(

@@ -138,6 +138,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
   List<String> lisAvt = [];
   Duration remainingTime = const Duration(seconds: 10);
   Timer? timer;
+  bool _timerStarted = false;
 
   List<String> modifyList(List<String> inputList, List<String> listTmp) {
     List<String> modifiedList = List.from(inputList);
@@ -147,6 +148,23 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
       print('ec ec');
     }
     return modifiedList;
+  }
+
+  void pause() {
+    timer?.cancel();
+
+    setState(() {
+      if (_timerStarted) {
+        _timerStarted = false;
+      }
+    });
+  }
+
+  void resume() {
+    if (!_timerStarted) {
+      startTimer();
+      _timerStarted = true;
+    }
   }
 
   @override
@@ -410,6 +428,8 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
         progressTitle: 'Found',
         progressMessage: '$progress/${listAnswer.length}',
         percent: progress / listAnswer.length,
+        onPause: pause,
+        onResume: resume,
       ),
       body: Stack(
         children: [
