@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/data/data.dart';
+import 'package:thinktank_mobile/widgets/game/coin_div.dart';
 
 class InstructionScreen extends StatelessWidget {
   const InstructionScreen({super.key});
@@ -8,12 +9,19 @@ class InstructionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: false,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+      ),
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.symmetric(
           horizontal: 14,
-          vertical: 50,
+          //vertical: 10,
         ),
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -49,7 +57,7 @@ class InstructionScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(
-                height: 20,
+                height: 40,
               ),
               SizedBox(
                 width: MediaQuery.of(context).size.width - 28,
@@ -72,9 +80,133 @@ class InstructionScreen extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
+              const SizedBox(
+                height: 15,
+              ),
               Container(
                 width: MediaQuery.of(context).size.width,
-                child: Row(),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: games.sublist(0, 4).map((game) {
+                    return Row(
+                      children: [
+                        Container(
+                          width: 75,
+                          height: 75,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(
+                                game.imageUrl,
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(
+                                10,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Participation fee: ",
+                      style: GoogleFonts.roboto(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    const CoinDiv(
+                      amount: "50",
+                      color: Colors.white,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    const Text(
+                      "-",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    const CoinDiv(
+                      amount: "150",
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Text(
+                "Mechanism:",
+                style: GoogleFonts.roboto(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width - 28,
+                child: Text(
+                  "When completing the challenge, the player will receive ThinkTank coins corresponding to the number of points they achieve divided by 10 (For example, if you get 100 points, you will receive 100/10 which is 10 ThinkTank coins).",
+                  style: GoogleFonts.roboto(
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              Text(
+                "Top 1: 50% Contest Pot",
+                style: GoogleFonts.roboto(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                "Top 2: 30% Contest Pot",
+                style: GoogleFonts.roboto(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                "Top 3: 20% Contest Pot",
+                style: GoogleFonts.roboto(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),

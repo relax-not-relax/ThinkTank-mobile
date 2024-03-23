@@ -480,7 +480,9 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
                     color: Color.fromARGB(48, 0, 0, 0),
-                    child: const Center(child: CustomLoadingSpinner()),
+                    child: const Center(
+                        child: CustomLoadingSpinner(
+                            color: Color.fromARGB(255, 245, 149, 24))),
                   ),
                 ),
                 Visibility(

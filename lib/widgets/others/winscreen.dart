@@ -167,7 +167,7 @@ class WinScreenState extends State<WinScreen> {
                                       gmaeId: widget.gameId,
                                     )));
                       },
-                      style: widget.isWin ? buttonWin : buttonLose,
+                      style: widget.isWin ? buttonWinVer2(context) : buttonLose,
                       child: const Text(
                         'CONTINUE',
                         style: TextStyle(

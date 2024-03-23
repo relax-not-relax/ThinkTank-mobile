@@ -168,7 +168,8 @@ class AddFriendScreenState extends State<AddFriendScreen> {
               Expanded(
                 child: _isLoading
                     ? const Center(
-                        child: const CustomLoadingSpinner(),
+                        child: const CustomLoadingSpinner(
+                            color: Color.fromARGB(255, 245, 149, 24)),
                       )
                     : SingleChildScrollView(
                         child: Column(
