@@ -2,18 +2,87 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
+import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
+import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/accountinrank.dart';
 import 'package:thinktank_mobile/widgets/game/leaderboard_user.dart';
 import 'package:thinktank_mobile/widgets/game/top_user.dart';
 
 class LeaderBoardScreen extends StatefulWidget {
-  const LeaderBoardScreen({super.key});
+  const LeaderBoardScreen({super.key, required this.gameId});
+  final int gameId;
 
   @override
   State<LeaderBoardScreen> createState() => _LeaderBoardScreenState();
 }
 
 class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
+  List<AccountInRank> accounts = [
+    AccountInRank(
+      accountId: 1,
+      fullName: "No user",
+      avatar:
+          "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688",
+      mark: 0,
+      rank: 1,
+    ),
+    AccountInRank(
+      accountId: 2,
+      fullName: "No user",
+      avatar:
+          "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688",
+      mark: 0,
+      rank: 2,
+    ),
+    AccountInRank(
+      accountId: 3,
+      fullName: "No user",
+      avatar:
+          "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688",
+      mark: 0,
+      rank: 3,
+    ),
+  ];
+  bool visibleAll = false;
+  late Future _getLeaderboard;
+  Future getLeaderboard() async {
+    List<AccountInRank> tmps =
+        await ApiAchieviements.getLeaderBoard(widget.gameId);
+    if (tmps.isEmpty) return;
+    switch (tmps.length) {
+      case 1:
+        accounts[0] = tmps[0];
+        break;
+      case 2:
+        accounts[0] = tmps[0];
+        accounts[1] = tmps[1];
+        break;
+      case 3:
+        accounts[0] = tmps[0];
+        accounts[1] = tmps[1];
+        accounts[2] = tmps[2];
+        break;
+    }
+    if (tmps.length > 3) {
+      accounts = tmps;
+    }
+    setState(() {
+      accounts;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getLeaderboard = getLeaderboard();
+    _getLeaderboard.then((value) => {
+          setState(() {
+            visibleAll = true;
+          })
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,74 +166,87 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                 ),
               ),
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 2.2,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20.0,
-                  vertical: 20.0,
-                ),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
+            Visibility(
+              visible: visibleAll,
+              child: Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 2.2,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0,
+                    vertical: 20.0,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          padding: EdgeInsets.zero,
+                          itemCount:
+                              accounts.length - 3 < 0 ? 0 : accounts.length - 3,
+                          itemBuilder: (context, index) => LeaderBoardUser(
+                              position: index + 4,
+                              userAva: accounts[index + 3].avatar,
+                              userName: accounts[index + 3].fullName,
+                              point: "${accounts[index + 3].mark} points"),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        itemCount: usersTest.length,
-                        itemBuilder: (context, index) => LeaderBoardUser(
-                            position: index + 4,
-                            userAva: "assets/pics/ava_noti_test.png",
-                            userName: usersTest[index],
-                            point: "400 points"),
-                      ),
-                    ),
-                  ],
+              ),
+            ),
+            Visibility(
+              visible: visibleAll && accounts.length >= 1,
+              child: Positioned(
+                top: MediaQuery.of(context).size.height * 0.1 + 25,
+                left: 0,
+                right: 0,
+                child: TopUser(
+                  userAva: accounts[0].avatar,
+                  top: 1,
+                  userName: accounts[0].fullName,
+                  point: "${accounts[0].mark} points",
                 ),
               ),
             ),
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.1 + 25,
-              left: 0,
-              right: 0,
-              child: const TopUser(
-                userAva: "assets/pics/ava_noti_test.png",
-                top: 1,
-                userName: "Hoang Huy",
-                point: "900 points",
+            Visibility(
+              visible: visibleAll && accounts.length >= 2,
+              child: Positioned(
+                top: MediaQuery.of(context).size.height * 0.25,
+                left: 0,
+                right: MediaQuery.of(context).size.width - 120,
+                child: TopUser(
+                  userAva: accounts[1].avatar,
+                  top: 2,
+                  userName: accounts[1].fullName,
+                  point: "${accounts[1].mark} points",
+                ),
               ),
             ),
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.25,
-              left: 0,
-              right: MediaQuery.of(context).size.width - 120,
-              child: const TopUser(
-                userAva: "assets/pics/ava_noti_test.png",
-                top: 2,
-                userName: "Hoang Huy",
-                point: "800 points",
-              ),
-            ),
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.28,
-              left: MediaQuery.of(context).size.width - 120,
-              right: 0,
-              child: const TopUser(
-                userAva: "assets/pics/ava_noti_test.png",
-                top: 3,
-                userName: "Hoang Huy",
-                point: "700 points",
+            Visibility(
+              visible: visibleAll && accounts.length >= 3,
+              child: Positioned(
+                top: MediaQuery.of(context).size.height * 0.28,
+                left: MediaQuery.of(context).size.width - 120,
+                right: 0,
+                child: TopUser(
+                  userAva: accounts[2].avatar,
+                  top: 3,
+                  userName: accounts[2].fullName,
+                  point: "${accounts[2].mark} points",
+                ),
               ),
             ),
           ],

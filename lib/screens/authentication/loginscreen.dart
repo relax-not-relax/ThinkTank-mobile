@@ -8,6 +8,7 @@ import 'package:thinktank_mobile/api/notification_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/logininfo.dart';
+import 'package:thinktank_mobile/screens/authentication/forgotpassscreen.dart';
 import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
 import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
@@ -201,11 +202,26 @@ class LoginScreenState extends State<LoginScreen> {
                         ),
                         Align(
                           alignment: Alignment.topRight,
-                          child: Text(
-                            'Forgot password?',
-                            style: GoogleFonts.roboto(
-                              color: Color.fromRGBO(240, 123, 63, 1),
-                              fontSize: 14,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ForgotPassScreen(),
+                                ),
+                              ).then((value) => {
+                                    setState(() {
+                                      _isIncorrect = false;
+                                    })
+                                  });
+                            },
+                            child: Text(
+                              'Forgot password?',
+                              style: GoogleFonts.roboto(
+                                color: Color.fromRGBO(240, 123, 63, 1),
+                                fontSize: 14,
+                              ),
                             ),
                           ),
                         ),

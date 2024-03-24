@@ -23,6 +23,19 @@ class ApiAuthentication {
     }
   }
 
+  static Future<bool> forgotpassword(String username, String email) async {
+    final response = await http.post(
+      Uri.parse(
+          'https://thinktank-sep490.azurewebsites.net/api/accounts/forgotten-password?Email=$email&Username=$username'),
+      headers: {'Content-Type': 'application/json'},
+    );
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   static Future<Account?> loginWithGoogle() async {
     GoogleSignIn googleSignIn = GoogleSignIn();
     await googleSignIn.signOut();
@@ -87,9 +100,9 @@ class ApiAuthentication {
       final jsonData = json.decode(response.body);
       await SharedPreferencesHelper.saveInfo(Account.fromJson(jsonData));
       return Account.fromJson(jsonData);
-    } else if (response.statusCode == 400 || response.body != null) {
+    } else if (response.statusCode == 401 || response.body != null) {
       final jsonData2 = json.decode(response.body);
-      if (jsonData2['error'].toString() == "Access Token is not expried") {
+      if (jsonData2['error'].toString() == "Unauthorized") {
         await SharedPreferencesHelper.saveInfo(account);
         return account;
       } else {

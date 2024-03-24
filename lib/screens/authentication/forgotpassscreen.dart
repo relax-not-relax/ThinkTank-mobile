@@ -1,9 +1,61 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
+
+void _showResizableDialogSuccess(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 300,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/pics/check1.png',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Reset password successfully!',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 5,
+                ),
+                child: Text(
+                  'Please check your email to get password',
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
 
 class ForgotPassScreen extends StatefulWidget {
   const ForgotPassScreen({super.key});
@@ -16,6 +68,35 @@ class ForgotPassScreen extends StatefulWidget {
 
 class ForgotPassScreenState extends State<ForgotPassScreen> {
   bool isRemember = false;
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  String error = "";
+
+  void submit() async {
+    _showResizableDialog(context);
+    if (_emailController.text.isEmpty || _usernameController.text.isEmpty) {
+      setState(() {
+        error = "Please enter all field to get new password!";
+      });
+      _closeDialog(context);
+    } else {
+      if (await ApiAuthentication.forgotpassword(
+          _usernameController.text, _emailController.text)) {
+        setState(() {
+          error = "";
+        });
+
+        _closeDialog(context);
+        _showResizableDialogSuccess(context);
+      } else {
+        setState(() {
+          error = "Email or Username is incorrect!";
+        });
+        _closeDialog(context);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +127,7 @@ class ForgotPassScreenState extends State<ForgotPassScreen> {
                   ),
                   child: Center(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: submit,
                       style: buttonPrimaryPink,
                       child: const Text(
                         'Continue',
@@ -73,7 +154,9 @@ class ForgotPassScreenState extends State<ForgotPassScreen> {
                           'assets/pics/arrow.png',
                           width: 30,
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
                       ),
                     ),
                     const SizedBox(
@@ -102,8 +185,45 @@ class ForgotPassScreenState extends State<ForgotPassScreen> {
                     ),
                     const Align(
                       child: Text(
-                        'Enter your email address to get OTP code to reset your password',
+                        'Enter your username and email of account to get new password in your email.',
                         style: contentGray,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    const Align(
+                      alignment: Alignment.topLeft,
+                      child: Row(
+                        children: [
+                          Text(
+                            'Username',
+                            style: titleMini,
+                            textAlign: TextAlign.left,
+                          ),
+                          Text(
+                            ' *',
+                            style: TextStyle(color: Colors.red, fontSize: 25),
+                            textAlign: TextAlign.left,
+                          ),
+                        ],
+                      ),
+                    ),
+                    TextField(
+                      controller: _usernameController,
+                      style: const TextStyle(fontSize: 20, color: Colors.black),
+                      decoration: const InputDecoration(
+                        hintText: 'Your username here',
+                        hintStyle: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          fontSize: 20,
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.amber),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.amber),
+                        ),
                       ),
                     ),
                     const SizedBox(
@@ -126,9 +246,10 @@ class ForgotPassScreenState extends State<ForgotPassScreen> {
                         ],
                       ),
                     ),
-                    const TextField(
-                      style: TextStyle(fontSize: 20, color: Colors.black),
-                      decoration: InputDecoration(
+                    TextField(
+                      controller: _emailController,
+                      style: const TextStyle(fontSize: 20, color: Colors.black),
+                      decoration: const InputDecoration(
                         hintText: 'Your email here',
                         hintStyle: TextStyle(
                           fontWeight: FontWeight.normal,
@@ -142,6 +263,15 @@ class ForgotPassScreenState extends State<ForgotPassScreen> {
                         ),
                       ),
                     ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Text(
+                        error,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    )
                   ],
                 ),
               ),
@@ -172,7 +302,7 @@ class OTPResetPassScreenState extends State<OTPResetPassScreen> {
   }
 
   void startTimer() {
-    timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
       setState(() {
         if (secondsRemaining > 0) {
           secondsRemaining--;
@@ -613,6 +743,10 @@ class NewPassScreenState extends State<NewPassScreen> {
   }
 }
 
+void _closeDialog(BuildContext context) {
+  Navigator.of(context).pop();
+}
+
 void _showResizableDialog(BuildContext context) {
   showDialog(
     context: context,
@@ -620,30 +754,29 @@ void _showResizableDialog(BuildContext context) {
       return AlertDialog(
         contentPadding: const EdgeInsets.all(0),
         content: Container(
-          width: 250, // Điều chỉnh kích thước chiều rộng
+          width: 250,
           height: 400,
           decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10)),
-              color: Color.fromARGB(
-                  255, 249, 249, 249)), // Điều chỉnh kích thước chiều cao
+              color: Color.fromARGB(255, 249, 249, 249)),
           child: Column(
             children: [
               const SizedBox(height: 20),
               Image.asset(
-                'assets/pics/check1.png', // Thay thế bằng đường dẫn hình ảnh của bạn
+                'assets/pics/check1.png',
                 height: 150,
                 width: 150,
               ),
               const SizedBox(height: 10),
               const Text(
-                'Welcome Back!',
+                'Please wait...',
                 style: TextStyle(
                     color: Color.fromRGBO(234, 84, 85, 1),
                     fontSize: 30,
                     fontWeight: FontWeight.bold),
               ),
               const Text(
-                'You have successfully reset and created a new password.',
+                'We are cheking for you!',
                 style: TextStyle(
                     color: Color.fromRGBO(129, 140, 155, 1),
                     fontSize: 18,
