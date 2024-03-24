@@ -23,6 +23,7 @@ class ApiNotification {
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       final results = jsonData['results'];
+      if (results == null) return [];
       notifications = results
           .map<NotificationItem>((item) => NotificationItem.fromJson(item))
           .toList();
@@ -44,6 +45,7 @@ class ApiNotification {
       if (response2.statusCode == 200) {
         final jsonData = json.decode(response.body);
         final results = jsonData['results'];
+        if (results == null) return [];
         List<NotificationItem> notifications = results
             .map<NotificationItem>((item) => NotificationItem.fromJson(item))
             .toList();

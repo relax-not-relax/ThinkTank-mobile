@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/game.dart';
 import 'package:thinktank_mobile/models/level.dart';
+import 'package:thinktank_mobile/screens/game/leaderboard.dart';
 import 'package:thinktank_mobile/screens/game/level_select.dart';
 import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
@@ -232,7 +234,16 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                             ],
                           ),
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              print('vo');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      LeaderBoardScreen(gameId: widget.game.id),
+                                ),
+                              );
+                            },
                             style: ButtonStyle(
                               fixedSize: MaterialStatePropertyAll(
                                 Size(MediaQuery.of(context).size.width - 45,
@@ -518,7 +529,16 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                               ],
                             ),
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () async {
+                                print('vo');
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LeaderBoardScreen(
+                                        gameId: widget.game.id),
+                                  ),
+                                );
+                              },
                               style: ButtonStyle(
                                 fixedSize: MaterialStatePropertyAll(
                                   Size(MediaQuery.of(context).size.width - 45,
