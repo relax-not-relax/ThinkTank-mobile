@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:thinktank_mobile/api/challenges_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/achievement.dart';
+import 'package:thinktank_mobile/screens/achievement/missioncomplete_screen.dart';
 
 class CustomTabIndicator extends Decoration {
   final BoxPainter _painter;
@@ -108,6 +110,20 @@ class ChallengesScreenState extends State<ChallengesScreen>
     const Color.fromARGB(255, 68, 190, 194),
   ];
 
+  void receive(Challenge mission) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return MissionCompleteScreen(
+            challenge: mission,
+          );
+        },
+      ),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -188,8 +204,11 @@ class ChallengesScreenState extends State<ChallengesScreen>
                                       ? 0
                                       : e.completedLevel!,
                                   total: e.completedMilestone,
-                                  recived:
+                                  received:
                                       (e.status == null) ? false : e.status!,
+                                  getBadges: () {
+                                    receive(e);
+                                  },
                                 ),
                               )
                               .toList(),
@@ -227,8 +246,17 @@ class ChallengesScreenState extends State<ChallengesScreen>
                                               : e.completedLevel)! /
                                           e.completedMilestone ==
                                       1,
-                                  borderBottom:
-                                      list.indexOf(e) != list.length - 1))
+                                  borderBottom: list
+                                          .where((element) =>
+                                              element.status == true)
+                                          .toList()
+                                          .indexOf(e) !=
+                                      list
+                                              .where((element) =>
+                                                  element.status == true)
+                                              .toList()
+                                              .length -
+                                          1))
                               .toList(),
                         ),
                       ),
@@ -254,7 +282,8 @@ class ItemAchieve extends StatelessWidget {
     required this.description,
     required this.progress,
     required this.total,
-    required this.recived,
+    required this.received,
+    required this.getBadges,
   });
   final String imgLink;
   final Color backgroundColor;
@@ -263,7 +292,8 @@ class ItemAchieve extends StatelessWidget {
   final String description;
   final int progress;
   final int total;
-  final bool recived;
+  final bool received;
+  final void Function() getBadges;
 
   @override
   Widget build(BuildContext context) {
@@ -369,33 +399,56 @@ class ItemAchieve extends StatelessWidget {
                         visible: true,
                         child: Align(
                           alignment: Alignment.topLeft,
-                          child: Container(
-                            margin: const EdgeInsets.only(left: 20, top: 10),
-                            height: 30,
-                            width: 150,
-                            decoration: BoxDecoration(
-                              color: (!recived)
-                                  ? const Color.fromRGBO(255, 199, 0, 1)
-                                  : Colors.grey,
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                            ),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                (!recived)
-                                    ? 'Receive reward'
-                                    : 'Received reward',
-                                style: TextStyle(
-                                  color:
-                                      (recived) ? Colors.black : Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
+                          child: !received
+                              ? InkWell(
+                                  onTap: getBadges,
+                                  child: Container(
+                                    margin: const EdgeInsets.only(
+                                        left: 20, top: 10),
+                                    height: 30,
+                                    width: 150,
+                                    decoration: const BoxDecoration(
+                                      color: Color.fromRGBO(255, 199, 0, 1),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(10),
+                                      ),
+                                    ),
+                                    child: const Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Receive reward',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  margin:
+                                      const EdgeInsets.only(left: 20, top: 10),
+                                  height: 30,
+                                  width: 150,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                  ),
+                                  child: const Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Received reward',
+                                      style: TextStyle(
+                                        color: Color.fromARGB(255, 41, 41, 41),
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
                         ),
                       ),
               ],
@@ -424,6 +477,11 @@ class ItemBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final DateTime parsedTime = DateTime.parse(time);
+
+    // Format the DateTime object to "January 2024" style
+    final String formattedTime = DateFormat('MMMM yyyy').format(parsedTime);
+
     return Container(
       height: 130,
       padding: const EdgeInsets.all(15),
@@ -481,7 +539,7 @@ class ItemBadge extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      time,
+                      formattedTime,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 13,

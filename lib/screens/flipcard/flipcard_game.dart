@@ -90,8 +90,8 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
         (points * 100).toInt(),
         levelNow,
         1,
-        widget.account.id,
-        widget.account.accessToken!,
+        //widget.account.id,
+        //widget.account.accessToken!,
         _game.cardCount ~/ 2);
     if (mounted)
       setState(() {
