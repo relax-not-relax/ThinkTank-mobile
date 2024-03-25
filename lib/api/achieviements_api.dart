@@ -64,13 +64,14 @@ class ApiAchieviements {
     }
   }
 
-  static Future<List<AccountInRank>> getLeaderBoard(int gameId) async {
+  static Future<List<AccountInRank>> getLeaderBoard(
+      int gameId, int pageIndex, int pageSize) async {
     Account? account = await SharedPreferencesHelper.getInfo();
     if (account == null) return [];
     List<AccountInRank> result = [];
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/achievements/$gameId/leaderboard'),
+          'https://thinktank-sep490.azurewebsites.net/api/achievements/$gameId/leaderboard?Page=$pageIndex&PageSize=$pageSize'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${account.accessToken}',
@@ -79,7 +80,7 @@ class ApiAchieviements {
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
-      for (var element in jsonData) {
+      for (var element in jsonData['results']) {
         result.add(AccountInRank.fromJson(element));
       }
       print("length" + result.length.toString());
@@ -91,7 +92,7 @@ class ApiAchieviements {
       SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/achievements/$gameId/leaderboard'),
+            'https://thinktank-sep490.azurewebsites.net/api/achievements/$gameId/leaderboard?Page=$pageIndex&PageSize=$pageSize'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2.accessToken}',
@@ -99,7 +100,7 @@ class ApiAchieviements {
       );
       if (response2.statusCode == 200) {
         final jsonData = json.decode(response2.body);
-        for (var element in jsonData) {
+        for (var element in jsonData['results']) {
           result.add(AccountInRank.fromJson(element));
         }
         print("length" + result.length.toString());

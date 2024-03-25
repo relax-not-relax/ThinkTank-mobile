@@ -27,7 +27,6 @@ class ApiNotification {
       notifications = results
           .map<NotificationItem>((item) => NotificationItem.fromJson(item))
           .toList();
-
       return notifications;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken(
@@ -41,7 +40,6 @@ class ApiNotification {
           'Authorization': 'Bearer ${account2.accessToken}',
         },
       );
-
       if (response2.statusCode == 200) {
         final jsonData = json.decode(response.body);
         final results = jsonData['results'];

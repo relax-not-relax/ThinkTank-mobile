@@ -48,7 +48,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
   late Future _getLeaderboard;
   Future getLeaderboard() async {
     List<AccountInRank> tmps =
-        await ApiAchieviements.getLeaderBoard(widget.gameId);
+        await ApiAchieviements.getLeaderBoard(widget.gameId, 1, 20);
     if (tmps.isEmpty) return;
     switch (tmps.length) {
       case 1:
