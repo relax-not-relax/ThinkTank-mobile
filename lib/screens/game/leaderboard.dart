@@ -221,12 +221,13 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                 ),
               ),
             ),
+
             Visibility(
               visible: visibleAll && accounts.length >= 2,
               child: Positioned(
                 top: MediaQuery.of(context).size.height * 0.25,
                 left: 0,
-                right: MediaQuery.of(context).size.width - 120,
+                right: MediaQuery.of(context).size.width - 130,
                 child: TopUser(
                   userAva: accounts[1].avatar,
                   top: 2,
@@ -239,7 +240,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
               visible: visibleAll && accounts.length >= 3,
               child: Positioned(
                 top: MediaQuery.of(context).size.height * 0.28,
-                left: MediaQuery.of(context).size.width - 120,
+                left: MediaQuery.of(context).size.width - 130,
                 right: 0,
                 child: TopUser(
                   userAva: accounts[2].avatar,

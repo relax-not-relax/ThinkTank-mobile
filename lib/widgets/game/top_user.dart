@@ -26,9 +26,9 @@ class TopUser extends StatelessWidget {
     ];
 
     final List<double> topUserRadius = [
-      125,
-      110,
-      110,
+      100,
+      80,
+      80,
     ];
 
     Widget content = Container();
@@ -58,7 +58,7 @@ class TopUser extends StatelessWidget {
                 ],
                 border: Border.all(
                   color: topUserColor[0],
-                  width: 10,
+                  width: 8,
                 ),
               ),
             ),
@@ -87,7 +87,7 @@ class TopUser extends StatelessWidget {
               point,
               style: TextStyle(
                 fontFamily: 'CustomProFont',
-                fontSize: 20,
+                fontSize: 18,
                 color: topUserColor[3],
                 shadows: const [
                   Shadow(
@@ -125,7 +125,7 @@ class TopUser extends StatelessWidget {
                 ],
                 border: Border.all(
                   color: topUserColor[1],
-                  width: 10,
+                  width: 8,
                 ),
               ),
             ),
@@ -154,7 +154,7 @@ class TopUser extends StatelessWidget {
               point,
               style: TextStyle(
                 fontFamily: 'CustomProFont',
-                fontSize: 20,
+                fontSize: 18,
                 color: topUserColor[4],
                 shadows: const [
                   Shadow(
@@ -192,7 +192,7 @@ class TopUser extends StatelessWidget {
                 ],
                 border: Border.all(
                   color: topUserColor[2],
-                  width: 10,
+                  width: 8,
                 ),
               ),
             ),
@@ -221,7 +221,7 @@ class TopUser extends StatelessWidget {
               point,
               style: TextStyle(
                 fontFamily: 'CustomProFont',
-                fontSize: 20,
+                fontSize: 18,
                 color: topUserColor[4],
                 shadows: const [
                   Shadow(
