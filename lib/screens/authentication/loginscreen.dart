@@ -3,10 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/api/assets_api.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
+import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/api/notification_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/contest.dart';
 import 'package:thinktank_mobile/models/logininfo.dart';
 import 'package:thinktank_mobile/screens/authentication/forgotpassscreen.dart';
 import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
@@ -282,11 +284,15 @@ class LoginScreenState extends State<LoginScreen> {
                             await SharedPreferencesHelper.saveInfo(acc);
                             await ApiAchieviements.getLevelOfUser(
                                 acc.id, acc.accessToken!);
-                            await ApiNotification.getNotifications();
                             int version = await SharedPreferencesHelper
                                 .getResourceVersion();
-                            await AssetsAPI.addAssets(
-                                version, acc.accessToken!);
+                            // await AssetsAPI.addAssets(
+                            //     version, acc.accessToken!);
+                            await ContestsAPI.getContets();
+                            for (var e in await SharedPreferencesHelper
+                                .getContests()) {
+                              print(e.toJson());
+                            }
                             _closeDialog(context);
 
                             // ignore: use_build_context_synchronously
