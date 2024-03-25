@@ -196,6 +196,8 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
       appBar: TGameAppBar(
         preferredHeight: MediaQuery.of(context).size.height * 0.26,
         userAvatar: widget.account.avatar!,
+        // userAvatar:
+        //     "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688",
         remainingTime: remainingTime,
         gameName: widget.gameName,
         percent: percent,
@@ -353,97 +355,119 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
   }
 
   Future _handleCardFlip(int index, GlobalKey<FlipCardState> cardKey) async {
-    setState(() {
-      _isFree = false;
-    });
-    if (!_timerStarted) {
-      startTimer();
-      _timerStarted = true;
-    }
-
-    if (_game.matchedCards[index] || _isCheckingCards) {
-      return;
-    }
-
-    cardKey.currentState!.toggleCard();
-
-    // if (checkCardKeys.isNotEmpty && checkCardKeys.contains(cardKey)) {
-    //   return;
-    // }
-    //_areAllCardsFlipped();
-
-    if (mounted)
-      // ignore: curly_braces_in_flow_control_structures
+    await Future.delayed(Duration(milliseconds: 100), () async {
       setState(() {
-        indexCheck = index;
-        _game.gameImg[index] = _game.duplicatedCardList![index];
-        _game.matchCheck.add({index: _game.duplicatedCardList![index]});
-        checkCardKeys.add(cardKey);
-        print(_game.matchCheck);
-        print(checkCardKeys);
+        _isFree = false;
       });
 
-    if (_game.matchCheck.length == 2) {
+      if (!_timerStarted) {
+        startTimer();
+        _timerStarted = true;
+      }
+
+      if (_game.matchedCards[index] || _isCheckingCards) {
+        return;
+      }
+
+      await cardKey.currentState!.toggleCard();
+
+      // if (checkCardKeys.isNotEmpty && checkCardKeys.contains(cardKey)) {
+      //   return;
+      // }
+      //_areAllCardsFlipped();
+
       if (mounted)
         // ignore: curly_braces_in_flow_control_structures
         setState(() {
-          _isCheckingCards = true;
-          indexCheck = -1;
+          indexCheck = index;
+          _game.gameImg[index] = _game.duplicatedCardList![index];
+          _game.matchCheck.add({index: _game.duplicatedCardList![index]});
+          checkCardKeys.add(cardKey);
+          //print(checkCardKeys[index].currentState);
+          print(_game.matchCheck);
+          print(checkCardKeys);
         });
+    });
 
-      //double points = (remainingTime.inMilliseconds / 1000);
-      if (_game.matchCheck[0].values.first ==
-              _game.matchCheck[1].values.first &&
-          _game.matchCheck[0].keys.first != _game.matchCheck[1].keys.first) {
-        int firstCardIndex = _game.matchCheck[0].keys.first;
-        int secondCardIndex = _game.matchCheck[1].keys.first;
-        _game.matchedCards[firstCardIndex] = true;
-        _game.matchedCards[secondCardIndex] = true;
-        print(_game.matchedCards);
-        if (mounted)
-          // ignore: curly_braces_in_flow_control_structures
-          setState(() {
-            count += 2;
-            _isCheckingCards = false;
-            total = (_game.cardCount ~/ 2).toInt();
-            pair = (count ~/ 2).toInt();
-            percent = pair / total;
-          });
-
-        checkCardKeys.clear();
-        _game.matchCheck.clear();
-      } else {
-        await Future.delayed(Duration(milliseconds: 550), () {
+    await Future.delayed(Duration.zero, () async {
+      if (_game.matchCheck.length == 2) {
+        await Future.delayed(Duration.zero, () async {
           if (mounted)
             // ignore: curly_braces_in_flow_control_structures
             setState(() {
-              checkCardKeys[0].currentState?.toggleCard();
-              checkCardKeys[1].currentState?.toggleCard();
-              setState(() {
-                _isFree = true;
-              });
-              _isCheckingCards = false;
+              _isCheckingCards = true;
+              indexCheck = -1;
             });
-          checkCardKeys.clear();
-          _game.matchCheck.clear();
-          print(_game.matchedCards);
         });
-        print("lat lai");
+        await Future.delayed(Duration.zero, () async {
+          if (_game.matchCheck[0].values.first ==
+                  _game.matchCheck[1].values.first &&
+              _game.matchCheck[0].keys.first !=
+                  _game.matchCheck[1].keys.first) {
+            int firstCardIndex = _game.matchCheck[0].keys.first;
+            int secondCardIndex = _game.matchCheck[1].keys.first;
+            _game.matchedCards[firstCardIndex] = true;
+            _game.matchedCards[secondCardIndex] = true;
+            print(_game.matchedCards);
+            if (mounted)
+              // ignore: curly_braces_in_flow_control_structures
+              setState(() {
+                count += 2;
+                _isCheckingCards = false;
+                total = (_game.cardCount ~/ 2).toInt();
+                pair = (count ~/ 2).toInt();
+                percent = pair / total;
+              });
+
+            checkCardKeys.clear();
+            _game.matchCheck.clear();
+          } else {
+            await Future.delayed(Duration(milliseconds: 600), () async {
+              if (mounted) {
+                print(checkCardKeys[0].currentState?.isFront.toString());
+                print(checkCardKeys[1].currentState?.isFront.toString());
+
+                while (checkCardKeys.length == 2 &&
+                    (checkCardKeys[0].currentState!.isFront &&
+                        checkCardKeys[1].currentState!.isFront)) {
+                  await Future.delayed(Duration(milliseconds: 100));
+                }
+
+                await checkCardKeys[0].currentState?.toggleCard();
+                await checkCardKeys[1].currentState?.toggleCard();
+                setState(() {
+                  //  _isFree = true;
+                  _isCheckingCards = false;
+                });
+              }
+              // ignore: curly_braces_in_flow_control_structures
+
+              checkCardKeys.clear();
+              _game.matchCheck.clear();
+              print(_game.matchedCards);
+            });
+            print("lat lai");
+          }
+        });
+        //double points =remainingTime.inMilliseconds / 1000);
       }
-    }
+    });
 
     // if (_areAllCardsFlipped()) {
     //   timer?.cancel();
     // }
-    if (count >= _game.cardCount) {
-      timer?.cancel();
-      win();
-    }
 
-    setState(() {
-      _isFree = true;
+    await Future.delayed(Duration.zero, () async {
+      if (count >= _game.cardCount) {
+        timer?.cancel();
+        //win();
+      }
+
+      setState(() {
+        _isFree = true;
+      });
+
+      print(indexCheck);
     });
-
-    print(indexCheck);
   }
 }

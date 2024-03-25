@@ -14,6 +14,7 @@ import 'package:thinktank_mobile/screens/contest/finalresult_screen.dart';
 import 'package:thinktank_mobile/screens/contest/leaderboardcontest_screen.dart';
 import 'package:thinktank_mobile/screens/findanonymous/cardprovider.dart';
 import 'package:thinktank_mobile/screens/findanonymous/findanonymous_game.dart';
+import 'package:thinktank_mobile/screens/flipcard/flipcard_game.dart';
 
 import 'package:thinktank_mobile/screens/friend/addfriend_screen.dart';
 import 'package:thinktank_mobile/screens/friend/friend_screen.dart';
@@ -98,7 +99,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           useMaterial3: true,
         ),
         home: StartScreen(),
-        // home: LeaderBoardContestScreen(),
+        //home: FlipCardGamePlay(gameName: "Flip Card Challenge", level: 24),
         // home: FindAnonymousGame(
         //   avt: 'asdv',
         //   listAnswer: [

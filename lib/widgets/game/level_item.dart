@@ -132,16 +132,16 @@ class LevelItem extends StatelessWidget {
                       break;
                     case 'Flip Card Challenge':
                       // ignore: use_build_context_synchronously
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FlipCardGamePlay(
-                            account: account!,
-                            gameName: game,
-                            level: levelNumber,
-                          ),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => FlipCardGamePlay(
+                      //       account: account!,
+                      //       gameName: game,
+                      //       level: levelNumber,
+                      //     ),
+                      //   ),
+                      // );
                       break;
                     case 'Images Walkthrough':
                       // ignore: use_build_context_synchronously
