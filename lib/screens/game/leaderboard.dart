@@ -6,6 +6,7 @@ import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/accountinrank.dart';
+import 'package:thinktank_mobile/screens/game/game_menu.dart';
 import 'package:thinktank_mobile/widgets/game/leaderboard_user.dart';
 import 'package:thinktank_mobile/widgets/game/top_user.dart';
 
@@ -130,7 +131,15 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              // Navigator.pushAndRemoveUntil(
+              //   context,
+              //   MaterialPageRoute(builder: (context) {
+              //     return GameMenuScreen(game: games[]);
+              //   },),
+              //   (route) => false,
+              // );
+            },
             icon: const Icon(IconlyBold.close_square),
           ),
         ],
@@ -221,7 +230,6 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                 ),
               ),
             ),
-
             Visibility(
               visible: visibleAll && accounts.length >= 2,
               child: Positioned(
