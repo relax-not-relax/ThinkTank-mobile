@@ -207,12 +207,12 @@ class FriendScreenState extends State<FriendScreen> {
             children: [
               Container(
                 margin: const EdgeInsets.only(top: 20),
-                height: MediaQuery.of(context).size.height * 0.2,
+                height: 195,
                 width: MediaQuery.of(context).size.width,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('assets/pics/friendbg.png'),
-                    fit: BoxFit.fill,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -223,7 +223,7 @@ class FriendScreenState extends State<FriendScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.85,
+                    width: MediaQuery.of(context).size.width * 0.8,
                     decoration: const BoxDecoration(
                       color: Color.fromRGBO(18, 19, 21, 1),
                       borderRadius: BorderRadius.all(
@@ -256,7 +256,7 @@ class FriendScreenState extends State<FriendScreen> {
                         prefixIcon: IconButton(
                           icon: const Icon(
                             IconlyLight.search,
-                            size: 35,
+                            size: 30,
                           ),
                           onPressed: () {},
                         ),
@@ -339,7 +339,10 @@ class FriendScreenState extends State<FriendScreen> {
                             for (var fs in list)
                               Container(
                                 height: 80,
-                                margin: const EdgeInsets.only(top: 10),
+                                margin: const EdgeInsets.only(
+                                  top: 10,
+                                  left: 10,
+                                ),
                                 width: MediaQuery.of(context).size.width,
                                 child: Row(
                                   mainAxisAlignment:
@@ -429,7 +432,7 @@ class FriendScreenState extends State<FriendScreen> {
                                           fs.userName2 ?? fs.userName1!,
                                           style: const TextStyle(
                                             color: Colors.white,
-                                            fontSize: 20,
+                                            fontSize: 16,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),

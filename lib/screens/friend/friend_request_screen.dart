@@ -112,6 +112,9 @@ class FriendRequestScreenState extends State<FriendRequestScreen> {
             child: AppBar(
               backgroundColor: Colors.black,
               toolbarHeight: 90.0,
+              iconTheme: const IconThemeData(
+                color: Colors.white,
+              ),
               title: Text(
                 "Friend requests",
                 style: GoogleFonts.inter(
@@ -145,7 +148,7 @@ class FriendRequestScreenState extends State<FriendRequestScreen> {
                     "Username",
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 30,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -185,7 +188,7 @@ class FriendRequestScreenState extends State<FriendRequestScreen> {
                     prefixIcon: IconButton(
                       icon: const Icon(
                         IconlyLight.search,
-                        size: 35,
+                        size: 30,
                       ),
                       onPressed: () {
                         search(_codeController.text);
@@ -248,7 +251,7 @@ class FriendRequestScreenState extends State<FriendRequestScreen> {
                                               element.userName1!,
                                           style: const TextStyle(
                                             color: Colors.white,
-                                            fontSize: 20,
+                                            fontSize: 16,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -279,7 +282,7 @@ class FriendRequestScreenState extends State<FriendRequestScreen> {
                                                 style: TextStyle(
                                                   color: Color.fromRGBO(
                                                       255, 212, 96, 1),
-                                                  fontSize: 18,
+                                                  fontSize: 16,
                                                 ),
                                               ),
                                             ),
@@ -303,7 +306,7 @@ class FriendRequestScreenState extends State<FriendRequestScreen> {
                                                 style: TextStyle(
                                                   color: Color.fromRGBO(
                                                       96, 234, 84, 1),
-                                                  fontSize: 18,
+                                                  fontSize: 16,
                                                 ),
                                               ),
                                             ),
@@ -339,90 +342,95 @@ class FriendRequestScreenState extends State<FriendRequestScreen> {
                   Radius.circular(10),
                 ),
                 color: Color.fromARGB(255, 249, 249, 249)),
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 30,
-                ),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      'Accept $username as a friend',
-                      style: const TextStyle(
-                          color: Color.fromRGBO(129, 140, 155, 1),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400),
-                      textAlign: TextAlign.center,
-                    ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 15,
+              ),
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 30,
                   ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        top: BorderSide(
-                            color: Color.fromARGB(255, 202, 202, 202),
-                            width: 1),
-                      ),
-                    ),
-                    margin: const EdgeInsets.only(
-                      bottom: 10,
-                    ),
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkWell(
-                            onTap: () async {
-                              Navigator.pop(context);
-                              await denied(friendShipId, index);
-                            },
-                            child: const SizedBox(
-                              height: 50,
-                              width: 125,
-                              child: Center(
-                                child: Text(
-                                  'Rejecte',
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(255, 58, 58, 1),
-                                    fontSize: 20,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () async {
-                              Navigator.pop(context);
-                              await accept(friendShipId, index);
-                            },
-                            child: const SizedBox(
-                              height: 50,
-                              width: 125,
-                              child: Center(
-                                child: Text(
-                                  'Accept',
-                                  style: TextStyle(
-                                    color: Color.fromRGBO(72, 145, 255, 1),
-                                    fontSize: 20,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        'Accept $username as a friend?',
+                        style: const TextStyle(
+                            color: Color.fromRGBO(129, 140, 155, 1),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
-                )
-              ],
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Expanded(
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                              color: Color.fromARGB(255, 202, 202, 202),
+                              width: 1),
+                        ),
+                      ),
+                      margin: const EdgeInsets.only(
+                        bottom: 10,
+                      ),
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                              onTap: () async {
+                                Navigator.pop(context);
+                                await denied(friendShipId, index);
+                              },
+                              child: const SizedBox(
+                                height: 50,
+                                width: 125,
+                                child: Center(
+                                  child: Text(
+                                    'Reject',
+                                    style: TextStyle(
+                                      color: Color.fromRGBO(255, 58, 58, 1),
+                                      fontSize: 16,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () async {
+                                Navigator.pop(context);
+                                await accept(friendShipId, index);
+                              },
+                              child: const SizedBox(
+                                height: 50,
+                                width: 125,
+                                child: Center(
+                                  child: Text(
+                                    'Accept',
+                                    style: TextStyle(
+                                      color: Color.fromRGBO(72, 145, 255, 1),
+                                      fontSize: 16,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         );
