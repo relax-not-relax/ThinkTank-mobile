@@ -45,7 +45,7 @@ class TopUser extends StatelessWidget {
                 shape: BoxShape.circle,
                 //borderRadius: BorderRadius.circular(20.0),
                 image: DecorationImage(
-                  image: AssetImage(userAva),
+                  image: NetworkImage(userAva),
                   fit: BoxFit.contain,
                 ),
                 boxShadow: [
@@ -112,7 +112,7 @@ class TopUser extends StatelessWidget {
                 shape: BoxShape.circle,
                 //borderRadius: BorderRadius.circular(20.0),
                 image: DecorationImage(
-                  image: AssetImage(userAva),
+                  image: NetworkImage(userAva),
                   fit: BoxFit.contain,
                 ),
                 boxShadow: [
@@ -179,7 +179,7 @@ class TopUser extends StatelessWidget {
                 shape: BoxShape.circle,
                 //borderRadius: BorderRadius.circular(20.0),
                 image: DecorationImage(
-                  image: AssetImage(userAva),
+                  image: NetworkImage(userAva),
                   fit: BoxFit.contain,
                 ),
                 boxShadow: [
