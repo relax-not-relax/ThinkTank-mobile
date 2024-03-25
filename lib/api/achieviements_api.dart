@@ -6,32 +6,25 @@ import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/accountinrank.dart';
 
 class ApiAchieviements {
-  static Future<void> addAchieviements(
-      double duration,
-      int mark,
-      int level,
-      int gameId,
-      // int topicId,
-      // int pieceOfInformation,
-      int accountId,
-      String authToken,
-      int pieceOfInformation) async {
+  static Future<void> addAchieviements(double duration, int mark, int level,
+      int gameId, int pieceOfInformation) async {
+    Account? account = await SharedPreferencesHelper.getInfo();
     Map<String, dynamic> data = {
       "duration": duration,
       "mark": mark,
       "level": level,
+      "accountId": account!.id,
       "gameId": gameId,
-      "accountId": accountId,
-      // "topicId": 0,
       "pieceOfInformation": pieceOfInformation
     };
     String jsonBody = jsonEncode(data);
+    print(jsonBody);
 
     final response = await http.post(
       Uri.parse('https://thinktank-sep490.azurewebsites.net/api/achievements'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $authToken',
+        'Authorization': 'Bearer ${account.accessToken}',
       },
       body: jsonBody,
     );
@@ -40,9 +33,8 @@ class ApiAchieviements {
       final jsonData = json.decode(response.body);
       print(jsonData);
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account = await SharedPreferencesHelper.getInfo();
       Account? account2 = await ApiAuthentication.refreshToken(
-          account!.refreshToken, account.accessToken);
+          account.refreshToken, account.accessToken);
       SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.post(
         Uri.parse(

@@ -289,8 +289,8 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
         (points * 100).toInt(),
         widget.level,
         5,
-        account!.id,
-        account.accessToken!,
+        //account!.id,
+        //account.accessToken!,
         widget.numberOfAnswer);
     setState(() {
       continueVisible = true;

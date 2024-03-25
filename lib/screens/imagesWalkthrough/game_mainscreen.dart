@@ -113,14 +113,13 @@ class _GameMainScreenState extends State<GameMainScreen> {
       await SharedPreferencesHelper.saveImagesWalkthroughLevel(
           widget.levelNumber + 1);
     }
+
     await ApiAchieviements.addAchieviements(
         (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
             1000,
         (points * 100).toInt(),
         widget.levelNumber,
         4,
-        widget.account.id,
-        widget.account.accessToken!,
         _game.gameData.length - 1);
   }
 
