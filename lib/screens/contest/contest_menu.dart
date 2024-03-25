@@ -7,6 +7,7 @@ import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/contest.dart';
 import 'package:thinktank_mobile/screens/contest/instruction_screen.dart';
 import 'package:thinktank_mobile/screens/home.dart';
+import 'package:thinktank_mobile/screens/imagesWalkthrough/game_mainscreen.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/game/coin_div.dart';
 import 'package:thinktank_mobile/widgets/game/memory_type.dart';
@@ -44,7 +45,22 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
     formatEndDate = DateFormat('yMd').format(endContest);
   }
 
-  void waiting() {
+  void waiting() async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    if (widget.contest.gameId == 4) {
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => GameMainScreen(
+            levelNumber: 1,
+            account: account!,
+            gameName: "Image WalkThrough",
+            contestId: widget.contest.id,
+          ),
+        ),
+      );
+    }
     setState(() {
       isVisible = false;
       isWaiting = true;
@@ -113,7 +129,7 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
           children: [
             Hero(
               tag: widget.contest.id,
-              child: Image.asset(
+              child: Image.network(
                 widget.contest.thumbnail,
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height / 2,

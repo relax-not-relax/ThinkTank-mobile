@@ -7,6 +7,7 @@ import 'package:thinktank_mobile/api/notification_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/contest.dart';
 import 'package:thinktank_mobile/models/game.dart';
 import 'package:thinktank_mobile/models/notification_item.dart';
 import 'package:thinktank_mobile/screens/game/game_menu.dart';
@@ -31,6 +32,8 @@ class OptionScreen extends StatefulWidget {
 class _OptionScreenState extends State<OptionScreen> {
   Account? account = null;
   late Future _initAccount;
+  late Future _getContests;
+  List<Contest> contests = [];
 
   void startTimer() {
     int _currentPage;
@@ -98,6 +101,12 @@ class _OptionScreenState extends State<OptionScreen> {
         account = value;
       });
     });
+    _getContests = getContests();
+    _getContests.then((value) => {
+          setState(() {
+            contests = value;
+          })
+        });
     _pages = List.generate(
       contest.length,
       (index) {
@@ -160,6 +169,10 @@ class _OptionScreenState extends State<OptionScreen> {
 
   Future<Account?> getAccount() async {
     return await SharedPreferencesHelper.getInfo();
+  }
+
+  Future<List<Contest>> getContests() async {
+    return await SharedPreferencesHelper.getContests();
   }
 
   @override
@@ -357,7 +370,7 @@ class _OptionScreenState extends State<OptionScreen> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: contestsTest.map(
+                  children: contests.map(
                     (contest) {
                       return ContestThumbnail(
                         contest: contest,

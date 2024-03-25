@@ -15,6 +15,7 @@ class AssetsAPI {
       final String filePath = '${appDir.path}/image$name.png';
       final File imageFile = File(filePath);
       await imageFile.writeAsBytes(response.bodyBytes);
+      print(filePath);
       return filePath;
     } catch (e) {
       return '';

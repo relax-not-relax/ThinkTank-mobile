@@ -152,6 +152,7 @@ class LevelItem extends StatelessWidget {
                             levelNumber: levelNumber,
                             account: account!,
                             gameName: game,
+                            contestId: null,
                           ),
                         ),
                       );

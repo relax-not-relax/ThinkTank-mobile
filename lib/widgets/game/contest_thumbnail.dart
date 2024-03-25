@@ -37,7 +37,7 @@ class ContestThumbnail extends StatelessWidget {
           height: 200,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(contest.thumbnail),
+              image: NetworkImage(contest.thumbnail),
               fit: BoxFit.cover,
             ),
             borderRadius: const BorderRadius.all(

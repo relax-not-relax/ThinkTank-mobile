@@ -21,11 +21,13 @@ class GameMainScreen extends StatefulWidget {
     required this.account,
     required this.gameName,
     required this.levelNumber,
+    this.contestId,
   });
 
   final Account account;
   final String gameName;
   final int levelNumber;
+  final int? contestId;
 
   @override
   State<GameMainScreen> createState() => _GameMainScreenState();
@@ -73,7 +75,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
 
   late Future _initResource;
   Future<void> initResource() async {
-    await _game.initGame(widget.levelNumber);
+    await _game.initGame(widget.levelNumber, widget.contestId);
   }
 
   @override

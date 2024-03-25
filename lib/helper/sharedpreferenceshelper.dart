@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/contest.dart';
 import 'package:thinktank_mobile/models/findanounymous_assets.dart';
 import 'package:thinktank_mobile/models/image_resource.dart';
 import 'package:thinktank_mobile/models/logininfo.dart';
@@ -24,6 +25,8 @@ class SharedPreferencesHelper {
   static const String anonymousLevel = 'anonymousLevel';
   static const String resourceVersionKey = 'resourceVersion';
   static const String anonymousResourcenKey = 'anonymousResourcenKey';
+  static const String contestsResourcenKey = 'contestsResourcenKey';
+  static const String contestsInfoKey = 'contestsInfoKey';
 
   static Future<void> saveAccount(LoginInfo account) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -233,6 +236,113 @@ class SharedPreferencesHelper {
         anonymousAssets.map((assets) => assets.toJson()).toList();
     String assets = json.encode(jsonList2);
     await prefs.setString(anonymousResourcenKey, assets);
+  }
+
+  static Future<void> saveContestResource(List<AssetOfContest> resource) async {
+    if (resource.isEmpty) return;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? contestString = prefs.getString(contestsResourcenKey);
+    List<dynamic> jsonList;
+    List<AssetOfContest> contestAssets = [];
+    if (contestString != null) {
+      jsonList = json.decode(contestString) as List<dynamic>;
+      contestAssets = jsonList
+          .map((jsonItem) =>
+              AssetOfContest.fromJson(jsonItem as Map<String, dynamic>))
+          .toList();
+    }
+
+    contestAssets.addAll(resource);
+    List<Map<String, dynamic>> jsonList2 =
+        contestAssets.map((assets) => assets.toJson()).toList();
+    String assets = json.encode(jsonList2);
+    await prefs.setString(contestsResourcenKey, assets);
+  }
+
+  static Future<void> saveContestInfo(List<Contest> resource) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? contestString = prefs.getString(contestsInfoKey);
+    List<dynamic> jsonList;
+    List<Contest> contests = [];
+    if (contestString != null) {
+      jsonList = json.decode(contestString) as List<dynamic>;
+      contests = jsonList
+          .map((jsonItem) => Contest.fromJson(jsonItem as Map<String, dynamic>))
+          .toList();
+    }
+
+    contests.addAll(resource);
+    List<Map<String, dynamic>> jsonList2 =
+        contests.map((assets) => assets.toJson()).toList();
+    String assets = json.encode(jsonList2);
+    await prefs.setString(contestsInfoKey, assets);
+  }
+
+  static Future<List<Contest>> getContests() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? assetString = prefs.getString(contestsInfoKey);
+    if (assetString != null) {
+      try {
+        List<dynamic> jsonList = json.decode(assetString) as List<dynamic>;
+
+        List<Contest> assets = jsonList
+            .map((jsonItem) =>
+                Contest.fromJson(jsonItem as Map<String, dynamic>))
+            .toList();
+        return assets;
+      } catch (e) {
+        print('Error parsing notifications from SharedPreferences: $e');
+        return [];
+      }
+    } else {
+      return [];
+    }
+  }
+
+  static Future<List<AssetOfContest>> getAllContestAssets() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? assetString = prefs.getString(contestsResourcenKey);
+    if (assetString != null) {
+      try {
+        List<dynamic> jsonList = json.decode(assetString) as List<dynamic>;
+
+        List<AssetOfContest> assets = jsonList
+            .map((jsonItem) =>
+                AssetOfContest.fromJson(jsonItem as Map<String, dynamic>))
+            .toList();
+        return assets;
+      } catch (e) {
+        print('Error parsing notifications from SharedPreferences: $e');
+        return [];
+      }
+    } else {
+      return [];
+    }
+  }
+
+  static Future<List<AssetOfContest>> getContestAssets(int id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? assetString = prefs.getString(contestsResourcenKey);
+    print(assetString);
+    if (assetString != null) {
+      try {
+        List<dynamic> jsonList = json.decode(assetString) as List<dynamic>;
+
+        List<AssetOfContest> assets = jsonList
+            .map((jsonItem) =>
+                AssetOfContest.fromJson(jsonItem as Map<String, dynamic>))
+            .where((element) => element.contestId == id)
+            .toList();
+        return assets;
+      } catch (e) {
+        print('Error parsing notifications from SharedPreferences: $e');
+        return [];
+      }
+    } else {
+      return [];
+    }
   }
 
   static Future<List<FindAnonymousAsset>> getAnonymousAssets() async {

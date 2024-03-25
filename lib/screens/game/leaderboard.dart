@@ -73,6 +73,16 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
     });
   }
 
+  String sortName(String name) {
+    if (name.isEmpty) return '';
+    List<String> tmp = name.split(' ');
+    int lenght = tmp.length;
+    if (lenght >= 3) {
+      return tmp[lenght - 2] + ' ' + tmp[lenght - 1];
+    }
+    return name;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -207,7 +217,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                           itemBuilder: (context, index) => LeaderBoardUser(
                               position: index + 4,
                               userAva: accounts[index + 3].avatar,
-                              userName: accounts[index + 3].fullName,
+                              userName: sortName(accounts[index + 3].fullName),
                               point: "${accounts[index + 3].mark} points"),
                         ),
                       ),
@@ -225,7 +235,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                 child: TopUser(
                   userAva: accounts[0].avatar,
                   top: 1,
-                  userName: accounts[0].fullName,
+                  userName: sortName(accounts[0].fullName),
                   point: "${accounts[0].mark} points",
                 ),
               ),
@@ -239,7 +249,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                 child: TopUser(
                   userAva: accounts[1].avatar,
                   top: 2,
-                  userName: accounts[1].fullName,
+                  userName: sortName(accounts[1].fullName),
                   point: "${accounts[1].mark} points",
                 ),
               ),
@@ -253,7 +263,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                 child: TopUser(
                   userAva: accounts[2].avatar,
                   top: 3,
-                  userName: accounts[2].fullName,
+                  userName: sortName(accounts[2].fullName),
                   point: "${accounts[2].mark} points",
                 ),
               ),
