@@ -5,6 +5,7 @@ import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
+import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/flipcard.dart';
@@ -19,11 +20,13 @@ class FlipCardGamePlay extends StatefulWidget {
     required this.account,
     required this.gameName,
     required this.level,
+    this.contestId,
   });
 
   final Account account;
   final String gameName;
   final int level;
+  final int? contestId;
 
   @override
   State<FlipCardGamePlay> createState() => _FlipCardGamePlayState();
@@ -80,19 +83,21 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
 
   void win() async {
     double points = (remainingTime.inMilliseconds / 1000);
-    int levelMax = await SharedPreferencesHelper.getFLipCardLevel();
-    if (levelMax == widget.level) {
-      await SharedPreferencesHelper.saveFLipCardLevel(widget.level + 1);
+    if (widget.contestId == null) {
+      int levelMax = await SharedPreferencesHelper.getFLipCardLevel();
+      if (levelMax == widget.level) {
+        await SharedPreferencesHelper.saveFLipCardLevel(widget.level + 1);
+      }
+      await ApiAchieviements.addAchieviements(
+          (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
+              1000,
+          (points * 100).toInt(),
+          levelNow,
+          1,
+          //widget.account.id,
+          //widget.account.accessToken!,
+          _game.cardCount ~/ 2);
     }
-    await ApiAchieviements.addAchieviements(
-        (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
-            1000,
-        (points * 100).toInt(),
-        levelNow,
-        1,
-        //widget.account.id,
-        //widget.account.accessToken!,
-        _game.cardCount ~/ 2);
     if (mounted)
       setState(() {
         continueVisible = true;
@@ -102,20 +107,29 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
   late Future _initResource;
   Future<void> initResource() async {
     levelNow = widget.level;
-    await _game.initGame(levelNow);
-    _game.gameImg = await _game.initGameImg(levelNow);
+    await _game.initGame(levelNow, widget.contestId);
+    if (widget.contestId != null) {
+      _game.gameImg = await _game.initGameImg(0);
+    } else {
+      _game.gameImg = await _game.initGameImg(levelNow);
+    }
     cardKeys = List<GlobalKey<FlipCardState>>.generate(
       _game.gameImg.length,
       (index) => GlobalKey<FlipCardState>(),
     );
-    print(_game.gameImg.length.toString() + "abc");
-
-    print(cardKeys);
   }
 
-  void _continue() {
+  void _continue() async {
     double points = (remainingTime.inMilliseconds / 1000);
     if (isLosed == false) {
+      if (widget.contestId != null) {
+        await ContestsAPI.addAccountInContest(
+            (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
+                1000,
+            (points * 100).toInt(),
+            widget.contestId!);
+      }
+      // ignore: use_build_context_synchronously
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -128,11 +142,20 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
             isWin: true,
             gameName: widget.gameName,
             gameId: 1,
+            contestId: widget.contestId,
           ),
         ),
         (route) => false,
       );
     } else {
+      if (widget.contestId != null) {
+        await ContestsAPI.addAccountInContest(
+            (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
+                1000,
+            0,
+            widget.contestId!);
+      }
+      // ignore: use_build_context_synchronously
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -143,6 +166,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
             isWin: false,
             gameName: widget.gameName,
             gameId: 1,
+            contestId: widget.contestId,
           ),
         ),
         (route) => false,

@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
+import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
@@ -97,12 +98,14 @@ class FindAnonymousGame extends StatefulWidget {
     required this.level,
     required this.numberOfAnswer,
     required this.time,
+    this.contestId,
   });
   final String avt;
   final List<FindAnonymousAsset> listAnswer;
   final int level;
   final int numberOfAnswer;
   final int time;
+  final int? contestId;
   @override
   State<StatefulWidget> createState() {
     return FindAnonymousGameState();
@@ -223,7 +226,14 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
       return false;
   }
 
-  void lose() {
+  void lose() async {
+    if (widget.contestId != null) {
+      await ContestsAPI.addAccountInContest(
+        (widget.time * 1000 - remainingTime.inMilliseconds).toDouble() / 1000,
+        0,
+        widget.contestId!,
+      );
+    }
     setState(() {
       finishVisible = true;
       continueVisible = true;
@@ -249,6 +259,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
             isWin: true,
             gameId: 5,
             gameName: games[2].name,
+            contestId: widget.contestId,
           ),
         ),
         (route) => false,
@@ -264,6 +275,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
             isWin: false,
             gameId: 5,
             gameName: games[2].name,
+            contestId: widget.contestId,
           ),
         ),
         (route) => false,
@@ -279,19 +291,28 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
       timer?.cancel();
     });
     double points = (remainingTime.inMilliseconds / 1000);
-    int levelMax = await SharedPreferencesHelper.getAnonymousLevel();
-    if (levelMax == widget.level) {
-      await SharedPreferencesHelper.saveAnonymousLevel(widget.level + 1);
-    }
-    Account? account = await SharedPreferencesHelper.getInfo();
-    await ApiAchieviements.addAchieviements(
+
+    if (widget.contestId == null) {
+      int levelMax = await SharedPreferencesHelper.getAnonymousLevel();
+      if (levelMax == widget.level) {
+        await SharedPreferencesHelper.saveAnonymousLevel(widget.level + 1);
+      }
+      await ApiAchieviements.addAchieviements(
+          (widget.time * 1000 - remainingTime.inMilliseconds).toDouble() / 1000,
+          (points * 100).toInt(),
+          widget.level,
+          5,
+          //account!.id,
+          //account.accessToken!,
+          widget.numberOfAnswer);
+    } else {
+      await ContestsAPI.addAccountInContest(
         (widget.time * 1000 - remainingTime.inMilliseconds).toDouble() / 1000,
         (points * 100).toInt(),
-        widget.level,
-        5,
-        //account!.id,
-        //account.accessToken!,
-        widget.numberOfAnswer);
+        widget.contestId!,
+      );
+    }
+
     setState(() {
       continueVisible = true;
     });
