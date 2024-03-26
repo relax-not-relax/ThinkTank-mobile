@@ -44,6 +44,7 @@ class ApiAuthentication {
           await googleSignIn.signIn();
       if (googleSignInAccount != null) {
         String? fcmToken = await FirebaseMessageAPI().getToken();
+        print("fcm:" + (fcmToken ?? "khong co"));
         Map<String, String> loginData = {
           "googleId": googleSignInAccount.id,
           "fcm": fcmToken ?? "",
@@ -51,7 +52,10 @@ class ApiAuthentication {
           "email": googleSignInAccount.email,
           "fullName": googleSignInAccount.displayName ?? "Anonymous"
         };
+
         String jsonBody = jsonEncode(loginData);
+
+        print(jsonBody);
 
         final response = await http.post(
           Uri.parse(

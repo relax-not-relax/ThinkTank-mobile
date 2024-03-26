@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
+import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 // import 'package:thinktank_mobile/data/imageswalkthrough_data.dart';
 // import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
@@ -110,24 +111,36 @@ class _GameMainScreenState extends State<GameMainScreen> {
 
   void win() async {
     double points = (remainingTime.inMilliseconds / 1000);
-    int levelMax = await SharedPreferencesHelper.getImagesWalkthroughLevel();
-    if (levelMax == widget.levelNumber) {
-      await SharedPreferencesHelper.saveImagesWalkthroughLevel(
-          widget.levelNumber + 1);
-    }
 
-    await ApiAchieviements.addAchieviements(
-        (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
-            1000,
-        (points * 100).toInt(),
-        widget.levelNumber,
-        4,
-        _game.gameData.length - 1);
+    if (widget.contestId == null) {
+      int levelMax = await SharedPreferencesHelper.getImagesWalkthroughLevel();
+      if (levelMax == widget.levelNumber) {
+        await SharedPreferencesHelper.saveImagesWalkthroughLevel(
+            widget.levelNumber + 1);
+      }
+
+      await ApiAchieviements.addAchieviements(
+          (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
+              1000,
+          (points * 100).toInt(),
+          widget.levelNumber,
+          4,
+          _game.gameData.length - 1);
+    }
   }
 
-  void _continue() {
+  void _continue() async {
     double points = (remainingTime.inMilliseconds / 1000);
     if (isLosed == false) {
+      if (widget.contestId != null) {
+        await ContestsAPI.addAccountInContest(
+            (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
+                1000,
+            (points * 100).toInt(),
+            widget.contestId!);
+      }
+
+      // ignore: use_build_context_synchronously
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -140,6 +153,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
             isWin: true,
             gameName: widget.gameName,
             gameId: 4,
+            contestId: widget.contestId,
           ),
         ),
         (route) => false,
@@ -147,8 +161,17 @@ class _GameMainScreenState extends State<GameMainScreen> {
     }
   }
 
-  void _continueLosed() {
+  void _continueLosed() async {
     if (isLosed == true) {
+      if (widget.contestId != null) {
+        await ContestsAPI.addAccountInContest(
+            (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
+                1000,
+            0,
+            widget.contestId!);
+      }
+
+      // ignore: use_build_context_synchronously
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -159,6 +182,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
             isWin: false,
             gameName: widget.gameName,
             gameId: 4,
+            contestId: widget.contestId,
           ),
         ),
         (route) => false,

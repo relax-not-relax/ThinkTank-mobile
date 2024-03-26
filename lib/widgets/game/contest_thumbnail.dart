@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/api/contest_api.dart';
+import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/accountincontest.dart';
 import 'package:thinktank_mobile/models/contest.dart';
 import 'package:thinktank_mobile/screens/contest/contest_menu.dart';
 
@@ -10,12 +13,18 @@ class ContestThumbnail extends StatelessWidget {
 
   final Contest contest;
 
-  void openContest(BuildContext context) {
+  void openContest(BuildContext context) async {
+    AccountInContest? accountInContest =
+        await ContestsAPI.checkAccountInContest(contest.id);
+    // ignore: use_build_context_synchronously
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) {
-          return ContestMenuScreen(contest: contest);
+          return ContestMenuScreen(
+            contest: contest,
+            accountInContest: accountInContest,
+          );
         },
       ),
     );

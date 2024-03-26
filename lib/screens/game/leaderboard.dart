@@ -205,29 +205,38 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                       topRight: Radius.circular(20),
                     ),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          padding: EdgeInsets.zero,
-                          itemCount:
-                              accounts.length - 3 < 0 ? 0 : accounts.length - 3,
-                          itemBuilder: (context, index) => LeaderBoardUser(
-                              position: index + 4,
-                              userAva: accounts[index + 3].avatar,
-                              userName: sortName(accounts[index + 3].fullName),
-                              point: "${accounts[index + 3].mark} points"),
+                  child: (accounts.length > 3)
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Expanded(
+                              child: ListView.builder(
+                                padding: EdgeInsets.zero,
+                                itemCount: accounts.length - 3 < 0
+                                    ? 0
+                                    : accounts.length - 3,
+                                itemBuilder: (context, index) => LeaderBoardUser(
+                                    position: index + 4,
+                                    userAva: accounts[index + 3].avatar,
+                                    userName:
+                                        sortName(accounts[index + 3].fullName),
+                                    point:
+                                        "${accounts[index + 3].mark} points"),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Center(
+                          child:
+                              Image.asset('assets/pics/nomore.png', width: 300),
                         ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ),
             Visibility(
-              visible: visibleAll && accounts.length >= 1,
+              visible:
+                  visibleAll && accounts.length >= 1 && accounts[0].mark > 0,
               child: Positioned(
                 top: MediaQuery.of(context).size.height * 0.1 + 25,
                 left: 0,
@@ -241,7 +250,8 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
               ),
             ),
             Visibility(
-              visible: visibleAll && accounts.length >= 2,
+              visible:
+                  visibleAll && accounts.length >= 2 && accounts[1].mark > 0,
               child: Positioned(
                 top: MediaQuery.of(context).size.height * 0.25,
                 left: 0,
@@ -255,7 +265,8 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
               ),
             ),
             Visibility(
-              visible: visibleAll && accounts.length >= 3,
+              visible:
+                  visibleAll && accounts.length >= 3 && accounts[2].mark > 0,
               child: Positioned(
                 top: MediaQuery.of(context).size.height * 0.28,
                 left: MediaQuery.of(context).size.width - 130,

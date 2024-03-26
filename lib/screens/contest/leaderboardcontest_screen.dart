@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
+import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
+import 'package:thinktank_mobile/models/accountincontest.dart';
 import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/game/leaderboard_user.dart';
@@ -11,7 +13,8 @@ import 'package:thinktank_mobile/widgets/game/top_user.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
 class LeaderBoardContestScreen extends StatefulWidget {
-  const LeaderBoardContestScreen({super.key});
+  const LeaderBoardContestScreen({super.key, required this.contestId});
+  final int contestId;
 
   @override
   State<LeaderBoardContestScreen> createState() =>
@@ -118,6 +121,65 @@ class _LeaderBoardContestScreenState extends State<LeaderBoardContestScreen> {
     );
   }
 
+  late Future _getLeaderboard;
+  Future getLeaderboard() async {
+    List<AccountInContest>? tmps =
+        await ContestsAPI.getAccountInContest(widget.contestId, 1, 20);
+    if (tmps == null || tmps.isEmpty) return;
+    switch (tmps.length) {
+      case 1:
+        list[0] = tmps[0];
+        break;
+      case 2:
+        list[0] = tmps[0];
+        list[1] = tmps[1];
+        break;
+      case 3:
+        list[0] = tmps[0];
+        list[1] = tmps[1];
+        list[2] = tmps[2];
+        break;
+    }
+    if (tmps.length > 3) {
+      list = tmps;
+    }
+    setState(() {
+      list;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getLeaderboard = getLeaderboard();
+    _getLeaderboard.then((value) => {
+          setState(() {
+            list;
+          })
+        });
+  }
+
+  List<AccountInContest> list = [
+    AccountInContest(
+        completedTime: DateTime.now(),
+        userName: "No user",
+        mark: 0,
+        avatar:
+            "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688"),
+    AccountInContest(
+        completedTime: DateTime.now(),
+        userName: "No user",
+        mark: 0,
+        avatar:
+            "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688"),
+    AccountInContest(
+        completedTime: DateTime.now(),
+        userName: "No user",
+        mark: 0,
+        avatar:
+            "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688")
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -221,56 +283,71 @@ class _LeaderBoardContestScreenState extends State<LeaderBoardContestScreen> {
                     topRight: Radius.circular(20),
                   ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        itemCount: usersTest.length,
-                        itemBuilder: (context, index) => LeaderBoardUser(
-                            position: index + 4,
-                            userAva: "assets/pics/ava_noti_test.png",
-                            userName: usersTest[index],
-                            point: "400 points"),
+                child: (list.length > 3)
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Expanded(
+                            child: ListView.builder(
+                              padding: EdgeInsets.zero,
+                              itemCount:
+                                  list.length - 3 < 0 ? 0 : list.length - 3,
+                              itemBuilder: (context, index) => LeaderBoardUser(
+                                  position: index + 4,
+                                  userAva: list[index + 3].avatar,
+                                  userName: list[index + 3].userName,
+                                  point: "${list[index + 3].mark} points"),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Center(
+                        child:
+                            Image.asset('assets/pics/nomore.png', width: 300),
                       ),
-                    ),
-                  ],
+              ),
+            ),
+            Visibility(
+              visible: list[0].mark > 0,
+              child: Positioned(
+                top: MediaQuery.of(context).size.height * 0.1 + 25,
+                left: 0,
+                right: 0,
+                child: TopUser(
+                  userAva: list[0].avatar,
+                  top: 1,
+                  userName: list[0].userName,
+                  point: "${list[0].mark} points",
                 ),
               ),
             ),
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.1 + 25,
-              left: 0,
-              right: 0,
-              child: const TopUser(
-                userAva: "assets/pics/ava_noti_test.png",
-                top: 1,
-                userName: "Hoang Huy",
-                point: "900 points",
+            Visibility(
+              visible: list[1].mark > 0,
+              child: Positioned(
+                top: MediaQuery.of(context).size.height * 0.25,
+                left: 0,
+                right: MediaQuery.of(context).size.width - 120,
+                child: TopUser(
+                  userAva: list[1].avatar,
+                  top: 2,
+                  userName: list[1].userName,
+                  point: "${list[1].mark} points",
+                ),
               ),
             ),
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.25,
-              left: 0,
-              right: MediaQuery.of(context).size.width - 120,
-              child: const TopUser(
-                userAva: "assets/pics/ava_noti_test.png",
-                top: 2,
-                userName: "Hoang Huy",
-                point: "800 points",
-              ),
-            ),
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.28,
-              left: MediaQuery.of(context).size.width - 120,
-              right: 0,
-              child: const TopUser(
-                userAva: "assets/pics/ava_noti_test.png",
-                top: 3,
-                userName: "Hoang Huy",
-                point: "700 points",
+            Visibility(
+              visible: list[2].mark > 0,
+              child: Positioned(
+                top: MediaQuery.of(context).size.height * 0.28,
+                left: MediaQuery.of(context).size.width - 120,
+                right: 0,
+                child: TopUser(
+                  userAva: list[2].avatar,
+                  top: 3,
+                  userName: list[2].userName,
+                  point: "${list[2].mark} points",
+                ),
               ),
             ),
           ],

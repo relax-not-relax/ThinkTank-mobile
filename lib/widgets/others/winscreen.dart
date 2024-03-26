@@ -1,8 +1,14 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/accountincontest.dart';
+import 'package:thinktank_mobile/models/contest.dart';
 import 'package:thinktank_mobile/models/game.dart';
 import 'package:thinktank_mobile/models/level.dart';
+import 'package:thinktank_mobile/screens/contest/contest_menu.dart';
 import 'package:thinktank_mobile/screens/game/level_select.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
@@ -14,13 +20,15 @@ class WinScreen extends StatefulWidget {
       this.time,
       required this.isWin,
       required this.gameId,
-      required this.gameName});
+      required this.gameName,
+      required this.contestId});
   final int points;
   final bool haveTime;
   final double? time;
   final bool isWin;
   final String gameName;
   final int gameId;
+  final int? contestId;
 
   @override
   State<StatefulWidget> createState() {
@@ -130,42 +138,62 @@ class WinScreenState extends State<WinScreen> {
                     ),
                     child: ElevatedButton(
                       onPressed: () async {
-                        int levelCompleted = 0;
-                        Game game = games[0];
-                        switch (widget.gameId) {
-                          case 1:
-                            levelCompleted = await SharedPreferencesHelper
-                                .getFLipCardLevel();
-                            game = games[0];
-                            break;
-                          case 2:
-                            levelCompleted = await SharedPreferencesHelper
-                                .getMusicPasswordLevel();
-                            game = games[1];
-                            break;
-                          case 5:
-                            levelCompleted = await SharedPreferencesHelper
-                                .getAnonymousLevel();
-                            game = games[2];
-                            break;
-                          case 4:
-                            levelCompleted = await SharedPreferencesHelper
-                                .getImagesWalkthroughLevel();
-                            game = games[3];
-                            break;
+                        if (widget.contestId != null) {
+                          Contest contest =
+                              (await SharedPreferencesHelper.getContests())
+                                  .singleWhere((element) =>
+                                      element.id == widget.contestId);
+                          AccountInContest? accountInContest =
+                              await ContestsAPI.checkAccountInContest(
+                                  contest.id);
+                          // ignore: use_build_context_synchronously
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ContestMenuScreen(
+                                        contest: contest,
+                                        accountInContest: accountInContest,
+                                      )),
+                              (route) => false);
+                        } else {
+                          int levelCompleted = 0;
+                          Game game = games[0];
+                          switch (widget.gameId) {
+                            case 1:
+                              levelCompleted = await SharedPreferencesHelper
+                                  .getFLipCardLevel();
+                              game = games[0];
+                              break;
+                            case 2:
+                              levelCompleted = await SharedPreferencesHelper
+                                  .getMusicPasswordLevel();
+                              game = games[1];
+                              break;
+                            case 5:
+                              levelCompleted = await SharedPreferencesHelper
+                                  .getAnonymousLevel();
+                              game = games[2];
+                              break;
+                            case 4:
+                              levelCompleted = await SharedPreferencesHelper
+                                  .getImagesWalkthroughLevel();
+                              game = games[3];
+                              break;
+                          }
+                          // ignore: use_build_context_synchronously
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LevelSelectScreen(
+                                        level: Level(
+                                          totalLevel: 100,
+                                          levelCompleted: levelCompleted,
+                                          game: game,
+                                        ),
+                                        gmaeId: widget.gameId,
+                                      )),
+                              (route) => false);
                         }
-                        // ignore: use_build_context_synchronously
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LevelSelectScreen(
-                                      level: Level(
-                                        totalLevel: 100,
-                                        levelCompleted: levelCompleted,
-                                        game: game,
-                                      ),
-                                      gmaeId: widget.gameId,
-                                    )));
                       },
                       style: widget.isWin ? buttonWinVer2(context) : buttonLose,
                       child: const Text(

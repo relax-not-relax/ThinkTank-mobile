@@ -322,29 +322,6 @@ class SharedPreferencesHelper {
     }
   }
 
-  static Future<List<AssetOfContest>> getContestAssets(int id) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? assetString = prefs.getString(contestsResourcenKey);
-    print(assetString);
-    if (assetString != null) {
-      try {
-        List<dynamic> jsonList = json.decode(assetString) as List<dynamic>;
-
-        List<AssetOfContest> assets = jsonList
-            .map((jsonItem) =>
-                AssetOfContest.fromJson(jsonItem as Map<String, dynamic>))
-            .where((element) => element.contestId == id)
-            .toList();
-        return assets;
-      } catch (e) {
-        print('Error parsing notifications from SharedPreferences: $e');
-        return [];
-      }
-    } else {
-      return [];
-    }
-  }
-
   static Future<List<FindAnonymousAsset>> getAnonymousAssets() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? assetString = prefs.getString(anonymousResourcenKey);

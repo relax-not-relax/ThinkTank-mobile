@@ -4,8 +4,14 @@ import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/accountincontest.dart';
 import 'package:thinktank_mobile/models/contest.dart';
+import 'package:thinktank_mobile/models/findanounymous_assets.dart';
+import 'package:thinktank_mobile/models/flipcard.dart';
 import 'package:thinktank_mobile/screens/contest/instruction_screen.dart';
+import 'package:thinktank_mobile/screens/contest/leaderboardcontest_screen.dart';
+import 'package:thinktank_mobile/screens/findanonymous/findanonymous_game.dart';
+import 'package:thinktank_mobile/screens/flipcard/flipcard_game.dart';
 import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/game_mainscreen.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
@@ -18,9 +24,11 @@ class ContestMenuScreen extends StatefulWidget {
   const ContestMenuScreen({
     super.key,
     required this.contest,
+    this.accountInContest,
   });
 
   final Contest contest;
+  final AccountInContest? accountInContest;
 
   @override
   State<ContestMenuScreen> createState() => _ContestMenuScreenState();
@@ -47,6 +55,10 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
 
   void waiting() async {
     Account? account = await SharedPreferencesHelper.getInfo();
+    if (widget.accountInContest != null) {
+      print('choi roi');
+      return;
+    }
     if (widget.contest.gameId == 4) {
       // ignore: use_build_context_synchronously
       Navigator.push(
@@ -56,6 +68,53 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
             levelNumber: 1,
             account: account!,
             gameName: "Image WalkThrough",
+            contestId: widget.contest.id,
+          ),
+        ),
+      );
+    }
+
+    if (widget.contest.gameId == 1) {
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FlipCardGamePlay(
+              account: account!,
+              gameName: "Flipcard",
+              level: 0,
+              contestId: widget.contest.id),
+        ),
+      );
+    }
+
+    if (widget.contest.gameId == 5) {
+      // ignore: use_build_context_synchronously
+      List<FindAnonymousAsset> listAnswer = [];
+      List<AssetOfContest> assets =
+          (await SharedPreferencesHelper.getAllContestAssets())
+              .where((element) => element.contestId == widget.contest.id)
+              .toList();
+      for (var element in assets) {
+        listAnswer.add(FindAnonymousAsset(
+            id: element.id,
+            description: element.value.split(';')[0],
+            numberOfDescription: 0,
+            imgPath: element.value.split(';')[1]));
+      }
+      // ignore: use_build_context_synchronously
+      listAnswer.shuffle();
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FindAnonymousGame(
+            avt: account!.avatar!,
+            listAnswer: listAnswer,
+            level: 1,
+            numberOfAnswer:
+                (listAnswer.length ~/ 5 > 0) ? (listAnswer.length ~/ 5) : 1,
+            time: widget.contest.playTime.toInt(),
             contestId: widget.contest.id,
           ),
         ),
@@ -286,51 +345,56 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Center(
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(50),
+                          Visibility(
+                            visible: widget.accountInContest == null,
+                            child: Center(
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(50),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color.fromARGB(183, 0, 0, 0),
+                                      spreadRadius: 1,
+                                      blurRadius: 10,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ],
                                 ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Color.fromARGB(183, 0, 0, 0),
-                                    spreadRadius: 1,
-                                    blurRadius: 10,
-                                    offset: Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  _showJoinDialog(
-                                    context,
-                                    widget.contest.coinBetting.toString(),
-                                    waiting,
-                                  );
-                                },
-                                style: ButtonStyle(
-                                  fixedSize: MaterialStatePropertyAll(
-                                    Size(MediaQuery.of(context).size.width - 45,
-                                        80.0),
-                                  ),
-                                  backgroundColor:
-                                      const MaterialStatePropertyAll(
-                                    Color.fromARGB(255, 234, 67, 53),
-                                  ),
-                                  side: const MaterialStatePropertyAll(
-                                    BorderSide(
-                                      color: Colors.white,
-                                      width: 5,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    _showJoinDialog(
+                                      context,
+                                      widget.contest.coinBetting.toString(),
+                                      waiting,
+                                    );
+                                  },
+                                  style: ButtonStyle(
+                                    fixedSize: MaterialStatePropertyAll(
+                                      Size(
+                                          MediaQuery.of(context).size.width -
+                                              45,
+                                          80.0),
+                                    ),
+                                    backgroundColor:
+                                        const MaterialStatePropertyAll(
+                                      Color.fromARGB(255, 234, 67, 53),
+                                    ),
+                                    side: const MaterialStatePropertyAll(
+                                      BorderSide(
+                                        color: Colors.white,
+                                        width: 5,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                child: const Text(
-                                  "JOIN",
-                                  style: TextStyle(
-                                    fontFamily: 'ButtonCustomFont',
-                                    fontSize: 28,
-                                    color: Colors.white,
+                                  child: const Text(
+                                    "JOIN",
+                                    style: TextStyle(
+                                      fontFamily: 'ButtonCustomFont',
+                                      fontSize: 28,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -355,7 +419,16 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
                                 ],
                               ),
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          LeaderBoardContestScreen(
+                                              contestId: widget.contest.id),
+                                    ),
+                                  );
+                                },
                                 style: ButtonStyle(
                                   fixedSize: MaterialStatePropertyAll(
                                     Size(MediaQuery.of(context).size.width - 45,

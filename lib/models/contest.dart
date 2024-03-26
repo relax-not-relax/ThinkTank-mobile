@@ -8,7 +8,7 @@ class Contest {
   String endTime;
   bool status;
   int gameId;
-  int playTime;
+  double playTime;
   String gameName;
   int amoutPlayer;
   int coinBetting;
@@ -70,25 +70,26 @@ class AssetOfContest {
   int id;
   String value;
   int contestId;
+  String? answer;
   String nameOfContest;
   String type;
 
-  AssetOfContest({
-    required this.id,
-    required this.value,
-    required this.contestId,
-    required this.nameOfContest,
-    required this.type,
-  });
+  AssetOfContest(
+      {required this.id,
+      required this.value,
+      required this.contestId,
+      required this.nameOfContest,
+      required this.type,
+      required this.answer});
 
   factory AssetOfContest.fromJson(Map<String, dynamic> json) {
     return AssetOfContest(
-      id: json['id'],
-      value: json['value'],
-      contestId: json['contestId'],
-      nameOfContest: json['nameOfContest'],
-      type: json['type'],
-    );
+        id: json['id'],
+        value: json['value'],
+        contestId: json['contestId'],
+        nameOfContest: json['nameOfContest'],
+        type: json['type'],
+        answer: json['answer']);
   }
 
   Map<String, dynamic> toJson() {
@@ -98,6 +99,7 @@ class AssetOfContest {
       'contestId': contestId,
       'nameOfContest': nameOfContest,
       'type': type,
+      'answer': answer
     };
   }
 }
