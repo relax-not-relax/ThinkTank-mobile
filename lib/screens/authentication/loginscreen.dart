@@ -286,8 +286,8 @@ class LoginScreenState extends State<LoginScreen> {
                                 acc.id, acc.accessToken!);
                             int version = await SharedPreferencesHelper
                                 .getResourceVersion();
-                            // await AssetsAPI.addAssets(
-                            //     version, acc.accessToken!);
+                            await AssetsAPI.addAssets(
+                                version, acc.accessToken!);
                             await ContestsAPI.getContets();
                             for (var e in await SharedPreferencesHelper
                                 .getContests()) {

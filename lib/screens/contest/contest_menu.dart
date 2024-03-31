@@ -8,12 +8,14 @@ import 'package:thinktank_mobile/models/accountincontest.dart';
 import 'package:thinktank_mobile/models/contest.dart';
 import 'package:thinktank_mobile/models/findanounymous_assets.dart';
 import 'package:thinktank_mobile/models/flipcard.dart';
+import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/screens/contest/instruction_screen.dart';
 import 'package:thinktank_mobile/screens/contest/leaderboardcontest_screen.dart';
 import 'package:thinktank_mobile/screens/findanonymous/findanonymous_game.dart';
 import 'package:thinktank_mobile/screens/flipcard/flipcard_game.dart';
 import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/game_mainscreen.dart';
+import 'package:thinktank_mobile/screens/musicpassword/musicpassgame.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/game/coin_div.dart';
 import 'package:thinktank_mobile/widgets/game/memory_type.dart';
@@ -61,7 +63,7 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
     }
     if (widget.contest.gameId == 4) {
       // ignore: use_build_context_synchronously
-      Navigator.push(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (context) => GameMainScreen(
@@ -71,12 +73,13 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
             contestId: widget.contest.id,
           ),
         ),
+        (route) => false,
       );
     }
 
     if (widget.contest.gameId == 1) {
       // ignore: use_build_context_synchronously
-      Navigator.push(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (context) => FlipCardGamePlay(
@@ -85,6 +88,32 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
               level: 0,
               contestId: widget.contest.id),
         ),
+        (route) => false,
+      );
+    }
+
+    if (widget.contest.gameId == 2) {
+      List<AssetOfContest> assets =
+          (await SharedPreferencesHelper.getAllContestAssets())
+              .where((element) => element.contestId == widget.contest.id)
+              .toList();
+      MusicPassword musicPassword = MusicPassword(
+          level: 0,
+          soundLink: assets.first.value,
+          answer: assets.first.answer!,
+          change: 10,
+          time: widget.contest.playTime.toInt());
+      // ignore: use_build_context_synchronously
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MusicPasswordGamePlay(
+              info: musicPassword,
+              account: account!,
+              gameName: widget.contest.name,
+              contestId: widget.contest.id),
+        ),
+        (route) => false,
       );
     }
 
@@ -105,7 +134,7 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
       // ignore: use_build_context_synchronously
       listAnswer.shuffle();
       // ignore: use_build_context_synchronously
-      Navigator.push(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (context) => FindAnonymousGame(
@@ -118,6 +147,7 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
             contestId: widget.contest.id,
           ),
         ),
+        (route) => false,
       );
     }
     setState(() {

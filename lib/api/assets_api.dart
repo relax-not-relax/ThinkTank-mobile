@@ -6,6 +6,8 @@ import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/findanounymous_assets.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:thinktank_mobile/models/musicpasssource.dart';
+import 'package:thinktank_mobile/models/musicpassword.dart';
 
 class AssetsAPI {
   static Future<String> saveImageToDevice(String imageUrl, String name) async {
@@ -13,6 +15,20 @@ class AssetsAPI {
       final response = await http.get(Uri.parse(imageUrl));
       final Directory appDir = await getApplicationDocumentsDirectory();
       final String filePath = '${appDir.path}/image$name.png';
+      final File imageFile = File(filePath);
+      await imageFile.writeAsBytes(response.bodyBytes);
+      print(filePath);
+      return filePath;
+    } catch (e) {
+      return '';
+    }
+  }
+
+  static Future<String> saveAudioToDevice(String audioUrl, String name) async {
+    try {
+      final response = await http.get(Uri.parse(audioUrl));
+      final Directory appDir = await getApplicationDocumentsDirectory();
+      final String filePath = '${appDir.path}/audio$name.mp3';
       final File imageFile = File(filePath);
       await imageFile.writeAsBytes(response.bodyBytes);
       print(filePath);
@@ -57,6 +73,7 @@ class AssetsAPI {
       final jsonList = jsonData['results'];
       List<FindAnonymousAsset> listAnomymous = [];
       List<String> listPathImageSource = [];
+      List<MusicPasswordSource> listMusicpassword = [];
       for (var element in jsonList) {
         if (int.parse(element['version'].toString()) > maxVersion) {
           maxVersion = int.parse(element['version'].toString());
@@ -69,6 +86,15 @@ class AssetsAPI {
             listPathImageSource.add(path);
             break;
           case 2:
+            String path = await saveAudioToDevice(
+                element['value'], element['id'].toString());
+            print(path);
+            MusicPasswordSource musicPasswordSource = MusicPasswordSource(
+                soundLink: path,
+                answer: element['answer']
+                    .toString()
+                    .substring(0, element['answer'].toString().length - 4));
+            listMusicpassword.add(musicPasswordSource);
             break;
           case 4:
             String path = await saveImageToDevice(
@@ -85,6 +111,7 @@ class AssetsAPI {
       await SharedPreferencesHelper.saveImageResoure(listPathImageSource);
       await SharedPreferencesHelper.saveAnonymousResoure(listAnomymous);
       await SharedPreferencesHelper.saveResourceVersion(maxVersion);
+      await SharedPreferencesHelper.saveMusicPasswordSources(listMusicpassword);
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account = await SharedPreferencesHelper.getInfo();
       Account? account2 = await ApiAuthentication.refreshToken(
@@ -103,6 +130,7 @@ class AssetsAPI {
         final jsonList = jsonData['results'];
         List<FindAnonymousAsset> listAnomymous = [];
         List<String> listPathImageSource = [];
+        List<MusicPasswordSource> listMusicpassword = [];
         for (var element in jsonList) {
           if (int.parse(element['version'].toString()) > maxVersion) {
             maxVersion = int.parse(element['version'].toString());
@@ -115,6 +143,15 @@ class AssetsAPI {
               listPathImageSource.add(path);
               break;
             case 2:
+              String path = await saveAudioToDevice(
+                  element['value'], element['id'].toString());
+              print(path);
+              MusicPasswordSource musicPasswordSource = MusicPasswordSource(
+                  soundLink: path,
+                  answer: element['answer']
+                      .toString()
+                      .substring(0, element['answer'].toString().length - 4));
+              listMusicpassword.add(musicPasswordSource);
               break;
             case 4:
               String path = await saveImageToDevice(
@@ -130,6 +167,8 @@ class AssetsAPI {
         }
         await SharedPreferencesHelper.saveImageResoure(listPathImageSource);
         await SharedPreferencesHelper.saveAnonymousResoure(listAnomymous);
+        await SharedPreferencesHelper.saveMusicPasswordSources(
+            listMusicpassword);
         await SharedPreferencesHelper.saveResourceVersion(maxVersion);
       } else {
         print(response2.body);

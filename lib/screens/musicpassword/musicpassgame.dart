@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
+import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
@@ -21,10 +22,12 @@ class MusicPasswordGamePlay extends StatefulWidget {
     required this.info,
     required this.account,
     required this.gameName,
+    this.contestId,
   });
   final MusicPassword info;
   final Account account;
   final String gameName;
+  final int? contestId;
 
   @override
   State<StatefulWidget> createState() {
@@ -161,20 +164,29 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
 
   void win() async {
     double points = (remainingTime.inMilliseconds / 1000);
-    int levelMax = await SharedPreferencesHelper.getMusicPasswordLevel();
-    if (levelMax == widget.info.level) {
-      await SharedPreferencesHelper.saveMusicPasswordLevel(
-          widget.info.level + 1);
+    if (widget.contestId != null) {
+      ContestsAPI.addAccountInContest(
+          (widget.info.time * 1000 - remainingTime.inMilliseconds).toDouble() /
+              1000,
+          (points * 100).toInt(),
+          widget.contestId!);
+    } else {
+      int levelMax = await SharedPreferencesHelper.getMusicPasswordLevel();
+      if (levelMax == widget.info.level) {
+        await SharedPreferencesHelper.saveMusicPasswordLevel(
+            widget.info.level + 1);
+      }
+      await ApiAchieviements.addAchieviements(
+          (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
+              1000,
+          (points * 100).toInt(),
+          widget.info.level,
+          2,
+          //widget.account.id,
+          //widget.account.accessToken!,
+          widget.info.answer.length ~/ 2);
     }
-    await ApiAchieviements.addAchieviements(
-        (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
-            1000,
-        (points * 100).toInt(),
-        widget.info.level,
-        2,
-        //widget.account.id,
-        //widget.account.accessToken!,
-        widget.info.answer.length ~/ 2);
+
     setState(() {
       bg = 'assets/pics/winmuisc.png';
       checkVisible = false;
@@ -187,7 +199,15 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
     });
   }
 
-  void lose() {
+  void lose() async {
+    if (widget.contestId != null) {
+      await ContestsAPI.addAccountInContest(
+        (widget.info.time * 1000 - remainingTime.inMilliseconds).toDouble() /
+            1000,
+        0,
+        widget.contestId!,
+      );
+    }
     setState(() {
       isWin = false;
       bg = 'assets/pics/losemusic.png';
@@ -245,7 +265,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
             isWin: true,
             gameName: widget.gameName,
             gameId: 2,
-            contestId: null,
+            contestId: widget.contestId,
           ),
         ),
         (route) => false,
@@ -261,7 +281,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
             isWin: false,
             gameName: widget.gameName,
             gameId: 2,
-            contestId: null,
+            contestId: widget.contestId,
           ),
         ),
         (route) => false,
@@ -346,8 +366,8 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
         remainingTime: remainingTime,
         gameName: 'Music Password',
         progressTitle: 'Chance',
-        progressMessage: '$remainChange/5',
-        percent: remainChange / 5,
+        progressMessage: '$remainChange/${widget.info.change}',
+        percent: remainChange / widget.info.change,
         onPause: pause,
         onResume: resume,
       ),
@@ -498,8 +518,10 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                                 isListenAlready) {
                               listenTime = listenTime - 1;
                               isListenAlready = false;
-                              audioPlayer
-                                  .play(UrlSource(widget.info.soundLink));
+                              audioPlayer.play(
+                                  DeviceFileSource(widget.info.soundLink));
+                              // audioPlayer
+                              //     .play(UrlSource(widget.info.soundLink));
                               audioPlayer.onPlayerComplete.listen((event) {
                                 isListenAlready = true;
                               });
