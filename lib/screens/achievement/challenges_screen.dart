@@ -61,12 +61,16 @@ class ChallengesScreenState extends State<ChallengesScreen>
   late TabController _tabController;
   List<Challenge> list = [];
   late Future<void> _getChallenges;
+  int coin = 0;
 
   Future<void> getChallenges() async {
+    Account? acc = await SharedPreferencesHelper.getInfo();
+    coin = acc!.coin ?? 0;
     list = await ApiChallenges.getChallenges();
     if (mounted) {
       setState(() {
         list;
+        coin;
       });
     }
   }
@@ -129,7 +133,7 @@ class ChallengesScreenState extends State<ChallengesScreen>
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: AvhievementAppBar(
-        coins: 2998,
+        coins: coin,
         progress: list
             .where((element) =>
                 ((element.completedLevel == null)

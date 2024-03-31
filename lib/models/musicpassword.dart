@@ -5,7 +5,6 @@ class MusicPassword {
       required this.answer,
       required this.change,
       required this.time});
-
   final int level;
   final String soundLink;
   final String answer;

@@ -11,6 +11,20 @@ import 'package:thinktank_mobile/models/findanounymous_assets.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ContestsAPI {
+  static Future<String> saveAudioToDevice(String audioUrl, String name) async {
+    try {
+      final response = await http.get(Uri.parse(audioUrl));
+      final Directory appDir = await getApplicationDocumentsDirectory();
+      final String filePath = '${appDir.path}/audio$name.mp3';
+      final File imageFile = File(filePath);
+      await imageFile.writeAsBytes(response.bodyBytes);
+      print(filePath);
+      return filePath;
+    } catch (e) {
+      return '';
+    }
+  }
+
   static Future<AccountInContest?> checkAccountInContest(int contestId) async {
     Account? account = await SharedPreferencesHelper.getInfo();
     if (account == null) return null;
@@ -219,6 +233,16 @@ class ContestsAPI {
                 assetsContest.add(as);
               }
             }
+            if (contest.gameId == 2) {
+              for (var as in contest.assetOfContests) {
+                String value = await AssetsAPI.saveAudioToDevice(
+                    as.value, "Contest" + as.id.toString());
+                as.value = value;
+                as.answer = as.answer!.substring(0, as.answer!.length - 4);
+                print(as.value);
+                assetsContest.add(as);
+              }
+            }
             if (contest.gameId == 4) {
               print('zo sau');
               for (var as in contest.assetOfContests) {
@@ -277,6 +301,16 @@ class ContestsAPI {
                   String value = await AssetsAPI.saveImageToDevice(
                       as.value, "Contest" + as.id.toString());
                   as.value = value;
+
+                  assetsContest.add(as);
+                }
+              }
+              if (contest.gameId == 2) {
+                for (var as in contest.assetOfContests) {
+                  String value = await AssetsAPI.saveAudioToDevice(
+                      as.value, "Contest" + as.id.toString());
+                  as.value = value;
+                  as.answer = as.answer!.substring(0, as.answer!.length - 4);
                   assetsContest.add(as);
                 }
               }

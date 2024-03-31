@@ -183,6 +183,7 @@ class ApiAuthentication {
       final jsonData = json.decode(response.body);
       return Account.fromJson(jsonData);
     } else {
+      print(response.body);
       return null;
     }
   }
