@@ -33,15 +33,13 @@ class ApiAchieviements {
       final jsonData = json.decode(response.body);
       print(jsonData);
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.post(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/achievements'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account2.accessToken}',
+          'Authorization': 'Bearer ${account2!.accessToken}',
         },
         body: jsonBody,
       );
@@ -78,16 +76,13 @@ class ApiAchieviements {
       print("length" + result.length.toString());
       return result;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account = await SharedPreferencesHelper.getInfo();
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account!.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/achievements/$gameId/leaderboard?Page=$pageIndex&PageSize=$pageSize'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account2.accessToken}',
+          'Authorization': 'Bearer ${account2!.accessToken}',
         },
       );
       if (response2.statusCode == 200) {
@@ -161,16 +156,13 @@ class ApiAchieviements {
         }
       }
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account = await SharedPreferencesHelper.getInfo();
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account!.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/accounts/game-level-of-account?accountId=$accountId'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account2.accessToken}',
+          'Authorization': 'Bearer ${account2!.accessToken}',
         },
       );
       if (response2.statusCode == 200) {

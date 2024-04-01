@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:synchronized/synchronized.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
+import 'package:thinktank_mobile/api/lock_manager.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 
 class ApiAuthentication {
+  static final Lock _lock = LockRefreshTokenManager().lock;
   static Future<bool> logOut() async {
     Account? account = await SharedPreferencesHelper.getInfo();
     if (account == null) return false;
@@ -106,7 +109,7 @@ class ApiAuthentication {
       return Account.fromJson(jsonData);
     } else if (response.statusCode == 401 || response.body != null) {
       final jsonData2 = json.decode(response.body);
-      if (jsonData2['error'].toString() == "Unauthorized") {
+      if (jsonData2['error'].toString() == "Access Token is not expried") {
         await SharedPreferencesHelper.saveInfo(account);
         return account;
       } else {
@@ -163,28 +166,38 @@ class ApiAuthentication {
     return response;
   }
 
-  static Future<Account?> refreshToken(
-    String? refreshToken,
-    String? accessToken,
-  ) async {
-    Map<String, String?> data = {
-      "accessToken": accessToken,
-      "refreshToken": refreshToken,
-    };
-    String jsonBody = jsonEncode(data);
-    final response = await http.post(
-      Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/accounts/token-verification'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonBody,
-    );
+  static Future<Account?> refreshToken() async {
+    return await _lock.synchronized(() async {
+      Account? account = await SharedPreferencesHelper.getInfo();
+      if (account == null) {
+        return null;
+      }
 
-    if (response.statusCode == 200) {
-      final jsonData = json.decode(response.body);
-      return Account.fromJson(jsonData);
-    } else {
-      print(response.body);
-      return null;
-    }
+      Map<String, String?> data = {
+        "accessToken": account.accessToken,
+        "refreshToken": account.refreshToken,
+      };
+      String jsonBody = jsonEncode(data);
+      final response = await http.post(
+        Uri.parse(
+            'https://thinktank-sep490.azurewebsites.net/api/accounts/token-verification'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonBody,
+      );
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        await SharedPreferencesHelper.saveInfo(Account.fromJson(jsonData));
+        return Account.fromJson(jsonData);
+      } else if (response.statusCode == 400) {
+        final jsonData2 = json.decode(response.body);
+        if (jsonData2['error'].toString() == "Access Token is not expried") {
+          return account;
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    });
   }
 }

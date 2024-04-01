@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/api/assets_api.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
+import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/api/init_api.dart';
 import 'package:thinktank_mobile/api/notification_api.dart';
@@ -86,15 +87,17 @@ class StartScreenState extends State<StartScreen>
       await ApiNotification.getNotifications();
       int version = await SharedPreferencesHelper.getResourceVersion();
       await AssetsAPI.addAssets(version, acc.accessToken!);
+      await ContestsAPI.getContets();
 
       // ignore: use_build_context_synchronously
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
-            builder: (context) => const HomeScreen(
-                  inputScreen: OptionScreen(),
-                  screenIndex: 0,
-                )),
+          builder: (context) => const HomeScreen(
+            inputScreen: OptionScreen(),
+            screenIndex: 0,
+          ),
+        ),
         (route) => false,
       );
     } else {

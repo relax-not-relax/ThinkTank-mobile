@@ -3,7 +3,9 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:synchronized/synchronized.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
+import 'package:thinktank_mobile/api/lock_manager.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 
@@ -24,16 +26,13 @@ class ApiAccount {
       //final responseData = json.decode(response.body);
       return response.body;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account = await SharedPreferencesHelper.getInfo();
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account!.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       http.MultipartRequest request = http.MultipartRequest('POST',
           Uri.parse('https://thinktank-sep490.azurewebsites.net/api/files'));
       request.files.add(await http.MultipartFile.fromPath('file', filePath));
       request.headers.addAll({
         'Content-Type': 'multipart/form-data',
-        'Authorization': 'Bearer ${account2.accessToken}',
+        'Authorization': 'Bearer ${account2!.accessToken}',
       });
 
       var streamedResponse2 = await request.send();
@@ -88,16 +87,13 @@ class ApiAccount {
       await SharedPreferencesHelper.saveInfo(account);
       return account;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account = await SharedPreferencesHelper.getInfo();
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account!.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.put(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/accounts/$id'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account2.accessToken}',
+          'Authorization': 'Bearer ${account2!.accessToken}',
         },
         body: jsonBody,
       );

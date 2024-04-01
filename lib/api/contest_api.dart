@@ -47,12 +47,10 @@ class ContestsAPI {
         return null;
       }
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/accountInContests?AccountId=${account2.id}&ContestId=$contestId'),
+            'https://thinktank-sep490.azurewebsites.net/api/accountInContests?AccountId=${account2!.id}&ContestId=$contestId'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2.accessToken}',
@@ -104,15 +102,13 @@ class ContestsAPI {
         return [];
       }
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/accountInContests?Page=$index&PageSize=$pageSize&SortType=1&ContestId=$contestId'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account2.accessToken}',
+          'Authorization': 'Bearer ${account2!.accessToken}',
         },
       );
 
@@ -163,15 +159,13 @@ class ContestsAPI {
       final jsonData = json.decode(response.body);
       print(jsonData);
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.post(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/accountInContests'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account.accessToken}',
+          'Authorization': 'Bearer ${account2!.accessToken}',
         },
         body: jsonBody,
       );
@@ -267,16 +261,13 @@ class ContestsAPI {
         await SharedPreferencesHelper.saveContestInfo(result);
         await SharedPreferencesHelper.saveContestResource(assetsContest);
       } else if (response.statusCode == 401 || response.statusCode == 403) {
-        Account? account = await SharedPreferencesHelper.getInfo();
-        Account? account2 = await ApiAuthentication.refreshToken(
-            account!.refreshToken, account.accessToken);
-        SharedPreferencesHelper.saveInfo(account2!);
+        Account? account2 = await ApiAuthentication.refreshToken();
         final response2 = await http.get(
           Uri.parse(
               'https://thinktank-sep490.azurewebsites.net/api/contests?Page=1&PageSize=10000&ContestStatus=2'),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${account.accessToken}',
+            'Authorization': 'Bearer ${account2!.accessToken}',
           },
         );
         List<Contest> result = [];

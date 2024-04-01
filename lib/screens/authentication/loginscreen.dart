@@ -289,10 +289,7 @@ class LoginScreenState extends State<LoginScreen> {
                             await AssetsAPI.addAssets(
                                 version, acc.accessToken!);
                             await ContestsAPI.getContets();
-                            for (var e in await SharedPreferencesHelper
-                                .getContests()) {
-                              print(e.toJson());
-                            }
+
                             _closeDialog(context);
 
                             // ignore: use_build_context_synchronously

@@ -29,12 +29,10 @@ class ApiNotification {
           .toList();
       return notifications;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/notifications?AccountId=${account2.id}'),
+            'https://thinktank-sep490.azurewebsites.net/api/notifications?AccountId=${account2!.id}'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2.accessToken}',
@@ -70,15 +68,13 @@ class ApiNotification {
       print("Successfully updated!");
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account = await SharedPreferencesHelper.getInfo();
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account!.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/notifications/$id/status'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account2.accessToken}',
+          'Authorization': 'Bearer ${account2!.accessToken}',
         },
       );
       if (response2.statusCode == 200) {
@@ -102,16 +98,13 @@ class ApiNotification {
     if (response.statusCode == 200) {
       print("Delete all notifications successfully!");
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account = await SharedPreferencesHelper.getInfo();
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account!.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.delete(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/notifications'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $authToken',
+          'Authorization': 'Bearer ${account2!.accessToken}}',
         },
         body: ids,
       );
