@@ -38,15 +38,13 @@ class ApiFriends {
       }
       return list;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account!.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=2&AccountId=$accountId'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account2.accessToken}',
+          'Authorization': 'Bearer ${account2!.accessToken}',
         },
       );
       if (response2.statusCode == 200) {
@@ -106,15 +104,13 @@ class ApiFriends {
       }
       return list;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account!.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=3&AccountId=$accountId&UserCode=$userCode'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account2.accessToken}',
+          'Authorization': 'Bearer ${account2!.accessToken}',
         },
       );
       if (response2.statusCode == 200) {
@@ -174,15 +170,13 @@ class ApiFriends {
       }
       return list;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account!.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=1&AccountId=$accountId&UserCode=$userCode'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account!.accessToken}',
+          'Authorization': 'Bearer ${account2!.accessToken}',
         },
       );
       if (response.statusCode == 200) {
@@ -233,14 +227,12 @@ class ApiFriends {
       final jsonData = json.decode(response.body);
       return Friendship.fromJson(jsonData);
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account!.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.post(
         Uri.parse('https://thinktank-sep490.azurewebsites.net/api/friends'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account2.accessToken}',
+          'Authorization': 'Bearer ${account2!.accessToken}',
         },
         body: jsonBody,
       );
@@ -267,15 +259,13 @@ class ApiFriends {
       },
     );
     if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account!.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       await http.delete(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/friends/$friendId'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account2.accessToken}',
+          'Authorization': 'Bearer ${account2!.accessToken}',
         },
       );
     }
@@ -295,15 +285,13 @@ class ApiFriends {
       final jsonData = json.decode(response.body);
       return Friendship.fromJson(jsonData);
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account!.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/friends/$friendShipId/status'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account2.accessToken}',
+          'Authorization': 'Bearer ${account2!.accessToken}',
         },
       );
       if (response2.statusCode == 200) {

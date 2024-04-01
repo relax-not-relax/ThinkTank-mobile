@@ -47,12 +47,10 @@ class ContestsAPI {
         return null;
       }
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/accountInContests?AccountId=${account2.id}&ContestId=$contestId'),
+            'https://thinktank-sep490.azurewebsites.net/api/accountInContests?AccountId=${account2!.id}&ContestId=$contestId'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2.accessToken}',
@@ -104,15 +102,13 @@ class ContestsAPI {
         return [];
       }
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/accountInContests?Page=$index&PageSize=$pageSize&SortType=1&ContestId=$contestId'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account2.accessToken}',
+          'Authorization': 'Bearer ${account2!.accessToken}',
         },
       );
 
@@ -163,15 +159,13 @@ class ContestsAPI {
       final jsonData = json.decode(response.body);
       print(jsonData);
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.post(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/accountInContests'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account.accessToken}',
+          'Authorization': 'Bearer ${account2!.accessToken}',
         },
         body: jsonBody,
       );
@@ -189,7 +183,7 @@ class ContestsAPI {
   static Future<AssetOfContest> convertFindAnonymous(
       AssetOfContest assetOfContest, String path) async {
     List<String> s = assetOfContest.value.split(';');
-    assetOfContest.value = s[0] + ';' + path;
+    assetOfContest.value = '${s[0]};$path';
     return assetOfContest;
   }
 
@@ -228,7 +222,7 @@ class ContestsAPI {
             if (contest.gameId == 1) {
               for (var as in contest.assetOfContests) {
                 String value = await AssetsAPI.saveImageToDevice(
-                    as.value, "Contest" + as.id.toString());
+                    as.value, "Contest${as.id}");
                 as.value = value;
                 assetsContest.add(as);
               }
@@ -236,9 +230,8 @@ class ContestsAPI {
             if (contest.gameId == 2) {
               for (var as in contest.assetOfContests) {
                 String value = await AssetsAPI.saveAudioToDevice(
-                    as.value, "Contest" + as.id.toString());
+                    as.value, "Contest${as.id}");
                 as.value = value;
-                as.answer = as.answer!.substring(0, as.answer!.length - 4);
                 print(as.value);
                 assetsContest.add(as);
               }
@@ -248,7 +241,7 @@ class ContestsAPI {
               for (var as in contest.assetOfContests) {
                 print('zo sau nua');
                 String value = await AssetsAPI.saveImageToDevice(
-                    as.value, "Contest" + as.id.toString());
+                    as.value, "Contest${as.id}");
                 as.value = value;
                 assetsContest.add(as);
               }
@@ -257,7 +250,7 @@ class ContestsAPI {
               print('anonymous');
               for (var as in contest.assetOfContests) {
                 String s = await AssetsAPI.saveImageToDevice(
-                    as.value.split(';')[1], "Contest" + as.id.toString());
+                    as.value.split(';')[1], "Contest${as.id}");
                 assetsContest.add(await convertFindAnonymous(as, s));
               }
             }
@@ -268,23 +261,20 @@ class ContestsAPI {
         await SharedPreferencesHelper.saveContestInfo(result);
         await SharedPreferencesHelper.saveContestResource(assetsContest);
       } else if (response.statusCode == 401 || response.statusCode == 403) {
-        Account? account = await SharedPreferencesHelper.getInfo();
-        Account? account2 = await ApiAuthentication.refreshToken(
-            account!.refreshToken, account.accessToken);
-        SharedPreferencesHelper.saveInfo(account2!);
+        Account? account2 = await ApiAuthentication.refreshToken();
         final response2 = await http.get(
           Uri.parse(
               'https://thinktank-sep490.azurewebsites.net/api/contests?Page=1&PageSize=10000&ContestStatus=2'),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${account.accessToken}',
+            'Authorization': 'Bearer ${account2!.accessToken}',
           },
         );
         List<Contest> result = [];
 
         if (response2.statusCode == 200) {
           final jsonData = json.decode(response2.body);
-          print("Messi" + jsonData.toString());
+          print("Messi$jsonData");
           List<AssetOfContest> assetsContest = [];
 
           for (var element in jsonData['results']) {
@@ -299,7 +289,7 @@ class ContestsAPI {
               if (contest.gameId == 1) {
                 for (var as in contest.assetOfContests) {
                   String value = await AssetsAPI.saveImageToDevice(
-                      as.value, "Contest" + as.id.toString());
+                      as.value, "Contest${as.id}");
                   as.value = value;
 
                   assetsContest.add(as);
@@ -308,9 +298,8 @@ class ContestsAPI {
               if (contest.gameId == 2) {
                 for (var as in contest.assetOfContests) {
                   String value = await AssetsAPI.saveAudioToDevice(
-                      as.value, "Contest" + as.id.toString());
+                      as.value, "Contest${as.id}");
                   as.value = value;
-                  as.answer = as.answer!.substring(0, as.answer!.length - 4);
                   assetsContest.add(as);
                 }
               }
@@ -319,7 +308,7 @@ class ContestsAPI {
                 for (var as in contest.assetOfContests) {
                   print('zo sau nua');
                   String value = await AssetsAPI.saveImageToDevice(
-                      as.value, "Contest" + as.id.toString());
+                      as.value, "Contest${as.id}");
                   as.value = value;
                   assetsContest.add(as);
                 }
@@ -328,7 +317,7 @@ class ContestsAPI {
                 print('anonymous');
                 for (var as in contest.assetOfContests) {
                   String s = await AssetsAPI.saveImageToDevice(
-                      as.value.split(';')[1], "Contest" + as.id.toString());
+                      as.value.split(';')[1], "Contest${as.id}");
                   assetsContest.add(await convertFindAnonymous(as, s));
                 }
               }

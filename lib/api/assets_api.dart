@@ -90,10 +90,7 @@ class AssetsAPI {
                 element['value'], element['id'].toString());
             print(path);
             MusicPasswordSource musicPasswordSource = MusicPasswordSource(
-                soundLink: path,
-                answer: element['answer']
-                    .toString()
-                    .substring(0, element['answer'].toString().length - 4));
+                soundLink: path, answer: element['answer'].toString());
             listMusicpassword.add(musicPasswordSource);
             break;
           case 4:
@@ -113,16 +110,13 @@ class AssetsAPI {
       await SharedPreferencesHelper.saveResourceVersion(maxVersion);
       await SharedPreferencesHelper.saveMusicPasswordSources(listMusicpassword);
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account = await SharedPreferencesHelper.getInfo();
-      Account? account2 = await ApiAuthentication.refreshToken(
-          account!.refreshToken, account.accessToken);
-      SharedPreferencesHelper.saveInfo(account2!);
+      Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/assets?PageSize=1000000&Version=$version'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account2.accessToken}',
+          'Authorization': 'Bearer ${account2!.accessToken}',
         },
       );
       if (response2.statusCode == 200) {
@@ -147,10 +141,7 @@ class AssetsAPI {
                   element['value'], element['id'].toString());
               print(path);
               MusicPasswordSource musicPasswordSource = MusicPasswordSource(
-                  soundLink: path,
-                  answer: element['answer']
-                      .toString()
-                      .substring(0, element['answer'].toString().length - 4));
+                  soundLink: path, answer: element['answer'].toString());
               listMusicpassword.add(musicPasswordSource);
               break;
             case 4:
