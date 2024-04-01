@@ -85,28 +85,21 @@ class _GameMainScreenState extends State<GameMainScreen> {
     _game = ImagesWalkthroughGame();
     _initResource = initResource();
 
-    _initResource.then((value) => {
-          setState(
-            () {
-              maxTime = Duration(seconds: _game.time.round());
-              remainingTime = maxTime;
-              gameSource = _game.gameData;
-              total = _game.gameData.length - 1;
-              correct = selectedAnswer.length;
-              percent = correct / total;
-              print(gameSource[0].answerImgPath);
-            },
-          ),
-        });
-
-    //print(gameSource.toString());
-
-    // setState(() {
-    //   remainingTime = const Duration(seconds: 120);
-    //   total = walkthroughs.length - 1;
-    //   correct = selectedAnswer.length;
-    //   percent = correct / total;
-    // });
+    _initResource.then(
+      (value) => {
+        setState(
+          () {
+            maxTime = Duration(seconds: _game.time.round());
+            remainingTime = maxTime;
+            gameSource = _game.gameData;
+            total = _game.gameData.length - 1;
+            correct = selectedAnswer.length;
+            percent = correct / total;
+            print(gameSource[0].answerImgPath);
+          },
+        ),
+      },
+    );
   }
 
   void win() async {

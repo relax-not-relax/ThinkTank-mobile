@@ -52,7 +52,7 @@ dependencies:
   image_picker: ^1.0.7
   google_sign_in: 5.0.7
   synchronized: ^3.0.0
-  
+  fl_chart: ^0.66.2
 
 dev_dependencies:
   flutter_test:

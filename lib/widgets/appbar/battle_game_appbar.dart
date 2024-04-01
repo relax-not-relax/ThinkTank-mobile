@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:iconly/iconly.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:thinktank_mobile/data/data.dart';
-import 'package:thinktank_mobile/models/game.dart';
 import 'package:thinktank_mobile/screens/game/game_menu.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:unicons/unicons.dart';
 
-class TGameAppBar extends StatefulWidget implements PreferredSizeWidget {
-  const TGameAppBar({
+class TBattleGameAppBar extends StatefulWidget implements PreferredSizeWidget {
+  const TBattleGameAppBar({
     super.key,
     required this.preferredHeight,
     required this.userAvatar,
+    required this.competitorAvatar,
     required this.remainingTime,
     required this.gameName,
     required this.progressTitle,
@@ -24,6 +22,7 @@ class TGameAppBar extends StatefulWidget implements PreferredSizeWidget {
 
   final double preferredHeight;
   final String userAvatar;
+  final String competitorAvatar;
   final Duration remainingTime;
   final String gameName;
   final String progressTitle;
@@ -33,38 +32,14 @@ class TGameAppBar extends StatefulWidget implements PreferredSizeWidget {
   final void Function() onResume;
 
   @override
-  State<TGameAppBar> createState() => _TGameAppBarState();
+  State<TBattleGameAppBar> createState() => _TBattleGameAppBarState();
 
   @override
   // TODO: implement preferredSize
   Size get preferredSize => Size.fromHeight(preferredHeight);
 }
 
-class _TGameAppBarState extends State<TGameAppBar> {
-  Game? game = null;
-  late Future _initGame;
-
-  Future<Game?> getGame(String name) async {
-    for (Game game in games) {
-      if (game.name == name) {
-        return game;
-      }
-    }
-
-    return null;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _initGame = getGame(widget.gameName);
-    _initGame.then((value) {
-      setState(() {
-        game = value;
-      });
-    });
-  }
-
+class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
   Future displayBottomSheet(BuildContext context) {
     return showModalBottomSheet(
       context: context,
@@ -152,15 +127,15 @@ class _TGameAppBarState extends State<TGameAppBar> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return GameMenuScreen(game: game!);
-                    },
-                  ),
-                  (route) => false,
-                );
+                // Navigator.pushAndRemoveUntil(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) {
+                //       return GameMenuScreen(game: game!);
+                //     },
+                //   ),
+                //   (route) => false,
+                // );
               },
               child: Text(
                 "Quit game",
@@ -218,6 +193,20 @@ class _TGameAppBarState extends State<TGameAppBar> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 20.0, right: 10.0),
+                child: Text(
+                  widget.gameName,
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0, right: 10.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -232,7 +221,31 @@ class _TGameAppBarState extends State<TGameAppBar> {
                         ),
                       ),
                       child: CircleAvatar(
-                        radius: 40, // Avatar radius
+                        radius: 25, // Avatar radius
+                        backgroundImage: NetworkImage(
+                            widget.userAvatar), // Your avatar image URL here
+                      ),
+                    ),
+                    Container(
+                      width: 54,
+                      height: 54,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/pics/vs_1.png"),
+                            fit: BoxFit.cover),
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: const Color.fromARGB(
+                              255, 255, 255, 255), // Border color
+                          width: 3.0, // Border width
+                        ),
+                      ),
+                      child: CircleAvatar(
+                        radius: 25, // Avatar radius
                         backgroundImage: NetworkImage(
                             widget.userAvatar), // Your avatar image URL here
                       ),
@@ -246,17 +259,6 @@ class _TGameAppBarState extends State<TGameAppBar> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              widget.gameName,
-                              style: GoogleFonts.inter(
-                                color: Colors.white,
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10.0,
-                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
