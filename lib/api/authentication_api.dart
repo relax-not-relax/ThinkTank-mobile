@@ -141,6 +141,7 @@ class ApiAuthentication {
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       FirebaseRealTime.setOnline(Account.fromJson(jsonData).id, true);
+      print("refresh" + Account.fromJson(jsonData).refreshToken.toString());
       return Account.fromJson(jsonData);
     } else {
       return null;

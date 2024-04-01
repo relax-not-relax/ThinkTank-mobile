@@ -280,8 +280,7 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
       ),
     );
 
-    if (widget.game.name == "Flip Card Challenge" ||
-        widget.game.name == "Music Password" ||
+    if (widget.game.name == "Music Password" ||
         widget.game.name == "Images Walkthrough") {
       content = Container(
         width: MediaQuery.of(context).size.width,

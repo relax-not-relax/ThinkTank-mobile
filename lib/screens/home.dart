@@ -7,6 +7,7 @@ import 'package:thinktank_mobile/api/friends_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/screens/account/account_mainscreen.dart';
+import 'package:thinktank_mobile/screens/analytics/memory_mainscreen.dart';
 import 'package:thinktank_mobile/screens/friend/friend_screen.dart';
 import 'package:thinktank_mobile/screens/achievement/challenges_screen.dart';
 import 'package:thinktank_mobile/screens/notification/notiscreen.dart';
@@ -54,6 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         activePage = OptionScreen();
         break;
+      case 1:
+        activePage = MemoryMainScreen();
+        break;
       case 4:
         activePage = const FriendScreen();
         break;
@@ -89,6 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             BottomNavigationBarItem(
               icon: Icon(IconlyLight.chart),
+              activeIcon: Icon(IconlyBold.chart),
               label: 'Chart',
             ),
             BottomNavigationBarItem(
