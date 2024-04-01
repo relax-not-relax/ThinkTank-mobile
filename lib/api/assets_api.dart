@@ -90,10 +90,7 @@ class AssetsAPI {
                 element['value'], element['id'].toString());
             print(path);
             MusicPasswordSource musicPasswordSource = MusicPasswordSource(
-                soundLink: path,
-                answer: element['answer']
-                    .toString()
-                    .substring(0, element['answer'].toString().length - 4));
+                soundLink: path, answer: element['answer'].toString());
             listMusicpassword.add(musicPasswordSource);
             break;
           case 4:
@@ -147,10 +144,7 @@ class AssetsAPI {
                   element['value'], element['id'].toString());
               print(path);
               MusicPasswordSource musicPasswordSource = MusicPasswordSource(
-                  soundLink: path,
-                  answer: element['answer']
-                      .toString()
-                      .substring(0, element['answer'].toString().length - 4));
+                  soundLink: path, answer: element['answer'].toString());
               listMusicpassword.add(musicPasswordSource);
               break;
             case 4:

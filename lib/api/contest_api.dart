@@ -189,7 +189,7 @@ class ContestsAPI {
   static Future<AssetOfContest> convertFindAnonymous(
       AssetOfContest assetOfContest, String path) async {
     List<String> s = assetOfContest.value.split(';');
-    assetOfContest.value = s[0] + ';' + path;
+    assetOfContest.value = '${s[0]};$path';
     return assetOfContest;
   }
 
@@ -228,7 +228,7 @@ class ContestsAPI {
             if (contest.gameId == 1) {
               for (var as in contest.assetOfContests) {
                 String value = await AssetsAPI.saveImageToDevice(
-                    as.value, "Contest" + as.id.toString());
+                    as.value, "Contest${as.id}");
                 as.value = value;
                 assetsContest.add(as);
               }
@@ -236,9 +236,8 @@ class ContestsAPI {
             if (contest.gameId == 2) {
               for (var as in contest.assetOfContests) {
                 String value = await AssetsAPI.saveAudioToDevice(
-                    as.value, "Contest" + as.id.toString());
+                    as.value, "Contest${as.id}");
                 as.value = value;
-                as.answer = as.answer!.substring(0, as.answer!.length - 4);
                 print(as.value);
                 assetsContest.add(as);
               }
@@ -248,7 +247,7 @@ class ContestsAPI {
               for (var as in contest.assetOfContests) {
                 print('zo sau nua');
                 String value = await AssetsAPI.saveImageToDevice(
-                    as.value, "Contest" + as.id.toString());
+                    as.value, "Contest${as.id}");
                 as.value = value;
                 assetsContest.add(as);
               }
@@ -257,7 +256,7 @@ class ContestsAPI {
               print('anonymous');
               for (var as in contest.assetOfContests) {
                 String s = await AssetsAPI.saveImageToDevice(
-                    as.value.split(';')[1], "Contest" + as.id.toString());
+                    as.value.split(';')[1], "Contest${as.id}");
                 assetsContest.add(await convertFindAnonymous(as, s));
               }
             }
@@ -284,7 +283,7 @@ class ContestsAPI {
 
         if (response2.statusCode == 200) {
           final jsonData = json.decode(response2.body);
-          print("Messi" + jsonData.toString());
+          print("Messi$jsonData");
           List<AssetOfContest> assetsContest = [];
 
           for (var element in jsonData['results']) {
@@ -299,7 +298,7 @@ class ContestsAPI {
               if (contest.gameId == 1) {
                 for (var as in contest.assetOfContests) {
                   String value = await AssetsAPI.saveImageToDevice(
-                      as.value, "Contest" + as.id.toString());
+                      as.value, "Contest${as.id}");
                   as.value = value;
 
                   assetsContest.add(as);
@@ -308,9 +307,8 @@ class ContestsAPI {
               if (contest.gameId == 2) {
                 for (var as in contest.assetOfContests) {
                   String value = await AssetsAPI.saveAudioToDevice(
-                      as.value, "Contest" + as.id.toString());
+                      as.value, "Contest${as.id}");
                   as.value = value;
-                  as.answer = as.answer!.substring(0, as.answer!.length - 4);
                   assetsContest.add(as);
                 }
               }
@@ -319,7 +317,7 @@ class ContestsAPI {
                 for (var as in contest.assetOfContests) {
                   print('zo sau nua');
                   String value = await AssetsAPI.saveImageToDevice(
-                      as.value, "Contest" + as.id.toString());
+                      as.value, "Contest${as.id}");
                   as.value = value;
                   assetsContest.add(as);
                 }
@@ -328,7 +326,7 @@ class ContestsAPI {
                 print('anonymous');
                 for (var as in contest.assetOfContests) {
                   String s = await AssetsAPI.saveImageToDevice(
-                      as.value.split(';')[1], "Contest" + as.id.toString());
+                      as.value.split(';')[1], "Contest${as.id}");
                   assetsContest.add(await convertFindAnonymous(as, s));
                 }
               }
