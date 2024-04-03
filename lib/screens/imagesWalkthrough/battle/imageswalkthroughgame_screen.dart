@@ -6,8 +6,8 @@ import 'package:thinktank_mobile/models/imageswalkthrough.dart';
 import 'package:thinktank_mobile/widgets/game/walkthrough_item.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
-class ImagesWalkthroughGameScreen extends StatefulWidget {
-  const ImagesWalkthroughGameScreen({
+class ImagesWalkthroughBattleGameScreen extends StatefulWidget {
+  const ImagesWalkthroughBattleGameScreen({
     super.key,
     required this.onSelectImage,
     required this.onCorrectAnswer,
@@ -29,12 +29,12 @@ class ImagesWalkthroughGameScreen extends StatefulWidget {
   final bool isEnd;
 
   @override
-  State<ImagesWalkthroughGameScreen> createState() =>
-      _ImagesWalkthroughGameScreenState();
+  State<ImagesWalkthroughBattleGameScreen> createState() =>
+      _ImagesWalkthroughBattleGameScreenState();
 }
 
-class _ImagesWalkthroughGameScreenState
-    extends State<ImagesWalkthroughGameScreen> {
+class _ImagesWalkthroughBattleGameScreenState
+    extends State<ImagesWalkthroughBattleGameScreen> {
   var currentQuestionIndex = 1;
   List<String>? shuffle;
   Widget? content;
@@ -149,7 +149,7 @@ class _ImagesWalkthroughGameScreenState
             ),
           )
         : Container(
-            height: MediaQuery.of(context).size.height * 0.74,
+            height: MediaQuery.of(context).size.height * 0.65,
             width: MediaQuery.of(context).size.width,
             child: Center(
               child: Column(
@@ -159,8 +159,8 @@ class _ImagesWalkthroughGameScreenState
                   //   height: 8,
                   // ),
                   Container(
-                    height: 180,
-                    width: 180,
+                    height: 150,
+                    width: 150,
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         // image: AssetImage(
@@ -193,7 +193,7 @@ class _ImagesWalkthroughGameScreenState
                       itemCount: itemCount,
                       itemBuilder: (context, index) {
                         return WalkThroughItem(
-                          isBattle: false,
+                          isBattle: true,
                           imgPath: shuffle![index],
                           onSelect: () {
                             answerQuestion(shuffle![index]);
