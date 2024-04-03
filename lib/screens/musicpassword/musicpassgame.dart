@@ -10,7 +10,9 @@ import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/contest.dart';
 import 'package:thinktank_mobile/models/musicpassword.dart';
+import 'package:thinktank_mobile/screens/contest/finalresult_screen.dart';
 import 'package:thinktank_mobile/widgets/appbar/game_appbar.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:thinktank_mobile/widgets/others/textstroke.dart';
@@ -220,7 +222,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
     });
   }
 
-  void skipScript() {
+  void skipScript() async {
     if (numScript == 1) {
       setState(() {
         script =
@@ -253,39 +255,72 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
     }
     if (isWin) {
       double points = (remainingTime.inMilliseconds / 1000);
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => WinScreen(
-            haveTime: true,
-            points: (points * 100).toInt(),
-            time: (maxTime.inMilliseconds - remainingTime.inMilliseconds)
-                    .toDouble() /
-                1000,
-            isWin: true,
-            gameName: widget.gameName,
-            gameId: 2,
-            contestId: widget.contestId,
+      if (widget.contestId != null) {
+        Account? account = await SharedPreferencesHelper.getInfo();
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => FinalResultScreen(
+                  points: (points * 100).toInt(),
+                  isWin: true,
+                  gameId: 2,
+                  totalCoin:
+                      account!.coin! + ((points * 100).toInt() / 10).toInt(),
+                  contestId: widget.contestId!)),
+          (route) => false,
+        );
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WinScreen(
+              haveTime: true,
+              points: (points * 100).toInt(),
+              time: (maxTime.inMilliseconds - remainingTime.inMilliseconds)
+                      .toDouble() /
+                  1000,
+              isWin: true,
+              gameName: widget.gameName,
+              gameId: 2,
+              contestId: widget.contestId,
+            ),
           ),
-        ),
-        (route) => false,
-      );
+          (route) => false,
+        );
+      }
     } else {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => WinScreen(
-            haveTime: false,
-            points: 0,
-            time: 0,
-            isWin: false,
-            gameName: widget.gameName,
-            gameId: 2,
-            contestId: widget.contestId,
+      if (widget.contestId != null) {
+        Account? account = await SharedPreferencesHelper.getInfo();
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => FinalResultScreen(
+                  points: 0,
+                  isWin: false,
+                  gameId: 2,
+                  totalCoin: account!.coin!,
+                  contestId: widget.contestId!)),
+          (route) => false,
+        );
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WinScreen(
+              haveTime: false,
+              points: 0,
+              time: 0,
+              isWin: false,
+              gameName: widget.gameName,
+              gameId: 2,
+              contestId: widget.contestId,
+            ),
           ),
-        ),
-        (route) => false,
-      );
+          (route) => false,
+        );
+      }
     }
   }
 

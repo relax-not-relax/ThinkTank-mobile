@@ -11,6 +11,7 @@ import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/findanounymous_assets.dart';
+import 'package:thinktank_mobile/screens/contest/finalresult_screen.dart';
 import 'package:thinktank_mobile/screens/findanonymous/cardprovider.dart';
 import 'package:thinktank_mobile/widgets/appbar/game_appbar.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
@@ -245,6 +246,74 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
   }
 
   void continueFinish() async {
+    if (isWin) {
+      double points = (remainingTime.inMilliseconds / 1000);
+      if (widget.contestId != null) {
+        Account? account = await SharedPreferencesHelper.getInfo();
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => FinalResultScreen(
+                  points: (points * 100).toInt(),
+                  isWin: true,
+                  gameId: games[2].id,
+                  totalCoin:
+                      account!.coin! + ((points * 100).toInt() / 10).toInt(),
+                  contestId: widget.contestId!)),
+          (route) => false,
+        );
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WinScreen(
+              haveTime: true,
+              points: (points * 100).toInt(),
+              time: (widget.time - remainingTime.inMilliseconds).toDouble() /
+                  1000,
+              isWin: true,
+              gameName: games[2].name,
+              gameId: games[2].id,
+              contestId: widget.contestId,
+            ),
+          ),
+          (route) => false,
+        );
+      }
+    } else {
+      if (widget.contestId != null) {
+        Account? account = await SharedPreferencesHelper.getInfo();
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => FinalResultScreen(
+                  points: 0,
+                  isWin: false,
+                  gameId: games[2].id,
+                  totalCoin: account!.coin!,
+                  contestId: widget.contestId!)),
+          (route) => false,
+        );
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WinScreen(
+              haveTime: false,
+              points: 0,
+              time: 0,
+              isWin: false,
+              gameName: games[2].name,
+              gameId: games[2].id,
+              contestId: widget.contestId,
+            ),
+          ),
+          (route) => false,
+        );
+      }
+    }
     if (isWin) {
       double points = (remainingTime.inMilliseconds / 1000);
       Navigator.pushAndRemoveUntil(

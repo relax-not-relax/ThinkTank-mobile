@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:thinktank_mobile/api/contest_api.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/accountincontest.dart';
+import 'package:thinktank_mobile/models/contest.dart';
+import 'package:thinktank_mobile/screens/contest/contest_menu.dart';
 import 'package:thinktank_mobile/widgets/game/coin_div.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
@@ -10,13 +15,14 @@ class FinalResultScreen extends StatefulWidget {
     required this.isWin,
     required this.gameId,
     required this.totalCoin,
+    required this.contestId,
   });
 
   final int points;
-
   final bool isWin;
   final int gameId;
   final int totalCoin;
+  final int contestId;
 
   @override
   State<FinalResultScreen> createState() => _FinalResultScreenState();
@@ -135,7 +141,23 @@ class _FinalResultScreenState extends State<FinalResultScreen> {
                     ],
                   ),
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      Contest contest =
+                          (await SharedPreferencesHelper.getContests())
+                              .singleWhere(
+                                  (element) => element.id == widget.contestId);
+                      AccountInContest? accountInContest =
+                          await ContestsAPI.checkAccountInContest(contest.id);
+                      // ignore: use_build_context_synchronously
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ContestMenuScreen(
+                                    contest: contest,
+                                    accountInContest: accountInContest,
+                                  )),
+                          (route) => false);
+                    },
                     style: widget.isWin
                         ? buttonWinVer2(context)
                         : buttonLoseVer2(context),

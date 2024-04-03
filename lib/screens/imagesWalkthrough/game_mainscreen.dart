@@ -10,6 +10,7 @@ import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/imageswalkthrough.dart';
 import 'package:thinktank_mobile/models/imageswalkthrough_game.dart';
+import 'package:thinktank_mobile/screens/contest/finalresult_screen.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/endgame_screen.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/imageswalkthroughgame_screen.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/startgame_screen.dart';
@@ -131,26 +132,41 @@ class _GameMainScreenState extends State<GameMainScreen> {
                 1000,
             (points * 100).toInt(),
             widget.contestId!);
-      }
 
-      // ignore: use_build_context_synchronously
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => WinScreen(
-            haveTime: true,
-            points: (points * 100).toInt(),
-            time: (maxTime.inMilliseconds - remainingTime.inMilliseconds)
-                    .toDouble() /
-                1000,
-            isWin: true,
-            gameName: widget.gameName,
-            gameId: 4,
-            contestId: widget.contestId,
+        Account? account = await SharedPreferencesHelper.getInfo();
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => FinalResultScreen(
+                  points: (points * 100).toInt(),
+                  isWin: true,
+                  gameId: 4,
+                  totalCoin:
+                      account!.coin! + ((points * 100).toInt() / 10).toInt(),
+                  contestId: widget.contestId!)),
+          (route) => false,
+        );
+      } else {
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WinScreen(
+              haveTime: true,
+              points: (points * 100).toInt(),
+              time: (maxTime.inMilliseconds - remainingTime.inMilliseconds)
+                      .toDouble() /
+                  1000,
+              isWin: true,
+              gameName: widget.gameName,
+              gameId: 4,
+              contestId: widget.contestId,
+            ),
           ),
-        ),
-        (route) => false,
-      );
+          (route) => false,
+        );
+      }
     }
   }
 
@@ -162,24 +178,37 @@ class _GameMainScreenState extends State<GameMainScreen> {
                 1000,
             0,
             widget.contestId!);
-      }
-
-      // ignore: use_build_context_synchronously
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => WinScreen(
-            haveTime: false,
-            points: 0,
-            time: 0,
-            isWin: false,
-            gameName: widget.gameName,
-            gameId: 4,
-            contestId: widget.contestId,
+        Account? account = await SharedPreferencesHelper.getInfo();
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => FinalResultScreen(
+                  points: 0,
+                  isWin: false,
+                  gameId: 4,
+                  totalCoin: account!.coin!,
+                  contestId: widget.contestId!)),
+          (route) => false,
+        );
+      } else {
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WinScreen(
+              haveTime: false,
+              points: 0,
+              time: 0,
+              isWin: false,
+              gameName: widget.gameName,
+              gameId: 4,
+              contestId: widget.contestId,
+            ),
           ),
-        ),
-        (route) => false,
-      );
+          (route) => false,
+        );
+      }
     }
   }
 
