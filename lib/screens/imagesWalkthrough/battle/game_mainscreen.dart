@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/imageswalkthrough.dart';
 import 'package:thinktank_mobile/models/imageswalkthrough_game.dart';
-import 'package:thinktank_mobile/screens/imagesWalkthrough/battle/startgame_screen.dart';
+import 'package:thinktank_mobile/screens/imagesWalkthrough/battle/imageswalkthroughgame_screen.dart';
+import 'package:thinktank_mobile/screens/imagesWalkthrough/endgame_screen.dart';
+import 'package:thinktank_mobile/screens/imagesWalkthrough/imageswalkthroughgame_screen.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/startgame_screen.dart';
 import 'package:thinktank_mobile/widgets/appbar/battle_game_appbar.dart';
 
@@ -85,6 +87,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
 
   late Future _initResource;
   Future<void> initResource() async {
+    print("level ${widget.levelNumber}");
     await _game.initGame(widget.levelNumber, widget.contestId);
   }
 
@@ -100,10 +103,11 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         .onChildAdded
         .listen((event) async {
       print(event.snapshot.value.toString());
-      if (event.snapshot.value
-              .toString()
-              .substring(0, widget.opponentName.length) ==
-          widget.opponentName) {
+      if (event.snapshot.value.toString().length > widget.opponentName.length &&
+          event.snapshot.value
+                  .toString()
+                  .substring(0, widget.opponentName.length) ==
+              widget.opponentName) {
         setState(() {
           chatVisible = true;
           listMessage.add(MessageChat(
@@ -134,6 +138,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
 
     _initResource.then(
       (value) => {
+        print("abc"),
         setState(
           () {
             maxTime = Duration(seconds: _game.time.round());
@@ -149,18 +154,119 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
     );
   }
 
-  void switchScreen() {}
+  void win() async {
+    double points = (remainingTime.inMilliseconds / 1000);
+  }
+
+  void _continue() async {
+    double points = (remainingTime.inMilliseconds / 1000);
+  }
+
+  void _continueLosed() async {}
+
+  void switchScreen() {
+    if (isLosed == false) {
+      setState(() {
+        activeScreen = 'questions-screen';
+        if (!_timerStarted) {
+          startTimer();
+          _timerStarted = true;
+        }
+      });
+    } else {
+      setState(() {
+        correct = 0;
+        percent = correct / total;
+        activeScreen = 'end-screen';
+        if (_timerStarted) {
+          _timerStarted = false;
+        }
+      });
+    }
+  }
+
+  void chooseAnswer(String answer) {
+    setState(() {
+      selectedAnswer = answer;
+    });
+  }
+
+  void incorrectSelect() {
+    timer?.cancel();
+
+    setState(() {
+      correct = 0;
+      percent = correct / total;
+      activeScreen = 'start-screen';
+      if (_timerStarted) {
+        _timerStarted = false;
+      }
+    });
+  }
+
+  void onTimeIsEnd() {
+    timer?.cancel();
+
+    setState(() {
+      correct = 0;
+      percent = correct / total;
+      activeScreen = 'end-screen';
+      if (_timerStarted) {
+        _timerStarted = false;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    Widget screenWidget = StartBattleGameScreen(
-        //source: gameSource,
-        );
+    Widget screenWidget = StartGameScreen(
+      startImage: switchScreen,
+      source: gameSource,
+    );
+
+    //Widget screenWidget = ImagesWalkthroughGameScreen();
 
     if (activeScreen == 'start-screen') {
-      StartBattleGameScreen(
-          //source: gameSource,
-          );
+      StartGameScreen(
+        startImage: switchScreen,
+        source: gameSource,
+      );
+    }
+
+    if (activeScreen == 'questions-screen') {
+      screenWidget = ImagesWalkthroughBattleGameScreen(
+        onSelectImage: (imgAnswer) {
+          chooseAnswer(imgAnswer);
+        },
+        onCorrectAnswer: () {
+          setState(() {
+            correct++;
+            percent = correct / total;
+          });
+        },
+        onEndGame: () async {
+          timer?.cancel();
+          setState(() {
+            timer = null;
+          });
+          win();
+        },
+        onInCorrectAnswer: () {
+          incorrectSelect();
+        },
+        source: gameSource,
+        isEnd: isLosed,
+        onEndTime: () {
+          onTimeIsEnd();
+        },
+        onDone: _continue,
+      );
+    }
+
+    if (activeScreen == 'end-screen') {
+      screenWidget = EndGameScreen(
+        onContinue: _continueLosed,
+      );
     }
 
     return Scaffold(
@@ -176,13 +282,11 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         userAvatar: widget.opponentAvt,
         competitorAvatar: widget.account.avatar ??
             "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688",
-        remainingTime: Duration(
-          seconds: 0,
-        ),
+        remainingTime: remainingTime,
         gameName: "Images Walkthrough",
         progressTitle: "Image",
-        progressMessage: "0/0",
-        percent: 0,
+        progressMessage: "$correct/$total",
+        percent: percent,
         onPause: () {},
         onResume: () {},
       ),
