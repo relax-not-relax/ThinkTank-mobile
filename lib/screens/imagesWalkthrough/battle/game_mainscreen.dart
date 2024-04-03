@@ -114,7 +114,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
       extendBodyBehindAppBar: false,
       backgroundColor: const Color.fromARGB(255, 255, 240, 199),
       appBar: TBattleGameAppBar(
-        preferredHeight: MediaQuery.of(context).size.height * 0.26,
+        preferredHeight: MediaQuery.of(context).size.height * 0.35,
         userAvatar:
             "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688",
         competitorAvatar:

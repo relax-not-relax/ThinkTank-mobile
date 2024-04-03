@@ -344,7 +344,7 @@ class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
                       widget.progressTitle,
                       style: GoogleFonts.roboto(
                         color: Colors.white,
-                        fontSize: 16.0,
+                        fontSize: 14.0,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -352,7 +352,53 @@ class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
                       widget.progressMessage,
                       style: GoogleFonts.roboto(
                         color: Colors.white,
-                        fontSize: 25.0,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 3.0,
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                child: LinearPercentIndicator(
+                  //width: MediaQuery.of(context).size.width * 0.9,
+                  animation: true,
+                  lineHeight: 25.0,
+                  animationDuration: 1000,
+                  animateFromLastPercent: true,
+                  percent: widget.percent,
+                  barRadius: const Radius.circular(20.0),
+                  progressColor: const Color.fromRGBO(255, 212, 96, 1),
+                  backgroundColor: Color.fromARGB(141, 255, 215, 105),
+                ),
+              ),
+              const SizedBox(
+                height: 5.0,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 30.0,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Competitor",
+                      style: GoogleFonts.roboto(
+                        color: Colors.white,
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      widget.progressMessage,
+                      style: GoogleFonts.roboto(
+                        color: Colors.white,
+                        fontSize: 18.0,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
