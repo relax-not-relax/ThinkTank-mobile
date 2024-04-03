@@ -8,11 +8,13 @@ class WalkThroughItem extends StatelessWidget {
     required this.imgPath,
     required this.onSelect,
     required this.itemIndex,
+    required this.isBattle,
   });
 
   final String imgPath;
   final void Function() onSelect;
   final int itemIndex;
+  final bool isBattle;
 
   @override
   Widget build(BuildContext context) {
@@ -45,27 +47,49 @@ class WalkThroughItem extends StatelessWidget {
             Radius.circular(10.0),
           ),
         ),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 100.0,
-                height: 100.0,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    // image: AssetImage(imgPath),
-                    image: FileImage(File(imgPath)),
-                    fit: BoxFit.cover,
-                  ),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(10.0),
-                  ),
+        child: isBattle
+            ? Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 80.0,
+                      height: 80.0,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          // image: AssetImage(imgPath),
+                          image: FileImage(File(imgPath)),
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 100.0,
+                      height: 100.0,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          // image: AssetImage(imgPath),
+                          image: FileImage(File(imgPath)),
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
       ),
     );
   }
