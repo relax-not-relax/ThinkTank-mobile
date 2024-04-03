@@ -5,6 +5,7 @@ import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/game.dart';
 import 'package:thinktank_mobile/models/level.dart';
+import 'package:thinktank_mobile/screens/game/battle_main_screen.dart';
 import 'package:thinktank_mobile/screens/game/leaderboard.dart';
 import 'package:thinktank_mobile/screens/game/level_select.dart';
 import 'package:thinktank_mobile/screens/home.dart';
@@ -482,7 +483,22 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                               ],
                             ),
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () async {
+                                Account? account =
+                                    await SharedPreferencesHelper.getInfo();
+                                switch (widget.game.id) {
+                                  case 4:
+                                    // ignore: use_build_context_synchronously
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => BattleMainScreen(
+                                            account: account!, gameId: 4),
+                                      ),
+                                    );
+                                    break;
+                                }
+                              },
                               style: ButtonStyle(
                                 fixedSize: MaterialStatePropertyAll(
                                   Size(MediaQuery.of(context).size.width - 45,
