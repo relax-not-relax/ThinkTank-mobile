@@ -100,11 +100,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           ),
           useMaterial3: true,
         ),
-        //home: StartScreen(),
-        home: GameBattleMainScreen(
-          gameName: "Images Walkthrough",
-          levelNumber: 1,
-        ),
+        home: const StartScreen(),
         // home: FindAnonymousGame(
         //   avt: 'asdv',
         //   listAnswer: [

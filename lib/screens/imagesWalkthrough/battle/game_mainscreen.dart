@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/imageswalkthrough.dart';
@@ -16,6 +18,9 @@ class GameBattleMainScreen extends StatefulWidget {
     required this.gameName,
     required this.levelNumber,
     this.contestId,
+    required this.roomId,
+    required this.account,
+    required this.opponentName,
   });
 
   //final Account account;
@@ -23,6 +28,9 @@ class GameBattleMainScreen extends StatefulWidget {
   final String gameName;
   final int levelNumber;
   final int? contestId;
+  final String roomId;
+  final Account account;
+  final String opponentName;
 
   @override
   State<GameBattleMainScreen> createState() => _GameBattleMainScreenState();
@@ -47,10 +55,15 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
   Duration maxTime = Duration(
     seconds: 0,
   );
+
+  DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
   bool continueVisible = false;
   bool isLosed = false;
   late ImagesWalkthroughGame _game;
-
+  bool chatVisible = false;
+  String opponentName = '';
+  String messgae = '';
+  List<MessageChat> listMessage = [];
   void startTimer() {
     timer = Timer.periodic(const Duration(milliseconds: 500), (_) {
       setState(() {
@@ -78,6 +91,44 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
     super.initState();
     _game = ImagesWalkthroughGame();
     _initResource = initResource();
+    _databaseReference
+        .child('battle')
+        .child(widget.roomId)
+        .child('chat')
+        .onChildAdded
+        .listen((event) async {
+      print(event.snapshot.value.toString());
+      if (event.snapshot.value
+              .toString()
+              .substring(0, widget.opponentName.length) ==
+          widget.opponentName) {
+        setState(() {
+          chatVisible = true;
+          listMessage.add(MessageChat(
+              isOwner: false,
+              content: event.snapshot.value
+                  .toString()
+                  .substring(widget.opponentName.length + 3),
+              name: widget.opponentName));
+          messgae = event.snapshot.value
+              .toString()
+              .substring(widget.opponentName.length + 3);
+        });
+        await Future.delayed(Duration(seconds: 2));
+        setState(() {
+          chatVisible = false;
+        });
+      } else {
+        setState(() {
+          listMessage.add(MessageChat(
+              isOwner: true,
+              content: event.snapshot.value
+                  .toString()
+                  .substring(widget.account.userName.length + 3),
+              name: widget.account.userName));
+        });
+      }
+    });
 
     _initResource.then(
       (value) => {
@@ -115,6 +166,11 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
       backgroundColor: const Color.fromARGB(255, 255, 240, 199),
       appBar: TBattleGameAppBar(
         preferredHeight: MediaQuery.of(context).size.height * 0.35,
+        listMessage: listMessage,
+        chatVisible: chatVisible,
+        messgae: messgae,
+        userName: widget.account.userName,
+        roomId: widget.roomId,
         userAvatar:
             "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688",
         competitorAvatar:
