@@ -21,6 +21,7 @@ class GameBattleMainScreen extends StatefulWidget {
     required this.roomId,
     required this.account,
     required this.opponentName,
+    required this.opponentAvt,
   });
 
   //final Account account;
@@ -31,6 +32,7 @@ class GameBattleMainScreen extends StatefulWidget {
   final String roomId;
   final Account account;
   final String opponentName;
+  final String opponentAvt;
 
   @override
   State<GameBattleMainScreen> createState() => _GameBattleMainScreenState();
@@ -171,9 +173,8 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         messgae: messgae,
         userName: widget.account.userName,
         roomId: widget.roomId,
-        userAvatar:
-            "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688",
-        competitorAvatar:
+        userAvatar: widget.opponentAvt,
+        competitorAvatar: widget.account.avatar ??
             "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688",
         remainingTime: Duration(
           seconds: 0,

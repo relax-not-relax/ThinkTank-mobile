@@ -97,10 +97,11 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => GameBattleMainScreen(
+                opponentAvt: _opponentAvt,
                 opponentName: opponentName,
                 account: account,
                 gameName: 'Image walkthroug',
-                levelNumber: 0,
+                levelNumber: 2,
                 roomId: roomID),
           ),
           (route) => false,

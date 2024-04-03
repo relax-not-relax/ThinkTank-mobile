@@ -10,7 +10,7 @@ class Account {
   final String? dateOfBirth;
   final String? registrationDate;
   final String? avatar;
-  final int? coin;
+  int? coin;
   final bool? isOnline;
   String? refreshToken;
   final String? fcm;
