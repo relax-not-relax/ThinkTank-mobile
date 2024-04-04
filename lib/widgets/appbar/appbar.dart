@@ -10,11 +10,12 @@ import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/notification_item.dart';
 
 class TAppBar extends StatefulWidget implements PreferredSizeWidget {
-  const TAppBar(
-      {super.key,
-      required this.onSelectNotification,
-      required this.account,
-      required this.notiAmount});
+  const TAppBar({
+    super.key,
+    required this.onSelectNotification,
+    required this.account,
+    required this.notiAmount,
+  });
 
   final void Function() onSelectNotification;
   final Account? account;

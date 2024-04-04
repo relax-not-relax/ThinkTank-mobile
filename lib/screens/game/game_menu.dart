@@ -8,6 +8,8 @@ import 'package:thinktank_mobile/models/level.dart';
 import 'package:thinktank_mobile/screens/game/battle_main_screen.dart';
 import 'package:thinktank_mobile/screens/game/leaderboard.dart';
 import 'package:thinktank_mobile/screens/game/level_select.dart';
+import 'package:thinktank_mobile/screens/game/room/create_room_screen.dart';
+import 'package:thinktank_mobile/screens/game/room/room_instruction_screen.dart';
 import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/game/memory_type.dart';
@@ -26,12 +28,26 @@ class GameMenuScreen extends StatefulWidget {
 }
 
 class _GameMenuScreeState extends State<GameMenuScreen> {
+  final TextEditingController _controller = TextEditingController();
+
   void onPlay(BuildContext context, Level level) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) =>
             LevelSelectScreen(level: level, gmaeId: widget.game.id),
+      ),
+    );
+  }
+
+  void onOpenInstruction(int gameId) {
+    if (gameId != 6) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return RoomInstructionScreen();
+        },
       ),
     );
   }
@@ -591,6 +607,327 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
       );
     }
 
+    if (widget.game.id == 6) {
+      content = Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: Stack(
+          children: [
+            Hero(
+              tag: widget.game.id,
+              child: Image.asset(
+                widget.game.imageUrl,
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height / 2,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height / 2,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color.fromARGB(0, 0, 0, 0),
+                      Color.fromARGB(176, 0, 0, 0)
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 255,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                ),
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Hero(
+                            tag: widget.game.name,
+                            child: Text(
+                              widget.game.name,
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontSize: 28,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Wrap(
+                            alignment: WrapAlignment.start,
+                            direction: Axis.horizontal,
+                            spacing: 5.0,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            runSpacing: 3.0,
+                            children: [
+                              for (final memonType in widget.game.type)
+                                MemoryType(type: memonType),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height / 1.89,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/pics/menu_bg.png"),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                      ),
+                      child: Text(
+                        "Enter room code",
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                      ),
+                      child: Center(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(15),
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color.fromARGB(85, 0, 0, 0),
+                                      spreadRadius: 1,
+                                      blurRadius: 5,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: TextField(
+                                  controller: _controller,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  decoration: const InputDecoration(
+                                    hintText: "AWE2231",
+                                    hintStyle: TextStyle(
+                                      color: Color.fromARGB(255, 218, 195, 134),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(15.0),
+                                      ),
+                                      borderSide: BorderSide(
+                                        color: Colors.transparent,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(15.0),
+                                      ),
+                                      borderSide: BorderSide(
+                                        color: Colors.transparent,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(15.0),
+                                      ),
+                                      borderSide: BorderSide(
+                                        color: Colors
+                                            .transparent, // Màu viền khi có focus
+                                        width: 1,
+                                      ),
+                                    ),
+                                    contentPadding: EdgeInsets.symmetric(
+                                      vertical: 25.0,
+                                      horizontal: 10.0,
+                                    ),
+                                    filled: true,
+                                    fillColor:
+                                        Color.fromARGB(255, 255, 223, 136),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(50),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color.fromARGB(85, 0, 0, 0),
+                                    spreadRadius: 1,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: ElevatedButton(
+                                onPressed: () {},
+                                style: ButtonStyle(
+                                  fixedSize: MaterialStatePropertyAll(
+                                    Size(
+                                        MediaQuery.of(context).size.width - 250,
+                                        70.0),
+                                  ),
+                                  backgroundColor:
+                                      const MaterialStatePropertyAll(
+                                    Color.fromARGB(255, 234, 67, 53),
+                                  ),
+                                  side: const MaterialStatePropertyAll(
+                                    BorderSide(
+                                      color: Colors.white,
+                                      width: 5,
+                                    ),
+                                  ),
+                                ),
+                                child: const Text(
+                                  "JOIN",
+                                  style: TextStyle(
+                                    fontFamily: 'ButtonCustomFont',
+                                    fontSize: 24,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(50),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color.fromARGB(85, 0, 0, 0),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return CreateRoomScreen();
+                                },
+                              ),
+                            );
+                          },
+                          style: ButtonStyle(
+                            fixedSize: MaterialStatePropertyAll(
+                              Size(
+                                  MediaQuery.of(context).size.width - 45, 80.0),
+                            ),
+                            backgroundColor: const MaterialStatePropertyAll(
+                              Color.fromARGB(255, 240, 123, 63),
+                            ),
+                            side: const MaterialStatePropertyAll(
+                              BorderSide(
+                                color: Colors.white,
+                                width: 5,
+                              ),
+                            ),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                UniconsLine.plus_circle,
+                                color: Colors.white,
+                                size: 35,
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                "NEW ROOM",
+                                style: TextStyle(
+                                  fontFamily: 'ButtonCustomFont',
+                                  fontSize: 28,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -621,7 +958,9 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
         ),
         actions: [
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              onOpenInstruction(widget.game.id);
+            },
             style: ElevatedButton.styleFrom(
               shape: const CircleBorder(),
               primary: const Color.fromARGB(255, 240, 122, 63),
