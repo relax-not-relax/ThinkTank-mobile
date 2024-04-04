@@ -23,15 +23,6 @@ const games = [
     color: Color.fromARGB(255, 245, 171, 43),
   ),
   Game(
-    id: 5,
-    imageUrl: "assets/pics/game_3.png",
-    name: "Find The Anonymous",
-    description:
-        "The player's mission is to identify the 'anonymous' within a group of people after being provided with a description of that person.",
-    type: ["Associative memory"],
-    color: Color.fromARGB(255, 234, 84, 85),
-  ),
-  Game(
     id: 4,
     imageUrl: "assets/pics/game_4.png",
     name: "Images Walkthrough",
@@ -39,6 +30,15 @@ const games = [
         "The player simply has to identify what the previous image was, a task that's simple yet not so simple.",
     type: ["Sequential memory"],
     color: Color.fromARGB(255, 85, 125, 176),
+  ),
+  Game(
+    id: 5,
+    imageUrl: "assets/pics/game_3.png",
+    name: "Find The Anonymous",
+    description:
+        "The player's mission is to identify the 'anonymous' within a group of people after being provided with a description of that person.",
+    type: ["Associative memory"],
+    color: Color.fromARGB(255, 234, 84, 85),
   ),
   Game(
     id: 6,
