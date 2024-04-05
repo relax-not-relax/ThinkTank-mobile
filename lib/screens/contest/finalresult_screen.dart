@@ -12,17 +12,17 @@ class FinalResultScreen extends StatefulWidget {
   const FinalResultScreen({
     super.key,
     required this.points,
-    required this.isWin,
     required this.gameId,
     required this.totalCoin,
     required this.contestId,
+    required this.status,
   });
 
   final int points;
-  final bool isWin;
+  final String status;
   final int gameId;
   final int totalCoin;
-  final int contestId;
+  final int? contestId;
 
   @override
   State<FinalResultScreen> createState() => _FinalResultScreenState();
@@ -40,11 +40,11 @@ class _FinalResultScreenState extends State<FinalResultScreen> {
         ),
         decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage(
-                widget.isWin
-                    ? 'assets/pics/winbg.png'
-                    : 'assets/pics/losebg.png',
-              ),
+              image: AssetImage((widget.status == 'win')
+                  ? 'assets/pics/winbg.png'
+                  : (widget.status == 'lose')
+                      ? 'assets/pics/losebg.png'
+                      : 'assets/pics/drawbg.png'),
               fit: BoxFit.cover),
         ),
         child: Stack(
@@ -65,14 +65,16 @@ class _FinalResultScreenState extends State<FinalResultScreen> {
               children: [
                 Center(
                   child: Image.asset(
-                    widget.isWin
+                    (widget.status == 'win')
                         ? 'assets/pics/cup.png'
-                        : 'assets/pics/cry.png',
+                        : (widget.status == 'lose')
+                            ? 'assets/pics/cry.png'
+                            : 'assets/pics/draw.png',
                     width: MediaQuery.of(context).size.width * 0.8,
                   ),
                 ),
                 Center(
-                  child: widget.isWin
+                  child: (widget.status == 'win')
                       ? const Text(
                           "WINNER",
                           style: TextStyle(
@@ -81,17 +83,26 @@ class _FinalResultScreenState extends State<FinalResultScreen> {
                             color: Color.fromARGB(255, 255, 213, 96),
                           ),
                         )
-                      : const Text(
-                          "LOSER",
-                          style: TextStyle(
-                            fontFamily: 'CustomProFont',
-                            fontSize: 60,
-                            color: Color.fromARGB(255, 17, 23, 32),
-                          ),
-                        ),
+                      : (widget.status == 'lose')
+                          ? const Text(
+                              "LOSER",
+                              style: TextStyle(
+                                fontFamily: 'CustomProFont',
+                                fontSize: 60,
+                                color: Color.fromARGB(255, 17, 23, 32),
+                              ),
+                            )
+                          : const Text(
+                              "DRAW",
+                              style: TextStyle(
+                                fontFamily: 'CustomProFont',
+                                fontSize: 60,
+                                color: Color.fromRGBO(40, 52, 68, 1),
+                              ),
+                            ),
                 ),
                 Visibility(
-                  visible: widget.isWin,
+                  visible: widget.status == 'win',
                   child: Center(
                     child: Text(
                       '${widget.points} Points',
@@ -105,16 +116,18 @@ class _FinalResultScreenState extends State<FinalResultScreen> {
                   ),
                 ),
                 Visibility(
-                  visible: widget.isWin,
+                  visible: widget.status == 'win',
                   child: const SizedBox(
                     height: 10,
                   ),
                 ),
                 Visibility(
-                  visible: widget.isWin,
+                  visible: widget.status == 'win',
                   child: Center(
                     child: CoinDiv(
-                      amount: "+ ${widget.points ~/ 10}",
+                      amount: widget.contestId != null
+                          ? "+ ${widget.points ~/ 10}"
+                          : "+ 20",
                       color: Colors.white,
                       size: 25,
                       textSize: 18,
@@ -142,25 +155,29 @@ class _FinalResultScreenState extends State<FinalResultScreen> {
                   ),
                   child: ElevatedButton(
                     onPressed: () async {
-                      Contest contest =
-                          (await SharedPreferencesHelper.getContests())
-                              .singleWhere(
-                                  (element) => element.id == widget.contestId);
-                      AccountInContest? accountInContest =
-                          await ContestsAPI.checkAccountInContest(contest.id);
-                      // ignore: use_build_context_synchronously
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ContestMenuScreen(
-                                    contest: contest,
-                                    accountInContest: accountInContest,
-                                  )),
-                          (route) => false);
+                      if (widget.contestId != null) {
+                        Contest contest =
+                            (await SharedPreferencesHelper.getContests())
+                                .singleWhere((element) =>
+                                    element.id == widget.contestId);
+                        AccountInContest? accountInContest =
+                            await ContestsAPI.checkAccountInContest(contest.id);
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ContestMenuScreen(
+                                      contest: contest,
+                                      accountInContest: accountInContest,
+                                    )),
+                            (route) => false);
+                      }
                     },
-                    style: widget.isWin
+                    style: widget.status == 'win'
                         ? buttonWinVer2(context)
-                        : buttonLoseVer2(context),
+                        : widget.status == 'lose'
+                            ? buttonLoseVer2(context)
+                            : buttonDraw(context),
                     child: const Text(
                       'CONTINUE',
                       style: TextStyle(

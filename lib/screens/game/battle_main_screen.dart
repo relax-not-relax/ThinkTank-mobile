@@ -45,6 +45,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
           'us1': widget.account.userName,
           'avt1': widget.account.avatar,
           'coin1': widget.account.coin,
+          'progress1': 0
         });
         _databaseReference
             .child('battle')
@@ -55,7 +56,8 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
             joinGame(
                 event.snapshot.child('us2').value.toString(),
                 event.snapshot.child('avt2').value.toString(),
-                int.parse(event.snapshot.child('coin2').value.toString()));
+                int.parse(event.snapshot.child('coin2').value.toString()),
+                isUser1);
           }
         });
       }
@@ -69,14 +71,16 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
           'us2': widget.account.userName,
           'avt2': widget.account.avatar,
           'coin2': widget.account.coin,
+          'progress2': 0
         });
-        joinGame(value.username!, value.avatar!, value.coin!);
+        joinGame(value.username!, value.avatar!, value.coin!, isUser1);
       }
       if (value != null) {}
     });
   }
 
-  void joinGame(String opponentName, String opponentAvt, int coin) async {
+  void joinGame(
+      String opponentName, String opponentAvt, int coin, bool isUser1) async {
     if (mounted) {
       setState(() {
         _opponentName = opponentName;
@@ -97,6 +101,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => GameBattleMainScreen(
+                isUSer1: isUser1,
                 opponentAvt: _opponentAvt,
                 opponentName: opponentName,
                 account: account,

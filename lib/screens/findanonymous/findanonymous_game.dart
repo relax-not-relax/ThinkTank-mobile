@@ -256,7 +256,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
           MaterialPageRoute(
               builder: (context) => FinalResultScreen(
                   points: (points * 100).toInt(),
-                  isWin: true,
+                  status: 'win',
                   gameId: games[2].id,
                   totalCoin:
                       account!.coin! + ((points * 100).toInt() / 10).toInt(),
@@ -290,7 +290,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
           MaterialPageRoute(
               builder: (context) => FinalResultScreen(
                   points: 0,
-                  isWin: false,
+                  status: 'lose',
                   gameId: games[2].id,
                   totalCoin: account!.coin!,
                   contestId: widget.contestId!)),

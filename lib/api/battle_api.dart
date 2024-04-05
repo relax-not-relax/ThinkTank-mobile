@@ -48,4 +48,51 @@ class BattleAPI {
       return null;
     }
   }
+
+  static Future<void> addResultBattle(int coins, int winerId, int account1Id,
+      int account2Id, int gameId, int roomId, DateTime startTime) async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    Map<String, dynamic> data = {
+      "startTime": startTime,
+      "coin": coins,
+      "winnerId": winerId,
+      "accountId1": account1Id,
+      "accountId2": account2Id,
+      "gameId": gameId,
+      "roomId": roomId
+    };
+
+    String jsonBody = jsonEncode(data);
+    final response = await http.post(
+        Uri.parse(
+            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${account!.accessToken}',
+        },
+        body: jsonBody);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      print('da add');
+    } else if (response.statusCode == 401 || response.statusCode == 403) {
+      Account? account2 = await ApiAuthentication.refreshToken();
+      final response2 = await http.post(
+          Uri.parse(
+              'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${account2!.accessToken}',
+          },
+          body: jsonBody);
+      print(response2.statusCode);
+      print(response2.body);
+      if (response2.statusCode == 200) {
+        print('da add');
+      } else {
+        return;
+      }
+    } else {
+      return;
+    }
+  }
 }
