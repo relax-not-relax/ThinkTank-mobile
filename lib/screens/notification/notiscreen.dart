@@ -39,10 +39,12 @@ class _NotiScreenState extends State<NotiScreen> {
     Account? loginInfo;
     loginInfo = await SharedPreferencesHelper.getInfo();
     notifications = await ApiNotification.getNotifications();
+
     await SharedPreferencesHelper.saveNotifications(notifications);
     setState(() {
       _isLoaded = true;
       notifications;
+      print(notifications);
     });
   }
 

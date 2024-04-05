@@ -87,4 +87,44 @@ class ApiRoom {
       );
     }
   }
+
+  static Future<bool> cancelRoom(int id) async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    final response = await http.delete(
+      Uri.parse(
+          'https://thinktank-sep490.azurewebsites.net/api/rooms/$id?accountId=${account!.id}'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${account.accessToken}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print("Cancel room successfully!");
+      return true;
+    } else if (response.statusCode == 401 || response.statusCode == 403) {
+      Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
+      final response2 = await http.delete(
+        Uri.parse(
+            'https://thinktank-sep490.azurewebsites.net/api/rooms/$id?accountId=${account2.id}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${account2.accessToken}',
+        },
+      );
+      if (response2.statusCode == 200) {
+        print("Cancel room successfully!");
+        return true;
+      } else {
+        final error = json.decode(response2.body)['error'];
+        print(error);
+        return false;
+      }
+    } else {
+      final error = json.decode(response.body)['error'];
+      print(error);
+      return false;
+    }
+  }
 }

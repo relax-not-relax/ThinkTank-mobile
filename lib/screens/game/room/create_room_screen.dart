@@ -9,6 +9,7 @@ import 'package:thinktank_mobile/models/game.dart';
 import 'package:thinktank_mobile/models/game_of_server.dart';
 import 'package:thinktank_mobile/models/room.dart';
 import 'package:thinktank_mobile/models/topic.dart';
+import 'package:thinktank_mobile/screens/game/room/waiting_lobby_screen.dart';
 import 'package:thinktank_mobile/widgets/appbar/owner_appbar.dart';
 import 'package:thinktank_mobile/widgets/game/room_game_selector.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
@@ -114,6 +115,16 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
       } else {
         // ignore: use_build_context_synchronously
         _closeDialog(context);
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return WaitingLobbyScreen(room: newRoom);
+            },
+          ),
+          (route) => false,
+        );
       }
     }
   }
