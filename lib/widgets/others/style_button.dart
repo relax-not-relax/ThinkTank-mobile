@@ -240,6 +240,23 @@ ButtonStyle buttonLoseVer2(BuildContext context) {
   );
 }
 
+ButtonStyle buttonDraw(BuildContext context) {
+  return ElevatedButton.styleFrom(
+    backgroundColor: const Color.fromRGBO(240, 123, 63, 1),
+    fixedSize: Size(MediaQuery.of(context).size.width - 50, 70.0),
+    elevation: 0,
+    shape: const RoundedRectangleBorder(
+      side: BorderSide(
+        color: Colors.white,
+        width: 3.8,
+      ),
+      borderRadius: BorderRadius.all(
+        Radius.circular(100),
+      ),
+    ),
+  );
+}
+
 final ButtonStyle buttonPass = ElevatedButton.styleFrom(
   backgroundColor: Color.fromARGB(0, 240, 122, 63),
   elevation: 8,

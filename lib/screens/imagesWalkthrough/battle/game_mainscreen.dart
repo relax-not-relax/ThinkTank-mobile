@@ -1,14 +1,13 @@
 import 'dart:async';
-import 'dart:math';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/imageswalkthrough.dart';
 import 'package:thinktank_mobile/models/imageswalkthrough_game.dart';
+import 'package:thinktank_mobile/screens/contest/finalresult_screen.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/battle/imageswalkthroughgame_screen.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/endgame_screen.dart';
-import 'package:thinktank_mobile/screens/imagesWalkthrough/imageswalkthroughgame_screen.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/startgame_screen.dart';
 import 'package:thinktank_mobile/widgets/appbar/battle_game_appbar.dart';
 
@@ -24,6 +23,7 @@ class GameBattleMainScreen extends StatefulWidget {
     required this.account,
     required this.opponentName,
     required this.opponentAvt,
+    required this.isUSer1,
   });
 
   //final Account account;
@@ -35,6 +35,7 @@ class GameBattleMainScreen extends StatefulWidget {
   final Account account;
   final String opponentName;
   final String opponentAvt;
+  final bool isUSer1;
 
   @override
   State<GameBattleMainScreen> createState() => _GameBattleMainScreenState();
@@ -52,6 +53,8 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
   List<String> selectedAnswers = [];
   List<String> matchCheck = [];
   int correct = 0;
+  int correctOpponent = 0;
+  DateTime startTime = DateTime.now();
   List<ImagesWalkthrough> gameSource = [];
   Duration remainingTime = Duration(
     seconds: 0,
@@ -60,13 +63,16 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
     seconds: 0,
   );
 
-  DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
+  DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
+  List<StreamSubscription<DatabaseEvent>> listEvent = [];
   bool continueVisible = false;
   bool isLosed = false;
   late ImagesWalkthroughGame _game;
   bool chatVisible = false;
   String opponentName = '';
   String messgae = '';
+  String progressOpponentId = '';
+  String progressUserId = '';
   List<MessageChat> listMessage = [];
   void startTimer() {
     timer = Timer.periodic(const Duration(milliseconds: 500), (_) {
@@ -74,6 +80,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         final newTime = remainingTime - const Duration(milliseconds: 500);
         if (newTime.isNegative) {
           timer!.cancel();
+          onTimeIsEnd();
           setState(() {
             isLosed = true;
             continueVisible = true;
@@ -96,7 +103,28 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
     super.initState();
     _game = ImagesWalkthroughGame();
     _initResource = initResource();
-    _databaseReference
+
+    if (widget.isUSer1) {
+      progressOpponentId = 'progress2';
+      progressUserId = 'progress1';
+    } else {
+      progressOpponentId = 'progress1';
+      progressUserId = 'progress2';
+    }
+    listEvent.add(_databaseReference
+        .child('battle')
+        .child(widget.roomId)
+        .child(progressOpponentId)
+        .onValue
+        .listen((event) {
+      setState(() {
+        if (int.parse(event.snapshot.value.toString()) >= 0) {
+          correctOpponent = int.parse(event.snapshot.value.toString());
+        }
+      });
+    }));
+
+    listEvent.add(_databaseReference
         .child('battle')
         .child(widget.roomId)
         .child('chat')
@@ -134,7 +162,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
               name: widget.account.userName));
         });
       }
-    });
+    }));
 
     _initResource.then(
       (value) => {
@@ -156,6 +184,169 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
 
   void win() async {
     double points = (remainingTime.inMilliseconds / 1000);
+    if (widget.isUSer1) {
+      _databaseReference
+          .child('battle')
+          .child(widget.roomId)
+          .child('time1')
+          .set(remainingTime.inMilliseconds);
+    } else {
+      _databaseReference
+          .child('battle')
+          .child(widget.roomId)
+          .child('time2')
+          .set(remainingTime.inMilliseconds);
+    }
+    listEvent.add(_databaseReference
+        .child('battle')
+        .child(widget.roomId)
+        .child(progressOpponentId)
+        .onValue
+        .listen((event) async {
+      if (int.parse(event.snapshot.value.toString()) == -1) {
+        print('Thắng rồi');
+        Account? account = await SharedPreferencesHelper.getInfo();
+        account!.coin = account.coin! + 20;
+        await SharedPreferencesHelper.saveInfo(account);
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => FinalResultScreen(
+                  points: points.toInt(),
+                  status: 'win',
+                  gameId: 4,
+                  totalCoin: account.coin!,
+                  contestId: widget.contestId)),
+          (route) => false,
+        );
+      }
+    }));
+    if (widget.isUSer1) {
+      listEvent.add(_databaseReference
+          .child('battle')
+          .child(widget.roomId)
+          .child('time2')
+          .onValue
+          .listen((event) async {
+        if (event.snapshot.exists) {
+          if (remainingTime.inMilliseconds >
+              int.parse(event.snapshot.value.toString())) {
+            print('Thắng do còn nhiều time hơn');
+            Account? account = await SharedPreferencesHelper.getInfo();
+            account!.coin = account.coin! + 20;
+            await SharedPreferencesHelper.saveInfo(account);
+            // ignore: use_build_context_synchronously
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FinalResultScreen(
+                      points: points.toInt(),
+                      status: 'win',
+                      gameId: 4,
+                      totalCoin: account.coin!,
+                      contestId: widget.contestId)),
+              (route) => false,
+            );
+          } else if (remainingTime.inMilliseconds <
+              int.parse(event.snapshot.value.toString())) {
+            print('Thua do ít time hơn');
+            Account? account = await SharedPreferencesHelper.getInfo();
+            account!.coin = account.coin! - 20;
+            await SharedPreferencesHelper.saveInfo(account);
+            // ignore: use_build_context_synchronously
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FinalResultScreen(
+                      points: points.toInt(),
+                      status: 'lose',
+                      gameId: 4,
+                      totalCoin: account.coin!,
+                      contestId: widget.contestId)),
+              (route) => false,
+            );
+          } else {
+            print('Hòa');
+            Account? account = await SharedPreferencesHelper.getInfo();
+            // ignore: use_build_context_synchronously
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FinalResultScreen(
+                      points: points.toInt(),
+                      status: 'draw',
+                      gameId: 4,
+                      totalCoin: account!.coin!,
+                      contestId: widget.contestId)),
+              (route) => false,
+            );
+          }
+        }
+      }));
+    } else {
+      listEvent.add(_databaseReference
+          .child('battle')
+          .child(widget.roomId)
+          .child('time1')
+          .onValue
+          .listen((event) async {
+        if (event.snapshot.exists) {
+          if (remainingTime.inMilliseconds >
+              int.parse(event.snapshot.value.toString())) {
+            print('Thắng do còn nhiều time hơn');
+            Account? account = await SharedPreferencesHelper.getInfo();
+            account!.coin = account.coin! + 20;
+            await SharedPreferencesHelper.saveInfo(account);
+            // ignore: use_build_context_synchronously
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FinalResultScreen(
+                      points: points.toInt(),
+                      status: 'win',
+                      gameId: 4,
+                      totalCoin: account.coin!,
+                      contestId: widget.contestId)),
+              (route) => false,
+            );
+          } else if (remainingTime.inMilliseconds <
+              int.parse(event.snapshot.value.toString())) {
+            print('Thua do ít time hơn');
+            Account? account = await SharedPreferencesHelper.getInfo();
+            account!.coin = account.coin! - 20;
+            await SharedPreferencesHelper.saveInfo(account);
+            // ignore: use_build_context_synchronously
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FinalResultScreen(
+                      points: points.toInt(),
+                      status: 'lose',
+                      gameId: 4,
+                      totalCoin: account.coin!,
+                      contestId: widget.contestId)),
+              (route) => false,
+            );
+          } else {
+            print('Hòa');
+            Account? account = await SharedPreferencesHelper.getInfo();
+            // ignore: use_build_context_synchronously
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FinalResultScreen(
+                      points: points.toInt(),
+                      status: 'draw',
+                      gameId: 4,
+                      totalCoin: account!.coin!,
+                      contestId: widget.contestId)),
+              (route) => false,
+            );
+          }
+        }
+      }));
+    }
   }
 
   void _continue() async {
@@ -196,6 +387,11 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
 
     setState(() {
       correct = 0;
+      _databaseReference
+          .child('battle')
+          .child(widget.roomId)
+          .child(progressUserId)
+          .set(correct);
       percent = correct / total;
       activeScreen = 'start-screen';
       if (_timerStarted) {
@@ -204,17 +400,110 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
     });
   }
 
-  void onTimeIsEnd() {
+  void onTimeIsEnd() async {
     timer?.cancel();
-
     setState(() {
       correct = 0;
+      _databaseReference
+          .child('battle')
+          .child(widget.roomId)
+          .child(progressUserId)
+          .set(correct);
       percent = correct / total;
       activeScreen = 'end-screen';
       if (_timerStarted) {
         _timerStarted = false;
       }
     });
+    _databaseReference
+        .child('battle')
+        .child(widget.roomId)
+        .child(progressUserId)
+        .set(-1);
+    listEvent.add(_databaseReference
+        .child('battle')
+        .child(widget.roomId)
+        .child(progressOpponentId)
+        .onValue
+        .listen((event) async {
+      if (int.parse(event.snapshot.value.toString()) == -1) {
+        print('Hòa - Cả 2 đều không hoàn thành');
+        Account? account = await SharedPreferencesHelper.getInfo();
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => FinalResultScreen(
+                  points: 0,
+                  status: 'draw',
+                  gameId: 4,
+                  totalCoin: account!.coin!,
+                  contestId: widget.contestId)),
+          (route) => false,
+        );
+      }
+    }));
+    if (widget.isUSer1) {
+      listEvent.add(_databaseReference
+          .child('battle')
+          .child(widget.roomId)
+          .child('time2')
+          .onValue
+          .listen((event) async {
+        if (event.snapshot.exists) {
+          print('Thua rồi');
+          Account? account = await SharedPreferencesHelper.getInfo();
+          account!.coin = account.coin! - 20;
+          await SharedPreferencesHelper.saveInfo(account);
+          // ignore: use_build_context_synchronously
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => FinalResultScreen(
+                    points: 0,
+                    status: 'lose',
+                    gameId: 4,
+                    totalCoin: 0,
+                    contestId: widget.contestId)),
+            (route) => false,
+          );
+        }
+      }));
+    } else {
+      listEvent.add(_databaseReference
+          .child('battle')
+          .child(widget.roomId)
+          .child('time1')
+          .onValue
+          .listen((event) async {
+        if (event.snapshot.exists) {
+          print('Thua rồi');
+          Account? account = await SharedPreferencesHelper.getInfo();
+          account!.coin = account.coin! - 20;
+          await SharedPreferencesHelper.saveInfo(account);
+          // ignore: use_build_context_synchronously
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => FinalResultScreen(
+                    points: 0,
+                    status: 'lose',
+                    gameId: 4,
+                    totalCoin: 0,
+                    contestId: widget.contestId)),
+            (route) => false,
+          );
+        }
+      }));
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    for (var element in listEvent) {
+      element.cancel();
+    }
   }
 
   @override
@@ -241,6 +530,11 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         onCorrectAnswer: () {
           setState(() {
             correct++;
+            _databaseReference
+                .child('battle')
+                .child(widget.roomId)
+                .child(progressUserId)
+                .set(correct);
             percent = correct / total;
           });
         },
@@ -256,9 +550,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         },
         source: gameSource,
         isEnd: isLosed,
-        onEndTime: () {
-          onTimeIsEnd();
-        },
+        onEndTime: () {},
         onDone: _continue,
       );
     }
@@ -273,6 +565,9 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
       extendBodyBehindAppBar: false,
       backgroundColor: const Color.fromARGB(255, 255, 240, 199),
       appBar: TBattleGameAppBar(
+        percentOpponent: correctOpponent / total,
+        progressMessageOpponent: "$correctOpponent/$total",
+        progressTitleOpponent: widget.opponentName,
         preferredHeight: MediaQuery.of(context).size.height * 0.35,
         listMessage: listMessage,
         chatVisible: chatVisible,
@@ -284,7 +579,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
             "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688",
         remainingTime: remainingTime,
         gameName: "Images Walkthrough",
-        progressTitle: "Image",
+        progressTitle: widget.account.userName,
         progressMessage: "$correct/$total",
         percent: percent,
         onPause: () {},

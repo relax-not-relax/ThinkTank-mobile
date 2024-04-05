@@ -65,6 +65,9 @@ class TBattleGameAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.messgae,
     required this.chatVisible,
     required this.listMessage,
+    required this.progressTitleOpponent,
+    required this.progressMessageOpponent,
+    required this.percentOpponent,
   });
 
   final double preferredHeight;
@@ -75,6 +78,9 @@ class TBattleGameAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String progressTitle;
   final String progressMessage;
   final double percent;
+  final String progressTitleOpponent;
+  final String progressMessageOpponent;
+  final double percentOpponent;
   final String roomId;
   final void Function() onPause;
   final void Function() onResume;
@@ -424,7 +430,7 @@ class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
                           child: CircleAvatar(
                             radius: 25, // Avatar radius
                             backgroundImage: NetworkImage(widget
-                                .userAvatar), // Your avatar image URL here
+                                .competitorAvatar), // Your avatar image URL here
                           ),
                         ),
                         Expanded(
@@ -564,7 +570,7 @@ class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Competitor",
+                          widget.progressTitleOpponent,
                           style: GoogleFonts.roboto(
                             color: Colors.white,
                             fontSize: 14.0,
@@ -572,7 +578,7 @@ class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
                           ),
                         ),
                         Text(
-                          widget.progressMessage,
+                          widget.progressMessageOpponent,
                           style: GoogleFonts.roboto(
                             color: Colors.white,
                             fontSize: 18.0,
@@ -593,7 +599,7 @@ class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
                       lineHeight: 25.0,
                       animationDuration: 1000,
                       animateFromLastPercent: true,
-                      percent: widget.percent,
+                      percent: widget.percentOpponent,
                       barRadius: const Radius.circular(20.0),
                       progressColor: const Color.fromRGBO(255, 212, 96, 1),
                       backgroundColor: const Color.fromARGB(141, 255, 215, 105),

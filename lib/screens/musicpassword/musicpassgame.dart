@@ -263,7 +263,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
           MaterialPageRoute(
               builder: (context) => FinalResultScreen(
                   points: (points * 100).toInt(),
-                  isWin: true,
+                  status: 'win',
                   gameId: 2,
                   totalCoin:
                       account!.coin! + ((points * 100).toInt() / 10).toInt(),
@@ -298,7 +298,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
           MaterialPageRoute(
               builder: (context) => FinalResultScreen(
                   points: 0,
-                  isWin: false,
+                  status: 'lose',
                   gameId: 2,
                   totalCoin: account!.coin!,
                   contestId: widget.contestId!)),
