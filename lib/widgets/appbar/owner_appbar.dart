@@ -98,22 +98,27 @@ class _TOwnerAppBarState extends State<TOwnerAppBar> {
                     ),
                     child: CircleAvatar(
                       radius: 40, // Avatar radius
-                      backgroundImage: NetworkImage(
-                          account!.avatar!), // Your avatar image URL here
+                      backgroundImage: account != null
+                          ? NetworkImage(account!.avatar!)
+                          : const NetworkImage(
+                              "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688",
+                            ), // Your avatar image URL here
                     ),
                   ),
                   const SizedBox(
                     width: 20,
                   ),
                   Expanded(
-                    child: Text(
-                      account!.fullName,
-                      style: GoogleFonts.roboto(
-                        color: Colors.white,
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    child: account != null
+                        ? Text(
+                            account!.fullName,
+                            style: GoogleFonts.roboto(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )
+                        : Container(),
                   ),
                 ],
               ),

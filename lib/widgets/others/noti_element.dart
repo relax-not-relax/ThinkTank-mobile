@@ -29,7 +29,7 @@ class _NotificationElementState extends State<NotificationElement> {
   @override
   void initState() {
     super.initState();
-    formatDate = DateTime.parse(widget.notiEl.dateTime!);
+    formatDate = DateTime.parse(widget.notiEl.dateNotification!);
     parsedDate = DateFormat('MMM dd, yyyy').format(formatDate);
     _isRead = widget.notiEl.status!;
   }

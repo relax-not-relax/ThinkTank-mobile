@@ -4,7 +4,7 @@ class NotificationItem {
     required this.avatar,
     required this.title,
     required this.description,
-    required this.dateTime,
+    required this.dateNotification,
     required this.status,
   });
 
@@ -12,7 +12,7 @@ class NotificationItem {
   final String? avatar;
   final String? title;
   final String? description;
-  final String? dateTime;
+  final String? dateNotification;
   final bool? status;
 
   Map<String, dynamic> toJson() => {
@@ -20,7 +20,7 @@ class NotificationItem {
         'avatar': avatar,
         'title': title,
         'description': description,
-        'dateTime': dateTime,
+        'dateNotification': dateNotification,
         'status': status,
       };
 
@@ -30,12 +30,12 @@ class NotificationItem {
         avatar: json['avatar'],
         title: json['title'],
         description: json['description'],
-        dateTime: json['dateTime'],
+        dateNotification: json['dateNotification'],
         status: json['status'],
       );
 
   @override
   String toString() {
-    return 'NotificationItem{imgUrl: $avatar, title: $title, description: $description, time: $dateTime, status: $status}';
+    return 'NotificationItem{imgUrl: $avatar, title: $title, description: $description, time: $dateNotification, status: $status}';
   }
 }
