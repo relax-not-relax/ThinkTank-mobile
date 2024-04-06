@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
+import 'package:thinktank_mobile/api/room_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/game.dart';
 import 'package:thinktank_mobile/models/level.dart';
+import 'package:thinktank_mobile/models/room.dart';
 import 'package:thinktank_mobile/screens/game/battle_main_screen.dart';
 import 'package:thinktank_mobile/screens/game/leaderboard.dart';
 import 'package:thinktank_mobile/screens/game/level_select.dart';
 import 'package:thinktank_mobile/screens/game/room/create_room_screen.dart';
 import 'package:thinktank_mobile/screens/game/room/room_instruction_screen.dart';
+import 'package:thinktank_mobile/screens/game/room/waiting_lobby_screen.dart';
 import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/game/memory_type.dart';
+import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:unicons/unicons.dart';
 
 class GameMenuScreen extends StatefulWidget {
@@ -50,6 +54,36 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
         },
       ),
     );
+  }
+
+  Future<void> onJoinRoom() async {
+    _showResizableDialog(context);
+    String roomCode = _controller.text;
+    print(roomCode);
+    if (roomCode != "") {
+      dynamic result = await ApiRoom.enterToRoom(roomCode);
+      if (result is Room) {
+        // ignore: use_build_context_synchronously
+        _closeDialog(context);
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return WaitingLobbyScreen(room: result);
+            },
+          ),
+          (route) => false,
+        );
+      } else {
+        // ignore: use_build_context_synchronously
+        _closeDialog(context);
+        Future.delayed(const Duration(seconds: 0), () {
+          // ignore: use_build_context_synchronously
+          _showResizableDialogError(context, result);
+        });
+      }
+    }
   }
 
   @override
@@ -821,7 +855,9 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                                 ],
                               ),
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  onJoinRoom();
+                                },
                                 style: ButtonStyle(
                                   fixedSize: MaterialStatePropertyAll(
                                     Size(
@@ -977,4 +1013,115 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
       body: content,
     );
   }
+}
+
+void _showResizableDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 400,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/pics/accOragne.png',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Please wait...',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 5,
+                ),
+                child: Text(
+                  'You are joining to the room party!',
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const CustomLoadingSpinner(
+                  color: Color.fromARGB(255, 245, 149, 24)),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _showResizableDialogError(BuildContext context, String message) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 300,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/pics/error.png',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Oh no!',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 5,
+                ),
+                child: Text(
+                  message,
+                  style: const TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _closeDialog(BuildContext context) {
+  Navigator.of(context).pop();
 }

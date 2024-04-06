@@ -52,7 +52,7 @@ class _TRoomAppBarState extends State<TRoomAppBar> {
   }
 
   Future<void> cancelRoom() async {
-    _showResizableDialog(context);
+    _showResizableDialog(context, true);
     bool status = await ApiRoom.cancelRoom(widget.room.id);
     if (status) {
       // ignore: use_build_context_synchronously
@@ -68,6 +68,32 @@ class _TRoomAppBarState extends State<TRoomAppBar> {
     } else {
       print("Can not cancel!");
       _closeDialog(context);
+    }
+  }
+
+  Future<void> leaveRoom() async {
+    _showResizableDialog(context, false);
+    dynamic result = await ApiRoom.leaveRoom(widget.room.id);
+    if (result is Room) {
+      // ignore: use_build_context_synchronously
+      _closeDialog(context);
+      // ignore: use_build_context_synchronously
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return GameMenuScreen(game: games[4]);
+          },
+        ),
+        (route) => false,
+      );
+    } else {
+// ignore: use_build_context_synchronously
+      _closeDialog(context);
+      Future.delayed(const Duration(seconds: 0), () {
+        // ignore: use_build_context_synchronously
+        _showResizableDialogError(context, result);
+      });
     }
   }
 
@@ -140,7 +166,7 @@ class _TRoomAppBarState extends State<TRoomAppBar> {
                     )
                   : InkWell(
                       onTap: () {
-                        _showCancelDialog(context, cancelRoom, widget.room.name,
+                        _showCancelDialog(context, leaveRoom, widget.room.name,
                             widget.isOwner);
                       },
                       child: Row(
@@ -203,12 +229,12 @@ class _TRoomAppBarState extends State<TRoomAppBar> {
       ),
       child: Container(
         height: widget.preferredHeight,
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(20),
             bottomRight: Radius.circular(20),
           ),
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
@@ -216,6 +242,14 @@ class _TRoomAppBarState extends State<TRoomAppBar> {
               Color.fromRGBO(234, 67, 53, 1),
             ],
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromARGB(255, 37, 37, 37).withOpacity(0.5),
+              spreadRadius: 0,
+              blurRadius: 5,
+              offset: Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -366,7 +400,7 @@ void _showCancelDialog(
   );
 }
 
-void _showResizableDialog(BuildContext context) {
+void _showResizableDialog(BuildContext context, bool isCancel) {
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -395,9 +429,11 @@ void _showResizableDialog(BuildContext context) {
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
-              const Text(
-                'The room party is being cancelled!',
-                style: TextStyle(
+              Text(
+                isCancel
+                    ? 'The room party is being cancelled!'
+                    : 'You are leaving the room!',
+                style: const TextStyle(
                     color: Color.fromRGBO(129, 140, 155, 1),
                     fontSize: 14,
                     fontWeight: FontWeight.w400),
@@ -408,6 +444,57 @@ void _showResizableDialog(BuildContext context) {
               ),
               const CustomLoadingSpinner(
                   color: Color.fromARGB(255, 245, 149, 24)),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _showResizableDialogError(BuildContext context, String message) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 300,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/pics/error.png',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Oh no!',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 5,
+                ),
+                child: Text(
+                  message,
+                  style: const TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ],
           ),
         ),

@@ -8,11 +8,11 @@ class Room {
     required this.amountPlayer,
     this.startTime,
     this.endTime,
-    required this.status,
+    this.status,
     required this.topicId,
     required this.topicName,
     required this.gameName,
-    required this.accountIn1Vs1Responses,
+    required this.accountInRoomResponses,
   });
 
   final int id;
@@ -21,11 +21,11 @@ class Room {
   final int amountPlayer;
   String? startTime;
   String? endTime;
-  final bool status;
+  bool? status;
   final int topicId;
   final String topicName;
   final String gameName;
-  final List<AccountInRoom> accountIn1Vs1Responses;
+  final List<AccountInRoom> accountInRoomResponses;
 
   factory Room.fromJson(Map<String, dynamic> json) {
     return Room(
@@ -33,13 +33,13 @@ class Room {
       name: json['name'] as String,
       code: json['code'] as String,
       amountPlayer: json['amountPlayer'] as int,
-      startTime: null,
-      endTime: null,
-      status: json['status'] as bool,
+      startTime: json['startTime'] as String?,
+      endTime: json['endTime'] as String?,
+      status: json['status'] as bool?,
       topicId: json['topicId'] as int,
       topicName: json['topicName'] as String,
       gameName: json['gameName'] as String,
-      accountIn1Vs1Responses: (json['accountIn1Vs1Responses'] as List<dynamic>)
+      accountInRoomResponses: (json['accountInRoomResponses'] as List<dynamic>)
           .map((account) => AccountInRoom.fromJson(account))
           .toList(),
     );

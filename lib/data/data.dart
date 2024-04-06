@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/models/account_in_room.dart';
 import 'package:thinktank_mobile/models/contest.dart';
 import 'package:thinktank_mobile/models/game.dart';
 import 'package:thinktank_mobile/models/notification_item.dart';
@@ -68,4 +69,67 @@ const usersTest = [
   "Tram Bao",
   "Pham Ha Vi",
   "Hieu Bui"
+];
+
+var usersRoomTest = [
+  AccountInRoom(
+    id: 1,
+    isAdmin: false,
+    accountId: 1,
+    username: "Hannah",
+    roomId: 1,
+    duration: 0,
+    mark: 0,
+    pieceOfInformation: 0,
+    avatar:
+        "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/0%2Fgirl_1.jpg?alt=media&token=694244ad-cd59-4368-80e3-84fd940d97e6",
+  ),
+  AccountInRoom(
+    id: 2,
+    isAdmin: false,
+    accountId: 2,
+    username: "Layla",
+    roomId: 1,
+    duration: 0,
+    mark: 0,
+    pieceOfInformation: 0,
+    avatar:
+        "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/0%2Fgirl_2.jpg?alt=media&token=5baaf827-5064-413c-ad0b-9fcfbeff93ec",
+  ),
+  AccountInRoom(
+    id: 3,
+    isAdmin: false,
+    accountId: 3,
+    username: "Kate",
+    roomId: 1,
+    duration: 0,
+    mark: 0,
+    pieceOfInformation: 0,
+    avatar:
+        "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/0%2Fgirl_3.jpg?alt=media&token=e508fd56-617c-4e64-ad4d-71a16ddaa5d7",
+  ),
+  AccountInRoom(
+    id: 4,
+    isAdmin: false,
+    accountId: 4,
+    username: "Violet",
+    roomId: 1,
+    duration: 0,
+    mark: 0,
+    pieceOfInformation: 0,
+    avatar:
+        "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/0%2Fgirl_4.jpg?alt=media&token=fbe1b207-55fe-4ef3-b93e-67d7f05c24ca",
+  ),
+  AccountInRoom(
+    id: 5,
+    isAdmin: false,
+    accountId: 5,
+    username: "Sally",
+    roomId: 1,
+    duration: 0,
+    mark: 0,
+    pieceOfInformation: 0,
+    avatar:
+        "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/0%2Fgirl_5.jpg?alt=media&token=eb3261a0-2381-40f5-847d-6f3cd9a983da",
+  ),
 ];

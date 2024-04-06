@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/screens/game/game_menu.dart';
 
 // ignore: must_be_immutable
 class TOwnerAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -71,7 +73,17 @@ class _TOwnerAppBarState extends State<TOwnerAppBar> {
             Align(
               alignment: Alignment.centerLeft,
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return GameMenuScreen(game: games[4]);
+                      },
+                    ),
+                    (route) => false,
+                  );
+                },
                 icon: const Icon(
                   Icons.arrow_back,
                   color: Colors.white,
