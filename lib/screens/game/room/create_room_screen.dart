@@ -103,7 +103,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
             topicId: selectedTopic!.id,
             topicName: "",
             gameName: "",
-            accountIn1Vs1Responses: [],
+            accountInRoomResponses: [],
           )) {
         // ignore: use_build_context_synchronously
         _closeDialog(context);
