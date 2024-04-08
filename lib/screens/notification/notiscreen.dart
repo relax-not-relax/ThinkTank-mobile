@@ -125,10 +125,9 @@ class _NotiScreenState extends State<NotiScreen> {
 
       await ApiNotification.deleteAllNotifications(
           notiIds, loginInfo!.accessToken!);
-      List<NotificationItem> updatedList =
-          await ApiNotification.getNotifications();
-      await SharedPreferencesHelper.saveNotifications(updatedList);
-      notifications = await SharedPreferencesHelper.getNotifications();
+
+      await SharedPreferencesHelper.saveNotifications([]);
+      notifications = [];
     }
 
     setState(() {

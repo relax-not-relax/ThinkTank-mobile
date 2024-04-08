@@ -42,6 +42,7 @@ class ApiAnalytics {
       );
       if (response2.statusCode == 200) {
         final jsonData = json.decode(response2.body);
+        print(jsonData);
         for (var element in jsonData) {
           results.add(Analysis.fromJson(element));
         }
