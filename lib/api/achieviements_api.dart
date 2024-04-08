@@ -103,7 +103,7 @@ class ApiAchieviements {
   static Future<void> getLevelOfUser(int accountId, String authToken) async {
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/accounts/game-level-of-account?accountId=$accountId'),
+          'https://thinktank-sep490.azurewebsites.net/api/accounts/$accountId/game-level-of-account'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $authToken',
@@ -159,7 +159,7 @@ class ApiAchieviements {
       Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/accounts/game-level-of-account?accountId=$accountId'),
+            'https://thinktank-sep490.azurewebsites.net/api/accounts/$accountId/game-level-of-account'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2!.accessToken}',

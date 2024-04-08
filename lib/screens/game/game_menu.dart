@@ -547,6 +547,16 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                                       ),
                                     );
                                     break;
+                                  case 2:
+                                    // ignore: use_build_context_synchronously
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => BattleMainScreen(
+                                            account: account!, gameId: 2),
+                                      ),
+                                    );
+                                    break;
                                 }
                               },
                               style: ButtonStyle(

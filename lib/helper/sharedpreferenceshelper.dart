@@ -96,14 +96,17 @@ class SharedPreferencesHelper {
 
   static Future<List<MusicPasswordSource>> getMusicPasswordSources() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? jsonString = prefs.getStringList(musicPassSource)?.first;
+    String? jsonString = prefs.getString(musicPassSource);
+    print(jsonString);
 
     if (jsonString != null) {
       List<dynamic> jsonList = jsonDecode(jsonString);
+      print('lenght' + jsonList.length.toString());
       List<MusicPasswordSource> musicPasswordSources =
           jsonList.map((json) => MusicPasswordSource.fromJson(json)).toList();
       return musicPasswordSources;
     } else {
+      print('khong get ra');
       return [];
     }
   }
@@ -111,7 +114,6 @@ class SharedPreferencesHelper {
   static Future<List<ImageResource>> getImagesSources() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? jsonString = prefs.getStringList(imageSource)?.first;
-
     if (jsonString != null) {
       List<dynamic> jsonList = jsonDecode(jsonString);
       List<ImageResource> imageSources =
@@ -373,6 +375,7 @@ class SharedPreferencesHelper {
 
   static Future<void> saveMusicPasswordSources(
       List<MusicPasswordSource> sources) async {
+    if (sources.isEmpty) return;
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     List<Map<String, dynamic>> jsonList =
@@ -380,7 +383,8 @@ class SharedPreferencesHelper {
 
     String jsonString = jsonEncode(jsonList);
 
-    await prefs.setStringList(musicPassSource, [jsonString]);
+    await prefs.setString(musicPassSource, jsonString);
+    print(jsonString);
   }
 
   static Future<void> saveMusicPasswordLevel(int level) async {

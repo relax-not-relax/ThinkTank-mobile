@@ -188,153 +188,153 @@ class ContestsAPI {
   }
 
   static Future<void> getContets() async {
-    try {
-      Account? account = await SharedPreferencesHelper.getInfo();
-      if (account == null) {
-        print("Get contest Error, Account null");
-        return;
-      }
-      print('get contest');
-      final response = await http.get(
-        Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/contests?Page=1&PageSize=10000&ContestStatus=2'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account.accessToken}',
-        },
-      );
-      List<Contest> result = [];
-      List<Contest> contestInDevice =
-          await SharedPreferencesHelper.getContests();
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        List<AssetOfContest> assetsContest = [];
-        print(jsonData['results']);
-        for (var element in jsonData['results']) {
-          print(element);
-          print('zo yo');
-          Contest contest = Contest.fromJson(element);
-          print(contestInDevice.length);
-          print(!contestInDevice.any((ele) => ele.id == contest.id));
-          if (!contestInDevice.any((ele) => ele.id == contest.id)) {
-            print('zo trong');
-            print(contest.gameId);
-            if (contest.gameId == 1) {
-              for (var as in contest.assetOfContests) {
-                String value = await AssetsAPI.saveImageToDevice(
-                    as.value, "Contest${as.id}");
-                as.value = value;
-                assetsContest.add(as);
-              }
-            }
-            if (contest.gameId == 2) {
-              for (var as in contest.assetOfContests) {
-                String value = await AssetsAPI.saveAudioToDevice(
-                    as.value, "Contest${as.id}");
-                as.value = value;
-                print(as.value);
-                assetsContest.add(as);
-              }
-            }
-            if (contest.gameId == 4) {
-              print('zo sau');
-              for (var as in contest.assetOfContests) {
-                print('zo sau nua');
-                String value = await AssetsAPI.saveImageToDevice(
-                    as.value, "Contest${as.id}");
-                as.value = value;
-                assetsContest.add(as);
-              }
-            }
-            if (contest.gameId == 5) {
-              print('anonymous');
-              for (var as in contest.assetOfContests) {
-                String s = await AssetsAPI.saveImageToDevice(
-                    as.value.split(';')[1], "Contest${as.id}");
-                assetsContest.add(await convertFindAnonymous(as, s));
-              }
-            }
-            contest.assetOfContests.clear();
-            result.add(contest);
-          }
-        }
-        await SharedPreferencesHelper.saveContestInfo(result);
-        await SharedPreferencesHelper.saveContestResource(assetsContest);
-      } else if (response.statusCode == 401 || response.statusCode == 403) {
-        Account? account2 = await ApiAuthentication.refreshToken();
-        final response2 = await http.get(
-          Uri.parse(
-              'https://thinktank-sep490.azurewebsites.net/api/contests?Page=1&PageSize=10000&ContestStatus=2'),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${account2!.accessToken}',
-          },
-        );
-        List<Contest> result = [];
+    // try {
+    //   Account? account = await SharedPreferencesHelper.getInfo();
+    //   if (account == null) {
+    //     print("Get contest Error, Account null");
+    //     return;
+    //   }
+    //   print('get contest');
+    //   final response = await http.get(
+    //     Uri.parse(
+    //         'https://thinktank-sep490.azurewebsites.net/api/contests?Page=1&PageSize=10000&ContestStatus=2'),
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Authorization': 'Bearer ${account.accessToken}',
+    //     },
+    //   );
+    //   List<Contest> result = [];
+    //   List<Contest> contestInDevice =
+    //       await SharedPreferencesHelper.getContests();
+    //   if (response.statusCode == 200) {
+    //     final jsonData = json.decode(response.body);
+    //     List<AssetOfContest> assetsContest = [];
+    //     print(jsonData['results']);
+    //     for (var element in jsonData['results']) {
+    //       print(element);
+    //       print('zo yo');
+    //       Contest contest = Contest.fromJson(element);
+    //       print(contestInDevice.length);
+    //       print(!contestInDevice.any((ele) => ele.id == contest.id));
+    //       if (!contestInDevice.any((ele) => ele.id == contest.id)) {
+    //         print('zo trong');
+    //         print(contest.gameId);
+    //         if (contest.gameId == 1) {
+    //           for (var as in contest.assetOfContests) {
+    //             String value = await AssetsAPI.saveImageToDevice(
+    //                 as.value, "Contest${as.id}");
+    //             as.value = value;
+    //             assetsContest.add(as);
+    //           }
+    //         }
+    //         if (contest.gameId == 2) {
+    //           for (var as in contest.assetOfContests) {
+    //             String value = await AssetsAPI.saveAudioToDevice(
+    //                 as.value, "Contest${as.id}");
+    //             as.value = value;
+    //             print(as.value);
+    //             assetsContest.add(as);
+    //           }
+    //         }
+    //         if (contest.gameId == 4) {
+    //           print('zo sau');
+    //           for (var as in contest.assetOfContests) {
+    //             print('zo sau nua');
+    //             String value = await AssetsAPI.saveImageToDevice(
+    //                 as.value, "Contest${as.id}");
+    //             as.value = value;
+    //             assetsContest.add(as);
+    //           }
+    //         }
+    //         if (contest.gameId == 5) {
+    //           print('anonymous');
+    //           for (var as in contest.assetOfContests) {
+    //             String s = await AssetsAPI.saveImageToDevice(
+    //                 as.value.split(';')[1], "Contest${as.id}");
+    //             assetsContest.add(await convertFindAnonymous(as, s));
+    //           }
+    //         }
+    //         contest.assetOfContests.clear();
+    //         result.add(contest);
+    //       }
+    //     }
+    //     await SharedPreferencesHelper.saveContestInfo(result);
+    //     await SharedPreferencesHelper.saveContestResource(assetsContest);
+    //   } else if (response.statusCode == 401 || response.statusCode == 403) {
+    //     Account? account2 = await ApiAuthentication.refreshToken();
+    //     final response2 = await http.get(
+    //       Uri.parse(
+    //           'https://thinktank-sep490.azurewebsites.net/api/contests?Page=1&PageSize=10000&ContestStatus=2'),
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //         'Authorization': 'Bearer ${account2!.accessToken}',
+    //       },
+    //     );
+    //     List<Contest> result = [];
 
-        if (response2.statusCode == 200) {
-          final jsonData = json.decode(response2.body);
-          print("Messi$jsonData");
-          List<AssetOfContest> assetsContest = [];
+    //     if (response2.statusCode == 200) {
+    //       final jsonData = json.decode(response2.body);
+    //       print("Messi$jsonData");
+    //       List<AssetOfContest> assetsContest = [];
 
-          for (var element in jsonData['results']) {
-            print(element);
-            print('zo yo');
-            Contest contest = Contest.fromJson(element);
-            print(contestInDevice.length);
-            print(!contestInDevice.any((ele) => ele.id == contest.id));
-            if (!contestInDevice.any((ele) => ele.id == contest.id)) {
-              print('zo trong');
-              print(contest.gameId);
-              if (contest.gameId == 1) {
-                for (var as in contest.assetOfContests) {
-                  String value = await AssetsAPI.saveImageToDevice(
-                      as.value, "Contest${as.id}");
-                  as.value = value;
+    //       for (var element in jsonData['results']) {
+    //         print(element);
+    //         print('zo yo');
+    //         Contest contest = Contest.fromJson(element);
+    //         print(contestInDevice.length);
+    //         print(!contestInDevice.any((ele) => ele.id == contest.id));
+    //         if (!contestInDevice.any((ele) => ele.id == contest.id)) {
+    //           print('zo trong');
+    //           print(contest.gameId);
+    //           if (contest.gameId == 1) {
+    //             for (var as in contest.assetOfContests) {
+    //               String value = await AssetsAPI.saveImageToDevice(
+    //                   as.value, "Contest${as.id}");
+    //               as.value = value;
 
-                  assetsContest.add(as);
-                }
-              }
-              if (contest.gameId == 2) {
-                for (var as in contest.assetOfContests) {
-                  String value = await AssetsAPI.saveAudioToDevice(
-                      as.value, "Contest${as.id}");
-                  as.value = value;
-                  assetsContest.add(as);
-                }
-              }
-              if (contest.gameId == 4) {
-                print('zo sau');
-                for (var as in contest.assetOfContests) {
-                  print('zo sau nua');
-                  String value = await AssetsAPI.saveImageToDevice(
-                      as.value, "Contest${as.id}");
-                  as.value = value;
-                  assetsContest.add(as);
-                }
-              }
-              if (contest.gameId == 5) {
-                print('anonymous');
-                for (var as in contest.assetOfContests) {
-                  String s = await AssetsAPI.saveImageToDevice(
-                      as.value.split(';')[1], "Contest${as.id}");
-                  assetsContest.add(await convertFindAnonymous(as, s));
-                }
-              }
-              contest.assetOfContests.clear();
-              result.add(contest);
-            }
-          }
-          await SharedPreferencesHelper.saveContestInfo(result);
-          await SharedPreferencesHelper.saveContestResource(assetsContest);
-        }
-      } else {
-        print(response.body);
-        return;
-      }
-    } catch (e) {
-      print(e.toString());
-      return;
-    }
+    //               assetsContest.add(as);
+    //             }
+    //           }
+    //           if (contest.gameId == 2) {
+    //             for (var as in contest.assetOfContests) {
+    //               String value = await AssetsAPI.saveAudioToDevice(
+    //                   as.value, "Contest${as.id}");
+    //               as.value = value;
+    //               assetsContest.add(as);
+    //             }
+    //           }
+    //           if (contest.gameId == 4) {
+    //             print('zo sau');
+    //             for (var as in contest.assetOfContests) {
+    //               print('zo sau nua');
+    //               String value = await AssetsAPI.saveImageToDevice(
+    //                   as.value, "Contest${as.id}");
+    //               as.value = value;
+    //               assetsContest.add(as);
+    //             }
+    //           }
+    //           if (contest.gameId == 5) {
+    //             print('anonymous');
+    //             for (var as in contest.assetOfContests) {
+    //               String s = await AssetsAPI.saveImageToDevice(
+    //                   as.value.split(';')[1], "Contest${as.id}");
+    //               assetsContest.add(await convertFindAnonymous(as, s));
+    //             }
+    //           }
+    //           contest.assetOfContests.clear();
+    //           result.add(contest);
+    //         }
+    //       }
+    //       await SharedPreferencesHelper.saveContestInfo(result);
+    //       await SharedPreferencesHelper.saveContestResource(assetsContest);
+    //     }
+    //   } else {
+    //     print(response.body);
+    //     return;
+    //   }
+    // } catch (e) {
+    //   print(e.toString());
+    //   return;
+    // }
   }
 }

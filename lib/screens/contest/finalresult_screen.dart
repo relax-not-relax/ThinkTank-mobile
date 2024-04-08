@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/api/contest_api.dart';
+import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/accountincontest.dart';
 import 'package:thinktank_mobile/models/contest.dart';
 import 'package:thinktank_mobile/screens/contest/contest_menu.dart';
+import 'package:thinktank_mobile/screens/game/game_menu.dart';
 import 'package:thinktank_mobile/widgets/game/coin_div.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
@@ -171,6 +173,49 @@ class _FinalResultScreenState extends State<FinalResultScreen> {
                                       accountInContest: accountInContest,
                                     )),
                             (route) => false);
+                      } else {
+                        switch (widget.gameId) {
+                          case 1:
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => GameMenuScreen(
+                                  game: games[0],
+                                ),
+                              ),
+                            );
+                            break;
+                          case 2:
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => GameMenuScreen(
+                                  game: games[1],
+                                ),
+                              ),
+                            );
+                            break;
+                          case 4:
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => GameMenuScreen(
+                                  game: games[3],
+                                ),
+                              ),
+                            );
+                            break;
+                          case 5:
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => GameMenuScreen(
+                                  game: games[2],
+                                ),
+                              ),
+                            );
+                            break;
+                        }
                       }
                     },
                     style: widget.status == 'win'

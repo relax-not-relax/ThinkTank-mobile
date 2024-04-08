@@ -1,5 +1,5 @@
 class MusicPassword {
-  const MusicPassword(
+  MusicPassword(
       {required this.level,
       required this.soundLink,
       required this.answer,
@@ -9,5 +9,5 @@ class MusicPassword {
   final String soundLink;
   final String answer;
   final int change;
-  final int time;
+  int time;
 }

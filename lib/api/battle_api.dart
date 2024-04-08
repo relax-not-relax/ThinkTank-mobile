@@ -15,13 +15,14 @@ class BattleAPI {
     Account? account = await SharedPreferencesHelper.getInfo();
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/opponent-of-account?accountId=$accountId&gameId=$gameId&coin=$coins'),
+          'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$accountId,$gameId,$coins/opponent-of-account'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${account!.accessToken}',
       },
     );
     print(response.statusCode);
+    print(response.toString());
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       return AccountBattle.fromJson(jsonData);
@@ -29,7 +30,7 @@ class BattleAPI {
       Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/opponent-of-account?accountId=$accountId&gameId=$gameId&coin=$coins'),
+            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$accountId,$gameId,$coins/opponent-of-account'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2!.accessToken}',
@@ -50,10 +51,10 @@ class BattleAPI {
   }
 
   static Future<void> addResultBattle(int coins, int winerId, int account1Id,
-      int account2Id, int gameId, int roomId, DateTime startTime) async {
+      int account2Id, int gameId, String roomId, DateTime startTime) async {
     Account? account = await SharedPreferencesHelper.getInfo();
     Map<String, dynamic> data = {
-      "startTime": startTime,
+      "startTime": startTime.toString(),
       "coin": coins,
       "winnerId": winerId,
       "accountId1": account1Id,
