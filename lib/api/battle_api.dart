@@ -64,6 +64,7 @@ class BattleAPI {
     };
 
     String jsonBody = jsonEncode(data);
+    print(jsonBody);
     final response = await http.post(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1'),
