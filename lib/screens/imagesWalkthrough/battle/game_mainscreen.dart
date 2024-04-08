@@ -103,6 +103,46 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
     super.initState();
     _game = ImagesWalkthroughGame();
     _initResource = initResource();
+    _databaseReference
+        .child('battle')
+        .child(widget.roomId)
+        .child('chat')
+        .onChildAdded
+        .listen((event) async {
+      print(event.snapshot.value.toString());
+      if (event.snapshot.value
+              .toString()
+              .substring(0, widget.opponentName.length) ==
+          widget.opponentName) {
+        listMessage.add(MessageChat(
+            isOwner: false,
+            content: event.snapshot.value
+                .toString()
+                .substring(widget.opponentName.length + 3),
+            name: widget.opponentName));
+        setState(() {
+          chatVisible = true;
+          listMessage;
+          messgae = event.snapshot.value
+              .toString()
+              .substring(widget.opponentName.length + 3);
+        });
+        await Future.delayed(Duration(seconds: 2));
+        setState(() {
+          chatVisible = false;
+        });
+      } else {
+        listMessage.add(MessageChat(
+            isOwner: true,
+            content: event.snapshot.value
+                .toString()
+                .substring(widget.account.userName.length + 3),
+            name: widget.account.userName));
+        setState(() {
+          listMessage;
+        });
+      }
+    });
 
     if (widget.isUSer1) {
       progressOpponentId = 'progress2';
