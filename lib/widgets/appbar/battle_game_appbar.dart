@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:synchronized/synchronized.dart';
+import 'package:thinktank_mobile/api/icon_api.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/icon.dart';
 import 'package:thinktank_mobile/screens/game/game_menu.dart';
+import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:unicons/unicons.dart';
 
@@ -98,6 +103,9 @@ class TBattleGameAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
+  bool isLoading = true;
+  List<IconApp> icons = [];
+
   Future displayBottomSheet(BuildContext context) {
     return showModalBottomSheet(
       context: context,
@@ -226,6 +234,13 @@ class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
       }
     }
 
+    Future getIconData() async {
+      icons = await SharedPreferencesHelper.getIconSources();
+      setState(() {
+        icons;
+      });
+    }
+
     return showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
@@ -300,13 +315,27 @@ class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.send),
+                          icon: const Icon(
+                            Icons.send,
+                          ),
                           onPressed: () {
                             if (messageContoller.text.trim().isNotEmpty) {
                               sendMessage(messageContoller.text);
                               messageContoller.clear();
                             }
                           },
+                        ),
+                        IconButton(
+                          onPressed: () async {
+                            //  await displayIcons(context);
+                            await getIconData().then((value) {
+                              //   Navigator.of(context).pop();
+                              displayIcons(context);
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.emoji_emotions,
+                          ),
                         ),
                       ],
                     ),
@@ -331,6 +360,45 @@ class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
             },
           );
         });
+  }
+
+  Future displayIcons(BuildContext context) async {
+    // ignore: use_build_context_synchronously
+    return showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+            height: MediaQuery.of(context).size.height * 0.50,
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 15,
+            ),
+            decoration: const BoxDecoration(
+              color: Color.fromARGB(61, 129, 140, 155),
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+            ),
+            child: GridView.count(
+              crossAxisCount: 3,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              children: icons.map((iconData) {
+                return Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(iconData.iconAvatar),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ));
+      },
+    );
   }
 
   @override

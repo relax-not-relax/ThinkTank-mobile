@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/contest.dart';
 import 'package:thinktank_mobile/models/findanounymous_assets.dart';
+import 'package:thinktank_mobile/models/icon.dart';
 import 'package:thinktank_mobile/models/image_resource.dart';
 import 'package:thinktank_mobile/models/logininfo.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
@@ -27,6 +28,7 @@ class SharedPreferencesHelper {
   static const String anonymousResourcenKey = 'anonymousResourcenKey';
   static const String contestsResourcenKey = 'contestsResourcenKey';
   static const String contestsInfoKey = 'contestsInfoKey';
+  static const String iconsData = 'iconsData';
 
   static Future<void> saveAccount(LoginInfo account) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -435,5 +437,29 @@ class SharedPreferencesHelper {
     } else {
       return false;
     }
+  }
+
+  static Future<List<IconApp>> getIconSources() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? jsonString = prefs.getStringList(iconsData)?.first;
+    if (jsonString != null) {
+      List<dynamic> jsonList = jsonDecode(jsonString);
+      List<IconApp> iconsDatas =
+          jsonList.map((json) => IconApp.fromJson(json)).toList();
+      return iconsDatas;
+    } else {
+      return [];
+    }
+  }
+
+  static Future<void> saveIconSources(List<IconApp> sources) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    List<Map<String, dynamic>> jsonList =
+        sources.map((source) => source.toJson()).toList();
+
+    String jsonString = jsonEncode(jsonList);
+
+    await prefs.setStringList(iconsData, [jsonString]);
   }
 }

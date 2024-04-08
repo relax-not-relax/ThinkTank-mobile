@@ -5,6 +5,7 @@ import 'package:thinktank_mobile/api/assets_api.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
+import 'package:thinktank_mobile/api/icon_api.dart';
 import 'package:thinktank_mobile/api/notification_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
@@ -289,6 +290,7 @@ class LoginScreenState extends State<LoginScreen> {
                             await AssetsAPI.addAssets(
                                 version, acc.accessToken!);
                             await ContestsAPI.getContets();
+                            await ApiIcon.getIconsOfAccount();
 
                             _closeDialog(context);
 
@@ -364,6 +366,7 @@ class LoginScreenState extends State<LoginScreen> {
                               acc.id, acc.accessToken!);
                           await ApiNotification.getNotifications();
                           await ContestsAPI.getContets();
+                          await ApiIcon.getIconsOfAccount();
 
                           int version = await SharedPreferencesHelper
                               .getResourceVersion();
