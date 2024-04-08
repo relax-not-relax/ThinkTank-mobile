@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:synchronized/synchronized.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
@@ -54,7 +55,7 @@ class BattleAPI {
       int account2Id, int gameId, String roomId, DateTime startTime) async {
     Account? account = await SharedPreferencesHelper.getInfo();
     Map<String, dynamic> data = {
-      "startTime": startTime.toString(),
+      "startTime": DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(startTime),
       "coin": coins,
       "winnerId": winerId,
       "accountId1": account1Id,
