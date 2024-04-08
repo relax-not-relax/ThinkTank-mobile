@@ -98,12 +98,15 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
       await Future.delayed(const Duration(seconds: 3));
       Account? account = await SharedPreferencesHelper.getInfo();
       if (account == null) return;
-      setState(() {
-        isWaiting = true;
-      });
+      if (mounted) {
+        setState(() {
+          isWaiting = true;
+        });
+      }
+
       await Future.delayed(Duration(seconds: 3));
-      if (widget.gameId == 4)
-        // ignore: curly_braces_in_flow_control_structures, use_build_context_synchronously
+      if (widget.gameId == 4 && mounted) {
+// ignore: use_build_context_synchronously
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -120,7 +123,11 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
           ),
           (route) => false,
         );
-      if (widget.gameId == 2) {
+        return;
+      }
+      // ignore: curly_braces_in_flow_control_structures, use_build_context_synchronously
+
+      if (widget.gameId == 2 && mounted) {
         var data = await getMusicPassword(4);
         data.time = 120;
         // ignore: curly_braces_in_flow_control_structures, use_build_context_synchronously
@@ -141,6 +148,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
           ),
           (route) => false,
         );
+        return;
       }
     }
   }
@@ -236,7 +244,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
                               "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688",
                           top: 6,
                           userName: widget.account.userName,
-                          point: "20 coins",
+                          point: '${widget.account.coin ?? 0} coins',
                           isBordered: false,
                         ),
                       ),
@@ -250,7 +258,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
                               : _opponentAvt,
                           top: 5,
                           userName: _opponentName,
-                          point: "$_opponentCoins points",
+                          point: "$_opponentCoins coins",
                           isBordered: false,
                         ),
                       ),

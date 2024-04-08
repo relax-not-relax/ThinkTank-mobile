@@ -51,6 +51,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
   Timer? timer;
   bool _timerStarted = false;
   double percent = 0.0;
+  bool isCompleted = false;
   final progressTitle = "Correct";
   int total = 0;
   List<String> selectedAnswers = [];
@@ -166,47 +167,6 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         }
       });
     }));
-
-    listEvent.add(_databaseReference
-        .child('battle')
-        .child(widget.roomId)
-        .child('chat')
-        .onChildAdded
-        .listen((event) async {
-      print(event.snapshot.value.toString());
-      if (event.snapshot.value.toString().length > widget.opponentName.length &&
-          event.snapshot.value
-                  .toString()
-                  .substring(0, widget.opponentName.length) ==
-              widget.opponentName) {
-        setState(() {
-          chatVisible = true;
-          listMessage.add(MessageChat(
-              isOwner: false,
-              content: event.snapshot.value
-                  .toString()
-                  .substring(widget.opponentName.length + 3),
-              name: widget.opponentName));
-          messgae = event.snapshot.value
-              .toString()
-              .substring(widget.opponentName.length + 3);
-        });
-        await Future.delayed(Duration(seconds: 2));
-        setState(() {
-          chatVisible = false;
-        });
-      } else {
-        setState(() {
-          listMessage.add(MessageChat(
-              isOwner: true,
-              content: event.snapshot.value
-                  .toString()
-                  .substring(widget.account.userName.length + 3),
-              name: widget.account.userName));
-        });
-      }
-    }));
-
     _initResource.then(
       (value) => {
         setState(
@@ -249,6 +209,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         Account? account = await SharedPreferencesHelper.getInfo();
         account!.coin = account.coin! + 20;
         await SharedPreferencesHelper.saveInfo(account);
+        isCompleted = true;
         await BattleAPI.addResultBattle(
           20,
           account.id,
@@ -286,6 +247,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
             Account? account = await SharedPreferencesHelper.getInfo();
             account!.coin = account.coin! + 20;
             await SharedPreferencesHelper.saveInfo(account);
+            isCompleted = true;
             await BattleAPI.addResultBattle(
               20,
               account.id,
@@ -313,6 +275,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
             Account? account = await SharedPreferencesHelper.getInfo();
             account!.coin = account.coin! - 20;
             await SharedPreferencesHelper.saveInfo(account);
+            isCompleted = true;
             await BattleAPI.addResultBattle(
               20,
               widget.opponentId,
@@ -337,6 +300,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
           } else {
             print('Hòa');
             Account? account = await SharedPreferencesHelper.getInfo();
+            isCompleted = true;
             await BattleAPI.addResultBattle(
               20,
               0,
@@ -375,6 +339,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
             Account? account = await SharedPreferencesHelper.getInfo();
             account!.coin = account.coin! + 20;
             await SharedPreferencesHelper.saveInfo(account);
+            isCompleted = true;
             await BattleAPI.addResultBattle(
               20,
               account.id,
@@ -402,6 +367,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
             Account? account = await SharedPreferencesHelper.getInfo();
             account!.coin = account.coin! - 20;
             await SharedPreferencesHelper.saveInfo(account);
+            isCompleted = true;
             await BattleAPI.addResultBattle(
               20,
               widget.opponentId,
@@ -426,6 +392,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
           } else {
             print('Hòa');
             Account? account = await SharedPreferencesHelper.getInfo();
+            isCompleted = true;
             await BattleAPI.addResultBattle(
               20,
               0,
@@ -533,6 +500,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
       if (int.parse(event.snapshot.value.toString()) == -1) {
         print('Hòa - Cả 2 đều không hoàn thành');
         Account? account = await SharedPreferencesHelper.getInfo();
+        isCompleted = true;
         await BattleAPI.addResultBattle(
           20,
           0,
@@ -568,6 +536,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
           Account? account = await SharedPreferencesHelper.getInfo();
           account!.coin = account.coin! - 20;
           await SharedPreferencesHelper.saveInfo(account);
+          isCompleted = true;
           await BattleAPI.addResultBattle(
             20,
             widget.opponentId,
@@ -603,6 +572,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
           Account? account = await SharedPreferencesHelper.getInfo();
           account!.coin = account.coin! - 20;
           await SharedPreferencesHelper.saveInfo(account);
+          isCompleted = true;
           await BattleAPI.addResultBattle(
             20,
             widget.opponentId,
@@ -632,6 +602,13 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
   @override
   void dispose() {
     super.dispose();
+    if (!isCompleted) {
+      _databaseReference
+          .child('battle')
+          .child(widget.roomId)
+          .child(progressUserId)
+          .set(-1);
+    }
     for (var element in listEvent) {
       element.cancel();
     }
