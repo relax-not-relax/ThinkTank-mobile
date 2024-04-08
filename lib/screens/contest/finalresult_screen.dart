@@ -200,7 +200,7 @@ class _FinalResultScreenState extends State<FinalResultScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => GameMenuScreen(
-                                  game: games[3],
+                                  game: games[2],
                                 ),
                               ),
                             );
@@ -210,7 +210,7 @@ class _FinalResultScreenState extends State<FinalResultScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => GameMenuScreen(
-                                  game: games[2],
+                                  game: games[3],
                                 ),
                               ),
                             );
