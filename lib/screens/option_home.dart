@@ -105,6 +105,7 @@ class _OptionScreenState extends State<OptionScreen> {
     _getContests.then((value) => {
           setState(() {
             contests = value;
+            print(contests);
           })
         });
     _pages = List.generate(

@@ -665,6 +665,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     List<FlSpot> flSpots = createFlSpotsFromData(weeksInMonth, results);
 
     print(weeksInMonth);
+    print(flSpots);
 
     return LineChartData(
       lineTouchData: const LineTouchData(enabled: false),
