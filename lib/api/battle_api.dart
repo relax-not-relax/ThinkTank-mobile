@@ -61,7 +61,7 @@ class BattleAPI {
       "accountId1": account1Id,
       "accountId2": account2Id,
       "gameId": gameId,
-      "roomId": roomId
+      "roomOfAccountIn1vs1Id": roomId
     };
 
     String jsonBody = jsonEncode(data);
