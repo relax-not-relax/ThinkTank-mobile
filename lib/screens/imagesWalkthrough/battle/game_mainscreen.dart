@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/api/battle_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/imageswalkthrough.dart';
@@ -24,6 +25,7 @@ class GameBattleMainScreen extends StatefulWidget {
     required this.opponentName,
     required this.opponentAvt,
     required this.isUSer1,
+    required this.opponentId,
   });
 
   //final Account account;
@@ -35,6 +37,7 @@ class GameBattleMainScreen extends StatefulWidget {
   final Account account;
   final String opponentName;
   final String opponentAvt;
+  final int opponentId;
   final bool isUSer1;
 
   @override
@@ -206,7 +209,6 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
 
     _initResource.then(
       (value) => {
-        print("abc"),
         setState(
           () {
             maxTime = Duration(seconds: _game.time.round());
@@ -215,7 +217,6 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
             total = _game.gameData.length - 1;
             correct = selectedAnswer.length;
             percent = correct / total;
-            print(gameSource[0].answerImgPath);
           },
         ),
       },
@@ -248,6 +249,15 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         Account? account = await SharedPreferencesHelper.getInfo();
         account!.coin = account.coin! + 20;
         await SharedPreferencesHelper.saveInfo(account);
+        await BattleAPI.addResultBattle(
+          20,
+          account.id,
+          widget.isUSer1 ? account.id : widget.opponentId,
+          widget.isUSer1 ? widget.opponentId : account.id,
+          4,
+          widget.roomId,
+          startTime,
+        );
         // ignore: use_build_context_synchronously
         Navigator.pushAndRemoveUntil(
           context,
@@ -276,6 +286,15 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
             Account? account = await SharedPreferencesHelper.getInfo();
             account!.coin = account.coin! + 20;
             await SharedPreferencesHelper.saveInfo(account);
+            await BattleAPI.addResultBattle(
+              20,
+              account.id,
+              widget.isUSer1 ? account.id : widget.opponentId,
+              widget.isUSer1 ? widget.opponentId : account.id,
+              4,
+              widget.roomId,
+              startTime,
+            );
             // ignore: use_build_context_synchronously
             Navigator.pushAndRemoveUntil(
               context,
@@ -294,6 +313,15 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
             Account? account = await SharedPreferencesHelper.getInfo();
             account!.coin = account.coin! - 20;
             await SharedPreferencesHelper.saveInfo(account);
+            await BattleAPI.addResultBattle(
+              20,
+              widget.opponentId,
+              widget.isUSer1 ? account.id : widget.opponentId,
+              widget.isUSer1 ? widget.opponentId : account.id,
+              4,
+              widget.roomId,
+              startTime,
+            );
             // ignore: use_build_context_synchronously
             Navigator.pushAndRemoveUntil(
               context,
@@ -309,6 +337,15 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
           } else {
             print('Hòa');
             Account? account = await SharedPreferencesHelper.getInfo();
+            await BattleAPI.addResultBattle(
+              20,
+              0,
+              widget.isUSer1 ? account!.id : widget.opponentId,
+              widget.isUSer1 ? widget.opponentId : account!.id,
+              4,
+              widget.roomId,
+              startTime,
+            );
             // ignore: use_build_context_synchronously
             Navigator.pushAndRemoveUntil(
               context,
@@ -338,6 +375,15 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
             Account? account = await SharedPreferencesHelper.getInfo();
             account!.coin = account.coin! + 20;
             await SharedPreferencesHelper.saveInfo(account);
+            await BattleAPI.addResultBattle(
+              20,
+              account.id,
+              widget.isUSer1 ? account.id : widget.opponentId,
+              widget.isUSer1 ? widget.opponentId : account.id,
+              4,
+              widget.roomId,
+              startTime,
+            );
             // ignore: use_build_context_synchronously
             Navigator.pushAndRemoveUntil(
               context,
@@ -356,6 +402,15 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
             Account? account = await SharedPreferencesHelper.getInfo();
             account!.coin = account.coin! - 20;
             await SharedPreferencesHelper.saveInfo(account);
+            await BattleAPI.addResultBattle(
+              20,
+              widget.opponentId,
+              widget.isUSer1 ? account.id : widget.opponentId,
+              widget.isUSer1 ? widget.opponentId : account.id,
+              4,
+              widget.roomId,
+              startTime,
+            );
             // ignore: use_build_context_synchronously
             Navigator.pushAndRemoveUntil(
               context,
@@ -371,6 +426,15 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
           } else {
             print('Hòa');
             Account? account = await SharedPreferencesHelper.getInfo();
+            await BattleAPI.addResultBattle(
+              20,
+              0,
+              widget.isUSer1 ? account!.id : widget.opponentId,
+              widget.isUSer1 ? widget.opponentId : account!.id,
+              4,
+              widget.roomId,
+              startTime,
+            );
             // ignore: use_build_context_synchronously
             Navigator.pushAndRemoveUntil(
               context,
@@ -469,6 +533,15 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
       if (int.parse(event.snapshot.value.toString()) == -1) {
         print('Hòa - Cả 2 đều không hoàn thành');
         Account? account = await SharedPreferencesHelper.getInfo();
+        await BattleAPI.addResultBattle(
+          20,
+          0,
+          widget.isUSer1 ? account!.id : widget.opponentId,
+          widget.isUSer1 ? widget.opponentId : account!.id,
+          4,
+          widget.roomId,
+          startTime,
+        );
         // ignore: use_build_context_synchronously
         Navigator.pushAndRemoveUntil(
           context,
@@ -495,6 +568,15 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
           Account? account = await SharedPreferencesHelper.getInfo();
           account!.coin = account.coin! - 20;
           await SharedPreferencesHelper.saveInfo(account);
+          await BattleAPI.addResultBattle(
+            20,
+            widget.opponentId,
+            widget.isUSer1 ? account.id : widget.opponentId,
+            widget.isUSer1 ? widget.opponentId : account.id,
+            4,
+            widget.roomId,
+            startTime,
+          );
           // ignore: use_build_context_synchronously
           Navigator.pushAndRemoveUntil(
             context,
@@ -521,6 +603,15 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
           Account? account = await SharedPreferencesHelper.getInfo();
           account!.coin = account.coin! - 20;
           await SharedPreferencesHelper.saveInfo(account);
+          await BattleAPI.addResultBattle(
+            20,
+            widget.opponentId,
+            widget.isUSer1 ? account.id : widget.opponentId,
+            widget.isUSer1 ? widget.opponentId : account.id,
+            4,
+            widget.roomId,
+            startTime,
+          );
           // ignore: use_build_context_synchronously
           Navigator.pushAndRemoveUntil(
             context,

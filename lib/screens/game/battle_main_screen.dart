@@ -6,10 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/api/battle_api.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/main.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/accountbattle.dart';
 import 'package:thinktank_mobile/models/battleinfo.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/battle/game_mainscreen.dart';
+import 'package:thinktank_mobile/screens/musicpassword/musicpass_battle_mainscreen.dart';
+import 'package:thinktank_mobile/widgets/game/level_item.dart';
 import 'package:thinktank_mobile/widgets/game/top_user.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 
@@ -45,7 +48,8 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
           'us1': widget.account.userName,
           'avt1': widget.account.avatar,
           'coin1': widget.account.coin,
-          'progress1': 0
+          'progress1': 0,
+          'id1': widget.account.id
         });
         _databaseReference
             .child('battle')
@@ -57,7 +61,8 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
                 event.snapshot.child('us2').value.toString(),
                 event.snapshot.child('avt2').value.toString(),
                 int.parse(event.snapshot.child('coin2').value.toString()),
-                isUser1);
+                isUser1,
+                int.parse(event.snapshot.child('id2').value.toString()));
           }
         });
       }
@@ -71,16 +76,18 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
           'us2': widget.account.userName,
           'avt2': widget.account.avatar,
           'coin2': widget.account.coin,
-          'progress2': 0
+          'progress2': 0,
+          'id2': widget.account.id
         });
-        joinGame(value.username!, value.avatar!, value.coin!, isUser1);
+        joinGame(value.username!, value.avatar!, value.coin!, isUser1,
+            value.accountId);
       }
       if (value != null) {}
     });
   }
 
-  void joinGame(
-      String opponentName, String opponentAvt, int coin, bool isUser1) async {
+  void joinGame(String opponentName, String opponentAvt, int coin, bool isUser1,
+      int opponentId) async {
     if (mounted) {
       setState(() {
         _opponentName = opponentName;
@@ -101,16 +108,40 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => GameBattleMainScreen(
-                isUSer1: isUser1,
-                opponentAvt: _opponentAvt,
-                opponentName: opponentName,
-                account: account,
-                gameName: 'Image walkthroug',
-                levelNumber: 2,
-                roomId: roomID),
+              isUSer1: isUser1,
+              opponentAvt: _opponentAvt,
+              opponentName: opponentName,
+              account: account,
+              gameName: 'Image walkthroug',
+              levelNumber: 2,
+              roomId: roomID,
+              opponentId: opponentId,
+            ),
           ),
           (route) => false,
         );
+      if (widget.gameId == 2) {
+        var data = await getMusicPassword(4);
+        data.time = 120;
+        // ignore: curly_braces_in_flow_control_structures, use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MusicPasswordGameBattle(
+              isUSer1: isUser1,
+              opponentAvt: _opponentAvt,
+              opponentName: opponentName,
+              account: account,
+              gameName: 'Image walkthroug',
+              levelNumber: 2,
+              roomId: roomID,
+              opponentId: opponentId,
+              info: data,
+            ),
+          ),
+          (route) => false,
+        );
+      }
     }
   }
 

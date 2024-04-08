@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
+import 'package:thinktank_mobile/api/battle_api.dart';
 import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
@@ -13,31 +15,42 @@ import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/contest.dart';
 import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/screens/contest/finalresult_screen.dart';
+import 'package:thinktank_mobile/widgets/appbar/battle_game_appbar.dart';
 import 'package:thinktank_mobile/widgets/appbar/game_appbar.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:thinktank_mobile/widgets/others/textstroke.dart';
 import 'package:thinktank_mobile/widgets/others/winscreen.dart';
 
-class MusicPasswordGamePlay extends StatefulWidget {
-  const MusicPasswordGamePlay({
+class MusicPasswordGameBattle extends StatefulWidget {
+  const MusicPasswordGameBattle({
     super.key,
     required this.info,
     required this.account,
     required this.gameName,
-    this.contestId,
+    required this.levelNumber,
+    required this.roomId,
+    required this.opponentName,
+    required this.opponentAvt,
+    required this.opponentId,
+    required this.isUSer1,
   });
   final MusicPassword info;
   final Account account;
   final String gameName;
-  final int? contestId;
+  final int levelNumber;
+  final String roomId;
+  final String opponentName;
+  final String opponentAvt;
+  final int opponentId;
+  final bool isUSer1;
 
   @override
   State<StatefulWidget> createState() {
-    return MusicPasswordGamePlayState();
+    return MusicPasswordGameBatleState();
   }
 }
 
-class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
+class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacityAnimation;
@@ -66,9 +79,18 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
   bool checkVisible = false;
   bool isListenAlready = true;
   bool enterPassVisible = false;
+  DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
+  List<StreamSubscription<DatabaseEvent>> listEvent = [];
+  bool chatVisible = false;
+  String opponentName = '';
+  String messgae = '';
+  String progressOpponentId = '';
+  String progressUserId = '';
+  List<MessageChat> listMessage = [];
   bool roundVisible = true;
   bool _timerStarted = false;
   String pass = '';
+  int progressOpponent = 5;
   bool isWin = false;
   AudioPlayer correctSound = AudioPlayer();
   AudioPlayer incorrectSound = AudioPlayer();
@@ -80,6 +102,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
   AudioPlayer sound6 = AudioPlayer();
   AudioPlayer sound7 = AudioPlayer();
   AudioPlayer sound8 = AudioPlayer();
+  DateTime startTime = DateTime.now();
   AudioPlayer sound9 = AudioPlayer();
   AudioPlayer sound0 = AudioPlayer();
   AudioPlayer soundSao = AudioPlayer();
@@ -111,26 +134,25 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
     return list;
   }
 
-  void setSound() async {
+  void setSound() {
     listNote.shuffle();
     for (var s in listNote) {
       print(s);
     }
-
-    await correctSound.setSourceAsset('sound/correct.mp3');
-    await incorrectSound.setSourceAsset('sound/incorrect.mp3');
-    await sound1.setSourceAsset('sound/${listNote[0]}.mp3');
-    await sound2.setSourceAsset('sound/${listNote[1]}.mp3');
-    await sound3.setSourceAsset('sound/${listNote[2]}.mp3');
-    await sound4.setSourceAsset('sound/${listNote[3]}.mp3');
-    await sound5.setSourceAsset('sound/${listNote[4]}.mp3');
-    await sound6.setSourceAsset('sound/${listNote[5]}.mp3');
-    await sound7.setSourceAsset('sound/${listNote[6]}.mp3');
-    await sound8.setSourceAsset('sound/${listNote[7]}.mp3');
-    await sound9.setSourceAsset('sound/${listNote[8]}.mp3');
-    await soundSao.setSourceAsset('sound/${listNote[9]}.mp3');
-    await sound0.setSourceAsset('sound/${listNote[10]}.mp3');
-    await soundThang.setSourceAsset('sound/${listNote[11]}.mp3');
+    correctSound.setSourceAsset('sound/correct.mp3');
+    incorrectSound.setSourceAsset('sound/incorrect.mp3');
+    sound1.setSourceAsset('sound/${listNote[0]}.mp3');
+    sound2.setSourceAsset('sound/${listNote[1]}.mp3');
+    sound3.setSourceAsset('sound/${listNote[2]}.mp3');
+    sound4.setSourceAsset('sound/${listNote[3]}.mp3');
+    sound5.setSourceAsset('sound/${listNote[4]}.mp3');
+    sound6.setSourceAsset('sound/${listNote[5]}.mp3');
+    sound7.setSourceAsset('sound/${listNote[6]}.mp3');
+    sound8.setSourceAsset('sound/${listNote[7]}.mp3');
+    sound9.setSourceAsset('sound/${listNote[8]}.mp3');
+    soundSao.setSourceAsset('sound/${listNote[9]}.mp3');
+    sound0.setSourceAsset('sound/${listNote[10]}.mp3');
+    soundThang.setSourceAsset('sound/${listNote[11]}.mp3');
   }
 
   void delete() {
@@ -167,28 +189,6 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
 
   void win() async {
     double points = (remainingTime.inMilliseconds / 1000);
-    if (widget.contestId != null) {
-      ContestsAPI.addAccountInContest(
-          (widget.info.time * 1000 - remainingTime.inMilliseconds).toDouble() /
-              1000,
-          (points * 100).toInt(),
-          widget.contestId!);
-    } else {
-      int levelMax = await SharedPreferencesHelper.getMusicPasswordLevel();
-      if (levelMax == widget.info.level) {
-        await SharedPreferencesHelper.saveMusicPasswordLevel(
-            widget.info.level + 1);
-      }
-      await ApiAchieviements.addAchieviements(
-          (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
-              1000,
-          (points * 100).toInt(),
-          widget.info.level,
-          2,
-          //widget.account.id,
-          //widget.account.accessToken!,
-          widget.info.answer.length ~/ 2);
-    }
 
     setState(() {
       bg = 'assets/pics/winmuisc.png';
@@ -196,52 +196,366 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
       enterPassVisible = false;
       script =
           "As James enters the last part of the password, the door emits a positive beep and unlocks. James can't hide his excitement.\nGot it! Who needs to remember a password when you've got rhythm?\nJames opens the door and steps inside, feeling a sense of accomplishment.";
-      continueVisible = true;
+
       scriptVisibile = true;
       timer?.cancel();
     });
+    if (widget.isUSer1) {
+      _databaseReference
+          .child('battle')
+          .child(widget.roomId)
+          .child('time1')
+          .set(remainingTime.inMilliseconds);
+    } else {
+      _databaseReference
+          .child('battle')
+          .child(widget.roomId)
+          .child('time2')
+          .set(remainingTime.inMilliseconds);
+    }
+
+    listEvent.add(_databaseReference
+        .child('battle')
+        .child(widget.roomId)
+        .child(progressOpponentId)
+        .onValue
+        .listen((event) async {
+      if (int.parse(event.snapshot.value.toString()) == 0) {
+        print('Thắng rồi');
+        Account? account = await SharedPreferencesHelper.getInfo();
+        account!.coin = account.coin! + 20;
+        await SharedPreferencesHelper.saveInfo(account);
+        await BattleAPI.addResultBattle(
+          20,
+          account.id,
+          widget.isUSer1 ? account.id : widget.opponentId,
+          widget.isUSer1 ? widget.opponentId : account.id,
+          2,
+          widget.roomId,
+          startTime,
+        );
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => FinalResultScreen(
+                  points: points.toInt(),
+                  status: 'win',
+                  gameId: 2,
+                  totalCoin: account.coin!,
+                  contestId: null)),
+          (route) => false,
+        );
+      }
+    }));
+    if (widget.isUSer1) {
+      listEvent.add(_databaseReference
+          .child('battle')
+          .child(widget.roomId)
+          .child('time2')
+          .onValue
+          .listen((event) async {
+        if (event.snapshot.exists) {
+          if (remainingTime.inMilliseconds >
+              int.parse(event.snapshot.value.toString())) {
+            print('Thắng do còn nhiều time hơn');
+            Account? account = await SharedPreferencesHelper.getInfo();
+            account!.coin = account.coin! + 20;
+            await SharedPreferencesHelper.saveInfo(account);
+            await BattleAPI.addResultBattle(
+              20,
+              account.id,
+              widget.isUSer1 ? account.id : widget.opponentId,
+              widget.isUSer1 ? widget.opponentId : account.id,
+              2,
+              widget.roomId,
+              startTime,
+            );
+            // ignore: use_build_context_synchronously
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FinalResultScreen(
+                      points: points.toInt(),
+                      status: 'win',
+                      gameId: 2,
+                      totalCoin: account.coin!,
+                      contestId: null)),
+              (route) => false,
+            );
+          } else if (remainingTime.inMilliseconds <
+              int.parse(event.snapshot.value.toString())) {
+            print('Thua do ít time hơn');
+            Account? account = await SharedPreferencesHelper.getInfo();
+            account!.coin = account.coin! - 20;
+            await SharedPreferencesHelper.saveInfo(account);
+            await BattleAPI.addResultBattle(
+              20,
+              widget.opponentId,
+              widget.isUSer1 ? account.id : widget.opponentId,
+              widget.isUSer1 ? widget.opponentId : account.id,
+              2,
+              widget.roomId,
+              startTime,
+            );
+            // ignore: use_build_context_synchronously
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FinalResultScreen(
+                      points: points.toInt(),
+                      status: 'lose',
+                      gameId: 2,
+                      totalCoin: account.coin!,
+                      contestId: null)),
+              (route) => false,
+            );
+          } else {
+            print('Hòa');
+            Account? account = await SharedPreferencesHelper.getInfo();
+            await BattleAPI.addResultBattle(
+              20,
+              0,
+              widget.isUSer1 ? account!.id : widget.opponentId,
+              widget.isUSer1 ? widget.opponentId : account!.id,
+              2,
+              widget.roomId,
+              startTime,
+            );
+            // ignore: use_build_context_synchronously
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FinalResultScreen(
+                      points: points.toInt(),
+                      status: 'draw',
+                      gameId: 2,
+                      totalCoin: account!.coin!,
+                      contestId: null)),
+              (route) => false,
+            );
+          }
+        }
+      }));
+    } else {
+      listEvent.add(_databaseReference
+          .child('battle')
+          .child(widget.roomId)
+          .child('time1')
+          .onValue
+          .listen((event) async {
+        if (event.snapshot.exists) {
+          if (remainingTime.inMilliseconds >
+              int.parse(event.snapshot.value.toString())) {
+            print('Thắng do còn nhiều time hơn');
+            Account? account = await SharedPreferencesHelper.getInfo();
+            account!.coin = account.coin! + 20;
+            await SharedPreferencesHelper.saveInfo(account);
+            await BattleAPI.addResultBattle(
+              20,
+              account.id,
+              widget.isUSer1 ? account.id : widget.opponentId,
+              widget.isUSer1 ? widget.opponentId : account.id,
+              2,
+              widget.roomId,
+              startTime,
+            );
+            // ignore: use_build_context_synchronously
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FinalResultScreen(
+                      points: points.toInt(),
+                      status: 'win',
+                      gameId: 2,
+                      totalCoin: account.coin!,
+                      contestId: null)),
+              (route) => false,
+            );
+          } else if (remainingTime.inMilliseconds <
+              int.parse(event.snapshot.value.toString())) {
+            print('Thua do ít time hơn');
+            Account? account = await SharedPreferencesHelper.getInfo();
+            account!.coin = account.coin! - 20;
+            await SharedPreferencesHelper.saveInfo(account);
+            await BattleAPI.addResultBattle(
+              20,
+              widget.opponentId,
+              widget.isUSer1 ? account.id : widget.opponentId,
+              widget.isUSer1 ? widget.opponentId : account.id,
+              2,
+              widget.roomId,
+              startTime,
+            );
+            // ignore: use_build_context_synchronously
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FinalResultScreen(
+                      points: points.toInt(),
+                      status: 'lose',
+                      gameId: 4,
+                      totalCoin: account.coin!,
+                      contestId: null)),
+              (route) => false,
+            );
+          } else {
+            print('Hòa');
+            Account? account = await SharedPreferencesHelper.getInfo();
+
+            await BattleAPI.addResultBattle(
+              20,
+              0,
+              widget.isUSer1 ? account!.id : widget.opponentId,
+              widget.isUSer1 ? widget.opponentId : account!.id,
+              2,
+              widget.roomId,
+              startTime,
+            );
+            // ignore: use_build_context_synchronously
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FinalResultScreen(
+                      points: points.toInt(),
+                      status: 'draw',
+                      gameId: 2,
+                      totalCoin: account!.coin!,
+                      contestId: null)),
+              (route) => false,
+            );
+          }
+        }
+      }));
+    }
   }
 
   void lose() async {
-    if (widget.contestId != null) {
-      await ContestsAPI.addAccountInContest(
-        (widget.info.time * 1000 - remainingTime.inMilliseconds).toDouble() /
-            1000,
-        0,
-        widget.contestId!,
-      );
-    }
     setState(() {
       isWin = false;
       bg = 'assets/pics/losemusic.png';
       checkVisible = false;
       enterPassVisible = false;
       script = "Oh no. Jame can't remember password!\nHe can't open the door!";
-      continueVisible = true;
+
       scriptVisibile = true;
       timer?.cancel();
     });
+
+    setState(() {
+      _databaseReference
+          .child('battle')
+          .child(widget.roomId)
+          .child(progressUserId)
+          .set(0);
+    });
+    listEvent.add(_databaseReference
+        .child('battle')
+        .child(widget.roomId)
+        .child(progressOpponentId)
+        .onValue
+        .listen((event) async {
+      if (int.parse(event.snapshot.value.toString()) == 0) {
+        print('Hòa - Cả 2 đều không hoàn thành');
+        Account? account = await SharedPreferencesHelper.getInfo();
+        await BattleAPI.addResultBattle(
+          20,
+          0,
+          widget.isUSer1 ? account!.id : widget.opponentId,
+          widget.isUSer1 ? widget.opponentId : account!.id,
+          2,
+          widget.roomId,
+          startTime,
+        );
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => FinalResultScreen(
+                  points: 0,
+                  status: 'draw',
+                  gameId: 4,
+                  totalCoin: account!.coin!,
+                  contestId: null)),
+          (route) => false,
+        );
+      }
+    }));
+
+    if (widget.isUSer1) {
+      listEvent.add(_databaseReference
+          .child('battle')
+          .child(widget.roomId)
+          .child('time2')
+          .onValue
+          .listen((event) async {
+        if (event.snapshot.exists) {
+          print('Thua rồi');
+          Account? account = await SharedPreferencesHelper.getInfo();
+          account!.coin = account.coin! - 20;
+          await SharedPreferencesHelper.saveInfo(account);
+          await BattleAPI.addResultBattle(
+            20,
+            widget.opponentId,
+            widget.isUSer1 ? account.id : widget.opponentId,
+            widget.isUSer1 ? widget.opponentId : account.id,
+            2,
+            widget.roomId,
+            startTime,
+          );
+          // ignore: use_build_context_synchronously
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const FinalResultScreen(
+                    points: 0,
+                    status: 'lose',
+                    gameId: 2,
+                    totalCoin: 0,
+                    contestId: null)),
+            (route) => false,
+          );
+        }
+      }));
+    } else {
+      listEvent.add(_databaseReference
+          .child('battle')
+          .child(widget.roomId)
+          .child('time1')
+          .onValue
+          .listen((event) async {
+        if (event.snapshot.exists) {
+          print('Thua rồi');
+          Account? account = await SharedPreferencesHelper.getInfo();
+          account!.coin = account.coin! - 20;
+          await SharedPreferencesHelper.saveInfo(account);
+          await BattleAPI.addResultBattle(
+            20,
+            widget.opponentId,
+            widget.isUSer1 ? account.id : widget.opponentId,
+            widget.isUSer1 ? widget.opponentId : account.id,
+            2,
+            widget.roomId,
+            startTime,
+          );
+          // ignore: use_build_context_synchronously
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const FinalResultScreen(
+                    points: 0,
+                    status: 'lose',
+                    gameId: 4,
+                    totalCoin: 0,
+                    contestId: null)),
+            (route) => false,
+          );
+        }
+      }));
+    }
   }
 
   void skipScript() async {
-    if (numScript == 1) {
-      setState(() {
-        script =
-            "Ah, yes! The sound!\nJames mimics the sound, tapping his fingers on the table. He listens intently, analyzing the rhythm.";
-      });
-      numScript++;
-      return;
-    }
-    if (numScript == 2) {
-      setState(() {
-        script =
-            "James grins as he recognizes the pattern. He takes a deep breath, ready to give it a try.";
-      });
-      numScript++;
-      skipVisible = false;
-      continueVisible = true;
-      return;
-    }
     if (numScript == 3) {
       setState(() {
         scriptVisibile = false;
@@ -254,92 +568,159 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
       numScript++;
       return;
     }
-    if (isWin) {
-      double points = (remainingTime.inMilliseconds / 1000);
-      if (widget.contestId != null) {
-        Account? account = await SharedPreferencesHelper.getInfo();
-        // ignore: use_build_context_synchronously
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => FinalResultScreen(
-                  points: (points * 100).toInt(),
-                  status: 'win',
-                  gameId: 2,
-                  totalCoin:
-                      account!.coin! + ((points * 100).toInt() / 10).toInt(),
-                  contestId: widget.contestId!)),
-          (route) => false,
-        );
-      } else {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WinScreen(
-              haveTime: true,
-              points: (points * 100).toInt(),
-              time: (maxTime.inMilliseconds - remainingTime.inMilliseconds)
-                      .toDouble() /
-                  1000,
-              isWin: true,
-              gameName: widget.gameName,
-              gameId: 2,
-              contestId: widget.contestId,
-            ),
-          ),
-          (route) => false,
-        );
-      }
-    } else {
-      if (widget.contestId != null) {
-        Account? account = await SharedPreferencesHelper.getInfo();
-        // ignore: use_build_context_synchronously
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => FinalResultScreen(
-                  points: 0,
-                  status: 'lose',
-                  gameId: 2,
-                  totalCoin: account!.coin!,
-                  contestId: widget.contestId!)),
-          (route) => false,
-        );
-      } else {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WinScreen(
-              haveTime: false,
-              points: 0,
-              time: 0,
-              isWin: false,
-              gameName: widget.gameName,
-              gameId: 2,
-              contestId: widget.contestId,
-            ),
-          ),
-          (route) => false,
-        );
-      }
-    }
+    // if (isWin) {
+    //   double points = (remainingTime.inMilliseconds / 1000);
+    //   if (widget.contestId != null) {
+    //     Account? account = await SharedPreferencesHelper.getInfo();
+    //     // ignore: use_build_context_synchronously
+    //     Navigator.pushAndRemoveUntil(
+    //       context,
+    //       MaterialPageRoute(
+    //           builder: (context) => FinalResultScreen(
+    //               points: (points * 100).toInt(),
+    //               status: 'win',
+    //               gameId: 2,
+    //               totalCoin:
+    //                   account!.coin! + ((points * 100).toInt() / 10).toInt(),
+    //               contestId: widget.contestId!)),
+    //       (route) => false,
+    //     );
+    //   } else {
+    //     Navigator.pushAndRemoveUntil(
+    //       context,
+    //       MaterialPageRoute(
+    //         builder: (context) => WinScreen(
+    //           haveTime: true,
+    //           points: (points * 100).toInt(),
+    //           time: (maxTime.inMilliseconds - remainingTime.inMilliseconds)
+    //                   .toDouble() /
+    //               1000,
+    //           isWin: true,
+    //           gameName: widget.gameName,
+    //           gameId: 2,
+    //           contestId: widget.contestId,
+    //         ),
+    //       ),
+    //       (route) => false,
+    //     );
+    //   }
+    // } else {
+    //   if (widget.contestId != null) {
+    //     Account? account = await SharedPreferencesHelper.getInfo();
+    //     // ignore: use_build_context_synchronously
+    //     Navigator.pushAndRemoveUntil(
+    //       context,
+    //       MaterialPageRoute(
+    //           builder: (context) => FinalResultScreen(
+    //               points: 0,
+    //               status: 'lose',
+    //               gameId: 2,
+    //               totalCoin: account!.coin!,
+    //               contestId: widget.contestId!)),
+    //       (route) => false,
+    //     );
+    //   } else {
+    //     Navigator.pushAndRemoveUntil(
+    //       context,
+    //       MaterialPageRoute(
+    //         builder: (context) => WinScreen(
+    //           haveTime: false,
+    //           points: 0,
+    //           time: 0,
+    //           isWin: false,
+    //           gameName: widget.gameName,
+    //           gameId: 2,
+    //           contestId: widget.contestId,
+    //         ),
+    //       ),
+    //       (route) => false,
+    //     );
+    //   }
+    // }
   }
 
   @override
   void dispose() {
     timer?.cancel();
     audioPlayer.dispose();
+    for (var element in listEvent) {
+      element.cancel();
+    }
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    setSound();
-    au.setSourceAsset('sound/startgame.mp3').then((value) {
-      au.play(AssetSource('sound/startgame.mp3'));
+    _databaseReference
+        .child('battle')
+        .child(widget.roomId)
+        .child('chat')
+        .onChildAdded
+        .listen((event) async {
+      print(event.snapshot.value.toString());
+      if (event.snapshot.value
+              .toString()
+              .substring(0, widget.opponentName.length) ==
+          widget.opponentName) {
+        listMessage.add(MessageChat(
+            isOwner: false,
+            content: event.snapshot.value
+                .toString()
+                .substring(widget.opponentName.length + 3),
+            name: widget.opponentName));
+        setState(() {
+          chatVisible = true;
+          listMessage;
+          messgae = event.snapshot.value
+              .toString()
+              .substring(widget.opponentName.length + 3);
+        });
+        await Future.delayed(Duration(seconds: 2));
+        setState(() {
+          chatVisible = false;
+        });
+      } else {
+        listMessage.add(MessageChat(
+            isOwner: true,
+            content: event.snapshot.value
+                .toString()
+                .substring(widget.account.userName.length + 3),
+            name: widget.account.userName));
+        setState(() {
+          listMessage;
+        });
+      }
     });
 
+    if (widget.isUSer1) {
+      progressOpponentId = 'progress2';
+      progressUserId = 'progress1';
+    } else {
+      progressOpponentId = 'progress1';
+      progressUserId = 'progress2';
+    }
+    _databaseReference
+        .child('battle')
+        .child(widget.roomId)
+        .child(progressUserId)
+        .set(widget.info.change);
+    listEvent.add(_databaseReference
+        .child('battle')
+        .child(widget.roomId)
+        .child(progressOpponentId)
+        .onValue
+        .listen((event) {
+      setState(() {
+        if (int.parse(event.snapshot.value.toString()) >= 0) {
+          progressOpponent = int.parse(event.snapshot.value.toString());
+        }
+      });
+    }));
+
+    setSound();
+    au.setSourceAsset('sound/startgame.mp3');
+    au.play(AssetSource('sound/startgame.mp3'));
     au.onPlayerComplete.listen((event) {
       au.dispose();
     });
@@ -365,9 +746,15 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
           const Duration(seconds: 1),
           () {
             setState(() {
+              numScript == 3;
               roundVisible = false;
-              scriptVisibile = true;
-              skipVisible = true;
+              scriptVisibile = false;
+              continueVisible = false;
+              enterPassVisible = true;
+              checkVisible = true;
+              bg = 'assets/pics/nhappass.png';
+              startTimer();
+              numScript++;
             });
           },
         );
@@ -398,16 +785,26 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: TGameAppBar(
-        preferredHeight: MediaQuery.of(context).size.height * 0.26,
-        userAvatar: widget.account.avatar!,
+      appBar: TBattleGameAppBar(
+        percentOpponent: progressOpponent / widget.info.change,
+        progressMessageOpponent: '$progressOpponent/${widget.info.change}',
+        progressTitleOpponent: widget.opponentName,
+        preferredHeight: MediaQuery.of(context).size.height * 0.35,
+        listMessage: listMessage,
+        chatVisible: chatVisible,
+        messgae: messgae,
+        userName: widget.account.userName,
+        roomId: widget.roomId,
+        userAvatar: widget.opponentAvt,
+        competitorAvatar: widget.account.avatar ??
+            "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688",
         remainingTime: remainingTime,
-        gameName: 'Music Password',
-        progressTitle: 'Chance',
+        gameName: "Images Walkthrough",
+        progressTitle: widget.account.userName,
         progressMessage: '$remainChange/${widget.info.change}',
         percent: remainChange / widget.info.change,
-        onPause: pause,
-        onResume: resume,
+        onPause: () {},
+        onResume: () {},
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -435,7 +832,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                 visible: roundVisible,
                 child: Center(
                     child: TextWidget(
-                  'Round ' + widget.info.level.toString(),
+                  "Let's go",
                   fontFamily: 'ButtonCustomFont',
                   fontSize: 70,
                   strokeColor: const Color.fromRGBO(255, 212, 96, 1),
@@ -623,12 +1020,12 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               height: 60,
                               width: 60,
                               child: ElevatedButton(
-                                onPressed: () async {
+                                onPressed: () {
                                   sound1.play(
                                       AssetSource('sound/${listNote[0]}.mp3'),
                                       volume: 1000);
                                   sound1 = AudioPlayer();
-                                  await sound1.setSourceAsset(
+                                  sound1.setSourceAsset(
                                       'sound/${listNote[0]}.mp3');
                                   nhappass('1', listNote[0]);
                                 },
@@ -657,12 +1054,12 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               height: 60,
                               width: 60,
                               child: ElevatedButton(
-                                onPressed: () async {
+                                onPressed: () {
                                   sound2.play(
                                       AssetSource('sound/${listNote[1]}.mp3'));
                                   nhappass('2', listNote[1]);
                                   sound2 = AudioPlayer();
-                                  await sound2.setSourceAsset(
+                                  sound2.setSourceAsset(
                                       'sound/${listNote[1]}.mp3');
                                 },
                                 style: buttonPass,
@@ -690,11 +1087,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               height: 60,
                               width: 60,
                               child: ElevatedButton(
-                                onPressed: () async {
+                                onPressed: () {
                                   sound3.play(
                                       AssetSource('sound/${listNote[2]}.mp3'));
                                   sound3 = AudioPlayer();
-                                  await sound3.setSourceAsset(
+                                  sound3.setSourceAsset(
                                       'sound/${listNote[2]}.mp3');
                                   nhappass('3', listNote[2]);
                                 },
@@ -735,11 +1132,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               height: 60,
                               width: 60,
                               child: ElevatedButton(
-                                onPressed: () async {
+                                onPressed: () {
                                   sound4.play(
                                       AssetSource('sound/${listNote[3]}.mp3'));
                                   sound4 = AudioPlayer();
-                                  await sound4.setSourceAsset(
+                                  sound4.setSourceAsset(
                                       'sound/${listNote[3]}.mp3');
                                   nhappass('4', listNote[3]);
                                 },
@@ -768,11 +1165,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               height: 60,
                               width: 60,
                               child: ElevatedButton(
-                                onPressed: () async {
+                                onPressed: () {
                                   sound5.play(
                                       AssetSource('sound/${listNote[4]}.mp3'));
                                   sound5 = AudioPlayer();
-                                  await sound5.setSourceAsset(
+                                  sound5.setSourceAsset(
                                       'sound/${listNote[4]}.mp3');
                                   nhappass('5', listNote[4]);
                                 },
@@ -801,11 +1198,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               height: 60,
                               width: 60,
                               child: ElevatedButton(
-                                onPressed: () async {
+                                onPressed: () {
                                   sound6.play(
                                       AssetSource('sound/${listNote[5]}.mp3'));
                                   sound6 = AudioPlayer();
-                                  await sound6.setSourceAsset(
+                                  sound6.setSourceAsset(
                                       'sound/${listNote[5]}.mp3');
                                   nhappass('6', listNote[5]);
                                 },
@@ -846,11 +1243,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               height: 60,
                               width: 60,
                               child: ElevatedButton(
-                                onPressed: () async {
+                                onPressed: () {
                                   sound7.play(
                                       AssetSource('sound/${listNote[6]}.mp3'));
                                   sound7 = AudioPlayer();
-                                  await sound7.setSourceAsset(
+                                  sound7.setSourceAsset(
                                       'sound/${listNote[6]}.mp3');
                                   nhappass('7', listNote[6]);
                                 },
@@ -879,11 +1276,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               height: 60,
                               width: 60,
                               child: ElevatedButton(
-                                onPressed: () async {
+                                onPressed: () {
                                   sound8.play(
                                       AssetSource('sound/${listNote[7]}.mp3'));
                                   sound8 = AudioPlayer();
-                                  await sound8.setSourceAsset(
+                                  sound8.setSourceAsset(
                                       'sound/${listNote[7]}.mp3');
                                   nhappass('8', listNote[7]);
                                 },
@@ -912,11 +1309,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               height: 60,
                               width: 60,
                               child: ElevatedButton(
-                                onPressed: () async {
+                                onPressed: () {
                                   sound9.play(
                                       AssetSource('sound/${listNote[8]}.mp3'));
                                   sound9 = AudioPlayer();
-                                  await sound9.setSourceAsset(
+                                  sound9.setSourceAsset(
                                       'sound/${listNote[8]}.mp3');
                                   nhappass('9', listNote[8]);
                                 },
@@ -957,11 +1354,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               height: 60,
                               width: 60,
                               child: ElevatedButton(
-                                onPressed: () async {
+                                onPressed: () {
                                   soundSao.play(
                                       AssetSource('sound/${listNote[9]}.mp3'));
                                   soundSao = AudioPlayer();
-                                  await soundSao.setSourceAsset(
+                                  soundSao.setSourceAsset(
                                       'sound/${listNote[9]}.mp3');
                                   nhappass('*', listNote[9]);
                                 },
@@ -990,11 +1387,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               height: 60,
                               width: 60,
                               child: ElevatedButton(
-                                onPressed: () async {
+                                onPressed: () {
                                   sound0.play(
                                       AssetSource('sound/${listNote[10]}.mp3'));
                                   sound0 = AudioPlayer();
-                                  await sound0.setSourceAsset(
+                                  sound0.setSourceAsset(
                                       'sound/${listNote[10]}.mp3');
                                   nhappass('0', listNote[10]);
                                 },
@@ -1023,11 +1420,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                               height: 60,
                               width: 60,
                               child: ElevatedButton(
-                                onPressed: () async {
+                                onPressed: () {
                                   soundThang.play(
                                       AssetSource('sound/${listNote[11]}.mp3'));
                                   soundThang = AudioPlayer();
-                                  await soundThang.setSourceAsset(
+                                  soundThang.setSourceAsset(
                                       'sound/${listNote[11]}.mp3');
                                   nhappass('#', listNote[11]);
                                 },
@@ -1113,14 +1510,13 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                         ],
                       ),
                       child: ElevatedButton(
-                        onPressed: () async {
+                        onPressed: () {
                           if (remainChange >= 1) {
                             if (check()) {
                               correctSound
                                   .play(AssetSource('sound/correct.mp3'));
                               correctSound = AudioPlayer();
-                              await correctSound
-                                  .setSourceAsset('sound/correct.mp3');
+                              correctSound.setSourceAsset('sound/correct.mp3');
                               setState(() {
                                 isWin = true;
                                 win();
@@ -1133,6 +1529,11 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                                 incorrectSound
                                     .setSourceAsset('sound/incorrect.mp3');
                                 remainChange -= 1;
+                                _databaseReference
+                                    .child('battle')
+                                    .child(widget.roomId)
+                                    .child(progressUserId)
+                                    .set(remainChange);
                               });
                               if (remainChange <= 0) {
                                 setState(() {

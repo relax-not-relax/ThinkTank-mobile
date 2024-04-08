@@ -124,21 +124,3 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     );
   }
 }
-
-Future<MusicPassword> getMusicPassword(int level) async {
-  List<MusicPasswordSource> listSource =
-      await SharedPreferencesHelper.getMusicPasswordSources();
-  List<MusicPasswordSource> listSource2 = listSource
-      .where((element) =>
-          element.answer.length == (((level / 10) + 4) * 2).toInt())
-      .toList();
-  listSource2.shuffle();
-  MusicPasswordSource source = listSource2.first;
-  return MusicPassword(
-    level: level,
-    soundLink: source.soundLink,
-    answer: source.answer,
-    change: 5,
-    time: 600 - ((level % 10)) * 30,
-  );
-}

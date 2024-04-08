@@ -14,7 +14,7 @@ class ApiAuthentication {
     if (account == null) return false;
     final response = await http.post(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/accounts/token-revoke?userId=${account.id}'),
+          'https://thinktank-sep490.azurewebsites.net/api/accounts/${account.id}/token-revoke'),
       headers: {'Content-Type': 'application/json'},
     );
     if (response.statusCode == 200) {
@@ -95,6 +95,7 @@ class ApiAuthentication {
       "refreshToken": account.refreshToken,
     };
     String jsonBody = jsonEncode(data);
+    print(jsonBody);
     final response = await http.post(
       Uri.parse(
           'https://thinktank-sep490.azurewebsites.net/api/accounts/token-verification'),
@@ -107,7 +108,7 @@ class ApiAuthentication {
       final jsonData = json.decode(response.body);
       await SharedPreferencesHelper.saveInfo(Account.fromJson(jsonData));
       return Account.fromJson(jsonData);
-    } else if (response.statusCode == 401 || response.body != null) {
+    } else if (response.statusCode == 400 || response.body != null) {
       final jsonData2 = json.decode(response.body);
       if (jsonData2['error'].toString() == "Access Token is not expried") {
         await SharedPreferencesHelper.saveInfo(account);

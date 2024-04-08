@@ -172,12 +172,12 @@ class WinScreenState extends State<WinScreen> {
                             case 5:
                               levelCompleted = await SharedPreferencesHelper
                                   .getAnonymousLevel();
-                              game = games[2];
+                              game = games[3];
                               break;
                             case 4:
                               levelCompleted = await SharedPreferencesHelper
                                   .getImagesWalkthroughLevel();
-                              game = games[3];
+                              game = games[2];
                               break;
                           }
                           // ignore: use_build_context_synchronously
