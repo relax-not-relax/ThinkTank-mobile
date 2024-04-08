@@ -40,7 +40,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
   late String gender;
   late Future<LoginInfo?> _loginFuture;
   TextEditingController _controller = TextEditingController();
-  late String oldPassword;
+  String oldPassword = "";
   File? _selectedImage;
   bool _isNullField = false;
   late String avatar;
