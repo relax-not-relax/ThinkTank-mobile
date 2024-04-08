@@ -363,6 +363,7 @@ class LoginScreenState extends State<LoginScreen> {
                           await ApiAchieviements.getLevelOfUser(
                               acc.id, acc.accessToken!);
                           await ApiNotification.getNotifications();
+                          await ContestsAPI.getContets();
 
                           int version = await SharedPreferencesHelper
                               .getResourceVersion();

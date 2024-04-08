@@ -21,6 +21,7 @@ class TNormalAppbar extends StatelessWidget implements PreferredSizeWidget {
         ),
         child: AppBar(
           backgroundColor: Colors.black,
+          automaticallyImplyLeading: false,
           toolbarHeight: 90.0,
           title: Text(
             title,
