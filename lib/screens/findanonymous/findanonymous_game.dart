@@ -468,6 +468,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
           timer!.cancel();
           setState(() {
             print('HẾt giờ');
+            lose();
           });
         } else {
           remainingTime = newTime;
