@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -26,9 +27,10 @@ class WaitingLobbyScreen extends StatefulWidget {
 class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
   bool? isOwner;
   late Future _initData;
-
+  Account? account;
+  DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
+  List<AccountInRoom> listMembers = [];
   Future<bool> getData() async {
-    Account? account;
     account = await SharedPreferencesHelper.getInfo();
     for (AccountInRoom _account in widget.room.accountInRoomResponses) {
       if (account!.id == _account.accountId) {
@@ -42,8 +44,38 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
   @override
   void initState() {
     super.initState();
+
     _initData = getData();
     _initData.then((value) {
+      _databaseReference
+          .child('room')
+          .child(widget.room.code)
+          .onValue
+          .listen((event) {
+        listMembers.clear();
+        for (int i = 1; i < 6; i++) {
+          if (event.snapshot.hasChild('us$i') &&
+              event.snapshot.child('us$i').child('name').value.toString() !=
+                  account!.userName) {
+            AccountInRoom accountInRoom = AccountInRoom(
+                id: i,
+                isAdmin: false,
+                accountId: 0,
+                username:
+                    event.snapshot.child('us$i').child('name').value.toString(),
+                roomId: 0,
+                duration: 0,
+                mark: 0,
+                pieceOfInformation: 0,
+                avatar:
+                    event.snapshot.child('us$i').child('avt').value.toString());
+            listMembers.add(accountInRoom);
+          }
+        }
+        setState(() {
+          listMembers;
+        });
+      });
       setState(() {
         isOwner = value;
         print(isOwner);
@@ -97,7 +129,7 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
                             runSpacing: 15.0,
                             children: [
                               //usersRoomTest dùng để test UI
-                              for (final acc in usersRoomTest)
+                              for (final acc in listMembers)
                                 UserChip(accountInRoom: acc),
 
                               //sử dụng list user có trong Room

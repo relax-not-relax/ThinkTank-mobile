@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/api/game_api.dart';
@@ -28,10 +29,11 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
   final TextEditingController _controller = TextEditingController();
   bool _isFieldValid = true;
   bool isSelecting = false;
-  int selectedPlayers = 1;
+  int selectedPlayers = 2;
   Topic? selectedTopic;
   Game? selectedGame = null;
   GameOfServer? gameOfServer = null;
+  DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
 
   Future<Account?> getAccount() async {
     return await SharedPreferencesHelper.getInfo();
@@ -113,6 +115,44 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
           "Something went wrong! Can not create a new room party.",
         );
       } else {
+        await _databaseReference
+            .child('room')
+            .child(newRoom.code)
+            .child('ownerId')
+            .set(account!.id);
+        await _databaseReference
+            .child('room')
+            .child(newRoom.code)
+            .child('amountPlayer')
+            .set(1);
+        await _databaseReference
+            .child('room')
+            .child(newRoom.code)
+            .child('roomName')
+            .set(newRoom.name);
+        await _databaseReference
+            .child('room')
+            .child(newRoom.code)
+            .child('topicId')
+            .set(newRoom.topicId);
+        await _databaseReference
+            .child('room')
+            .child(newRoom.code)
+            .child('us1')
+            .child('name')
+            .set(account!.userName);
+        await _databaseReference
+            .child('room')
+            .child(newRoom.code)
+            .child('us1')
+            .child('done')
+            .set(false);
+        await _databaseReference
+            .child('room')
+            .child(newRoom.code)
+            .child('us1')
+            .child('avt')
+            .set(account!.avatar);
         // ignore: use_build_context_synchronously
         _closeDialog(context);
         // ignore: use_build_context_synchronously
@@ -260,13 +300,13 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                       ),
                       child: DropdownButton<int>(
                         value: selectedPlayers,
-                        items: List<DropdownMenuItem<int>>.generate(8,
-                            (int index) {
+                        items: [2, 3, 4, 5]
+                            .map<DropdownMenuItem<int>>((int value) {
                           return DropdownMenuItem<int>(
-                            value: index + 1,
-                            child: Text('${index + 1}'),
+                            value: value,
+                            child: Text('$value'),
                           );
-                        }),
+                        }).toList(),
                         dropdownColor: Colors.white,
                         onChanged: (int? newValue) {
                           setState(() {
