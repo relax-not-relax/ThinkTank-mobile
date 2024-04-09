@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
@@ -33,6 +36,9 @@ class GameMenuScreen extends StatefulWidget {
 
 class _GameMenuScreeState extends State<GameMenuScreen> {
   final TextEditingController _controller = TextEditingController();
+  DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
+  bool isJoin = false;
+  List<StreamSubscription<DatabaseEvent>> listEvent = [];
 
   void onPlay(BuildContext context, Level level) {
     Navigator.push(
@@ -60,21 +66,66 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
     _showResizableDialog(context);
     String roomCode = _controller.text;
     print(roomCode);
+    isJoin = false;
     if (roomCode != "") {
       dynamic result = await ApiRoom.enterToRoom(roomCode);
+      Account? account = await SharedPreferencesHelper.getInfo();
       if (result is Room) {
         // ignore: use_build_context_synchronously
         _closeDialog(context);
-        // ignore: use_build_context_synchronously
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return WaitingLobbyScreen(room: result);
-            },
-          ),
-          (route) => false,
-        );
+        listEvent.add(_databaseReference
+            .child('room')
+            .child(result.code)
+            .onValue
+            .listen((event) {
+          if (event.snapshot.exists && !isJoin) {
+            _databaseReference
+                .child('room')
+                .child(result.code)
+                .child('amountPlayer')
+                .onValue
+                .listen((event) {
+              if (event.snapshot.exists && !isJoin) {
+                isJoin = true;
+                int i = int.parse(event.snapshot.value.toString());
+                if (i >= result.amountPlayer) {
+                  print("Phòng đầy!!!");
+                } else {
+                  _databaseReference
+                      .child('room')
+                      .child(result.code)
+                      .child('us${i + 1}')
+                      .child('name')
+                      .set(account!.userName);
+                  _databaseReference
+                      .child('room')
+                      .child(result.code)
+                      .child('us${i + 1}')
+                      .child('done')
+                      .set(false);
+                  _databaseReference
+                      .child('room')
+                      .child(result.code)
+                      .child('us${i + 1}')
+                      .child('avt')
+                      .set(account!.avatar);
+                  // ignore: use_build_context_synchronously
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return WaitingLobbyScreen(room: result);
+                      },
+                    ),
+                    (route) => false,
+                  );
+                }
+              }
+            });
+          } else {
+            print('Phòng đã giải tán');
+          }
+        }));
       } else {
         // ignore: use_build_context_synchronously
         _closeDialog(context);
@@ -83,6 +134,15 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
           _showResizableDialogError(context, result);
         });
       }
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    for (var element in listEvent) {
+      element.cancel();
     }
   }
 

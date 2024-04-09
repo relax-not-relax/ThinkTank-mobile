@@ -104,6 +104,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
   AudioPlayer sound7 = AudioPlayer();
   AudioPlayer sound8 = AudioPlayer();
   DateTime startTime = DateTime.now();
+  bool isIcon = false;
   AudioPlayer sound9 = AudioPlayer();
   AudioPlayer sound0 = AudioPlayer();
   AudioPlayer soundSao = AudioPlayer();
@@ -738,6 +739,31 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
         });
       }
     });
+    _databaseReference
+        .child('battle')
+        .child(widget.roomId)
+        .child('iconChat')
+        .onChildAdded
+        .listen((event) async {
+      print(event.snapshot.value.toString());
+      if (event.snapshot.value
+              .toString()
+              .substring(0, widget.opponentName.length) ==
+          widget.opponentName) {
+        setState(() {
+          chatVisible = true;
+          isIcon = true;
+          messgae = event.snapshot.value
+              .toString()
+              .substring(widget.opponentName.length + 3);
+        });
+        await Future.delayed(Duration(seconds: 4));
+        setState(() {
+          chatVisible = false;
+          isIcon = false;
+        });
+      }
+    });
 
     if (widget.isUSer1) {
       progressOpponentId = 'progress2';
@@ -853,6 +879,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
         percent: remainChange / widget.info.change,
         onPause: () {},
         onResume: () {},
+        isIcon: isIcon,
       ),
       body: Container(
         decoration: BoxDecoration(

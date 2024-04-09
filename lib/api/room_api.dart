@@ -92,7 +92,7 @@ class ApiRoom {
     Account? account = await SharedPreferencesHelper.getInfo();
     final response = await http.delete(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/rooms/$id?accountId=${account!.id}'),
+          'https://thinktank-sep490.azurewebsites.net/api/rooms/$id,${account!.id}'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${account.accessToken}',
@@ -107,7 +107,7 @@ class ApiRoom {
       SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.delete(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/rooms/$id?accountId=${account2.id}'),
+            'https://thinktank-sep490.azurewebsites.net/api/rooms/$id,${account2.id}'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2.accessToken}',

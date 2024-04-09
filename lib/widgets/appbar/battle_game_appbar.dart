@@ -73,6 +73,7 @@ class TBattleGameAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.progressTitleOpponent,
     required this.progressMessageOpponent,
     required this.percentOpponent,
+    required this.isIcon,
   });
 
   final double preferredHeight;
@@ -93,6 +94,7 @@ class TBattleGameAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String messgae;
   final bool chatVisible;
   final List<MessageChat> listMessage;
+  final bool isIcon;
 
   @override
   State<TBattleGameAppBar> createState() => _TBattleGameAppBarState();
@@ -363,6 +365,19 @@ class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
   }
 
   Future displayIcons(BuildContext context) async {
+    DatabaseReference _databaseReference =
+        FirebaseDatabase.instance.reference();
+    Future sendIcon(String icon) async {
+      if (mounted) {
+        DatabaseReference newChat = await _databaseReference
+            .child('battle')
+            .child(widget.roomId)
+            .child('iconChat')
+            .push();
+        await newChat.set("${widget.userName} : $icon");
+      }
+    }
+
     // ignore: use_build_context_synchronously
     return showModalBottomSheet(
       context: context,
@@ -385,13 +400,19 @@ class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
               children: icons.map((iconData) {
-                return Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(iconData.iconAvatar),
-                      fit: BoxFit.cover,
+                return InkWell(
+                  onTap: () async {
+                    await sendIcon(iconData.iconAvatar);
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(iconData.iconAvatar),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 );
@@ -703,11 +724,22 @@ class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
                             top: MediaQuery.of(context).size.height * 0.11 +
                                 14.7),
                         // ignore: sort_child_properties_last
-                        child: Text(
-                          widget.messgae,
-                          style: const TextStyle(
-                              fontSize: 17, color: Colors.white),
-                        ),
+                        child: widget.isIcon
+                            ? Container(
+                                width: 120,
+                                height: 120,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: NetworkImage(widget.messgae),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              )
+                            : Text(
+                                widget.messgae,
+                                style: const TextStyle(
+                                    fontSize: 17, color: Colors.white),
+                              ),
                         decoration: BoxDecoration(
                             color: const Color.fromARGB(218, 0, 0, 0),
                             borderRadius: BorderRadius.circular(10)),

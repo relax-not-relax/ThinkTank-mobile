@@ -73,6 +73,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
   bool isLosed = false;
   late ImagesWalkthroughGame _game;
   bool chatVisible = false;
+  bool isICon = false;
   String opponentName = '';
   String messgae = '';
   String progressOpponentId = '';
@@ -131,7 +132,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
               .toString()
               .substring(widget.opponentName.length + 3);
         });
-        await Future.delayed(Duration(seconds: 2));
+        await Future.delayed(Duration(seconds: 6));
         setState(() {
           chatVisible = false;
         });
@@ -144,6 +145,32 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
             name: widget.account.userName));
         setState(() {
           listMessage;
+        });
+      }
+    });
+
+    _databaseReference
+        .child('battle')
+        .child(widget.roomId)
+        .child('iconChat')
+        .onChildAdded
+        .listen((event) async {
+      print(event.snapshot.value.toString());
+      if (event.snapshot.value
+              .toString()
+              .substring(0, widget.opponentName.length) ==
+          widget.opponentName) {
+        setState(() {
+          chatVisible = true;
+          isICon = true;
+          messgae = event.snapshot.value
+              .toString()
+              .substring(widget.opponentName.length + 3);
+        });
+        await Future.delayed(Duration(seconds: 6));
+        setState(() {
+          chatVisible = false;
+          isICon = false;
         });
       }
     });
@@ -692,6 +719,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         percent: percent,
         onPause: () {},
         onResume: () {},
+        isIcon: isICon,
       ),
       body: Container(
         child: screenWidget,
