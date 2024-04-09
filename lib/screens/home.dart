@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
         activePage = OptionScreen();
         break;
       case 1:
-        activePage = MemoryMainScreen();
+        //activePage = MemoryMainScreen();
         break;
       case 4:
         activePage = const FriendScreen();

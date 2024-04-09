@@ -114,12 +114,10 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         .onChildAdded
         .listen((event) async {
       print(event.snapshot.value.toString());
-      if (event.snapshot.value.toString().length >=
-              widget.opponentName.length &&
-          event.snapshot.value
-                  .toString()
-                  .substring(0, widget.opponentName.length) ==
-              widget.opponentName) {
+      if (event.snapshot.value
+              .toString()
+              .substring(0, widget.opponentName.length) ==
+          widget.opponentName) {
         listMessage.add(MessageChat(
             isOwner: false,
             content: event.snapshot.value
