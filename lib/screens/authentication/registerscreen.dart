@@ -5,7 +5,9 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/screens/authentication/loginscreen.dart';
 import 'package:thinktank_mobile/screens/game/game_menu.dart';
 import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
@@ -128,15 +130,14 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
       });
       final jsonData = json.decode(response.body);
       Account account = Account.fromJson(jsonData);
+      await SharedPreferencesHelper.saveInfo(account);
       _showSuccessDialog(context);
       Future.delayed(const Duration(seconds: 2), () {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (context) => const HomeScreen(
-                    inputScreen: OptionScreen(),
-                    screenIndex: 0,
-                  )),
+            builder: (context) => const LoginScreen(),
+          ),
           (route) => false,
         );
       });
