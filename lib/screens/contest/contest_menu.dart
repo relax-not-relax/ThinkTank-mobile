@@ -129,7 +129,8 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
             id: element.id,
             description: element.value.split(';')[0],
             numberOfDescription: 0,
-            imgPath: element.value.split(';')[1]));
+            imgPath: element.value.split(';')[1],
+            topicId: 0));
       }
       // ignore: use_build_context_synchronously
       listAnswer.shuffle();

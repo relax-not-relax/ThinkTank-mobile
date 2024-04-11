@@ -108,7 +108,12 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                       .child(result.code)
                       .child('us${i + 1}')
                       .child('avt')
-                      .set(account!.avatar);
+                      .set(account.avatar);
+                  _databaseReference
+                      .child('room')
+                      .child(result.code)
+                      .child('amountPlayer')
+                      .set(i + 1);
                   // ignore: use_build_context_synchronously
                   Navigator.pushAndRemoveUntil(
                     context,

@@ -6,6 +6,7 @@ import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/findanounymous_assets.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:thinktank_mobile/models/image_resource.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
 import 'package:thinktank_mobile/models/musicpassword.dart';
 
@@ -43,6 +44,7 @@ class AssetsAPI {
     print(element['value'].toString() + "Lukaku");
     int id = int.parse(element['id'].toString());
     List<String> des = element['value'].toString().split(';');
+    int topicId = int.parse(element['topicId'].toString());
 
     String description = des[0];
     String imgLink = des[1];
@@ -52,7 +54,8 @@ class AssetsAPI {
         id: id,
         description: description,
         numberOfDescription: numberOfDescription,
-        imgPath: imgPath);
+        imgPath: imgPath,
+        topicId: topicId);
     return result;
   }
 
@@ -72,7 +75,7 @@ class AssetsAPI {
       final jsonData = json.decode(response.body);
       final jsonList = jsonData['results'];
       List<FindAnonymousAsset> listAnomymous = [];
-      List<String> listPathImageSource = [];
+      List<ImageResource> listPathImageSource = [];
       List<MusicPasswordSource> listMusicpassword = [];
       for (var element in jsonList) {
         if (int.parse(element['version'].toString()) > maxVersion) {
@@ -83,20 +86,26 @@ class AssetsAPI {
             String path = await saveImageToDevice(
                 element['value'], element['id'].toString());
             print(path);
-            listPathImageSource.add(path);
+            int topicId = int.parse(element['topicId'].toString());
+            listPathImageSource
+                .add(ImageResource(topicId: topicId, value: path));
             break;
           case 2:
             String path = await saveAudioToDevice(
                 element['value'], element['id'].toString());
             print(path);
             MusicPasswordSource musicPasswordSource = MusicPasswordSource(
-                soundLink: path, answer: element['answer'].toString());
+                soundLink: path,
+                answer: element['answer'].toString(),
+                topicId: int.parse(element['topicId'].toString()));
             listMusicpassword.add(musicPasswordSource);
             break;
           case 4:
             String path = await saveImageToDevice(
                 element['value'], element['id'].toString());
-            listPathImageSource.add(path);
+            int topicId = int.parse(element['topicId'].toString());
+            listPathImageSource
+                .add(ImageResource(topicId: topicId, value: path));
             break;
           case 5:
             FindAnonymousAsset asset =
@@ -123,7 +132,7 @@ class AssetsAPI {
         final jsonData = json.decode(response.body);
         final jsonList = jsonData['results'];
         List<FindAnonymousAsset> listAnomymous = [];
-        List<String> listPathImageSource = [];
+        List<ImageResource> listPathImageSource = [];
         List<MusicPasswordSource> listMusicpassword = [];
         for (var element in jsonList) {
           if (int.parse(element['version'].toString()) > maxVersion) {
@@ -134,20 +143,26 @@ class AssetsAPI {
               String path = await saveImageToDevice(
                   element['value'], element['id'].toString());
               print(path);
-              listPathImageSource.add(path);
+              int topicId = int.parse(element['topicId'].toString());
+              listPathImageSource
+                  .add(ImageResource(topicId: topicId, value: path));
               break;
             case 2:
               String path = await saveAudioToDevice(
                   element['value'], element['id'].toString());
               print(path);
               MusicPasswordSource musicPasswordSource = MusicPasswordSource(
-                  soundLink: path, answer: element['answer'].toString());
+                  soundLink: path,
+                  answer: element['answer'].toString(),
+                  topicId: int.parse(element['topicId'].toString()));
               listMusicpassword.add(musicPasswordSource);
               break;
             case 4:
               String path = await saveImageToDevice(
                   element['value'], element['id'].toString());
-              listPathImageSource.add(path);
+              int topicId = int.parse(element['topicId'].toString());
+              listPathImageSource
+                  .add(ImageResource(topicId: topicId, value: path));
               break;
             case 5:
               FindAnonymousAsset asset =
