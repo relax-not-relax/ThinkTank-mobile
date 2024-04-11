@@ -1,14 +1,9 @@
 import 'dart:async';
-
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/account_in_room.dart';
-import 'package:thinktank_mobile/models/imageswalkthrough.dart';
 import 'package:thinktank_mobile/models/room.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/game_mainscreen.dart';
 import 'package:thinktank_mobile/widgets/appbar/room_appbar.dart';
@@ -101,19 +96,24 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
             .onValue
             .listen((event) {
           if (int.parse(event.snapshot.value.toString()) == -1) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => GameMainScreen(
-                    account: account!,
-                    gameName: 'Image Walkthrough',
-                    levelNumber: 0,
-                    contestId: null,
-                    roomCode: widget.room.code,
-                    topicId: topicId),
-              ),
-              (route) => false,
-            );
+            switch (widget.gameId) {
+              case 4:
+                // ignore: use_build_context_synchronously
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GameMainScreen(
+                        account: account!,
+                        gameName: 'Image Walkthrough',
+                        levelNumber: 0,
+                        contestId: null,
+                        roomCode: widget.room.code,
+                        topicId: topicId),
+                  ),
+                  (route) => false,
+                );
+                break;
+            }
           }
         }));
       }
@@ -242,21 +242,24 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
                                     .child(widget.room.code)
                                     .child('AmountPlayerDone')
                                     .set(0);
-
-                                // ignore: use_build_context_synchronously
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => GameMainScreen(
-                                        account: account!,
-                                        gameName: 'Image Walkthrough',
-                                        levelNumber: 0,
-                                        contestId: null,
-                                        roomCode: widget.room.code,
-                                        topicId: topicId),
-                                  ),
-                                  (route) => false,
-                                );
+                                switch (widget.gameId) {
+                                  case 4:
+                                    // ignore: use_build_context_synchronously
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => GameMainScreen(
+                                            account: account!,
+                                            gameName: 'Image Walkthrough',
+                                            levelNumber: 0,
+                                            contestId: null,
+                                            roomCode: widget.room.code,
+                                            topicId: topicId),
+                                      ),
+                                      (route) => false,
+                                    );
+                                    break;
+                                }
                               }
                             },
                             style: button1v1,

@@ -435,7 +435,7 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                 visible: roundVisible,
                 child: Center(
                     child: TextWidget(
-                  'Round ' + widget.info.level.toString(),
+                  'Level ' + widget.info.level.toString(),
                   fontFamily: 'ButtonCustomFont',
                   fontSize: 70,
                   strokeColor: const Color.fromRGBO(255, 212, 96, 1),

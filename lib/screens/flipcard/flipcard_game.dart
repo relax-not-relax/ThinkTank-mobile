@@ -1,16 +1,20 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/api/contest_api.dart';
+import 'package:thinktank_mobile/api/room_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/flipcard.dart';
 import 'package:thinktank_mobile/models/logininfo.dart';
 import 'package:thinktank_mobile/screens/contest/finalresult_screen.dart';
+import 'package:thinktank_mobile/screens/game/leaderboard.dart';
 import 'package:thinktank_mobile/widgets/appbar/game_appbar.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:thinktank_mobile/widgets/others/winscreen.dart';
@@ -22,12 +26,16 @@ class FlipCardGamePlay extends StatefulWidget {
     required this.gameName,
     required this.level,
     this.contestId,
+    this.roomCode,
+    this.topicId,
   });
 
   final Account account;
   final String gameName;
   final int level;
   final int? contestId;
+  final String? roomCode;
+  final int? topicId;
 
   @override
   State<FlipCardGamePlay> createState() => _FlipCardGamePlayState();
@@ -48,6 +56,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
   bool _timerStarted = false;
   int count = 0;
   double percent = 0.0;
+  bool isNotaddAccountInRoom = true;
   final progressTitle = "Flipped";
   int total = 0;
   int pair = 0;
@@ -55,8 +64,10 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
   bool continueVisible = false;
   bool isLosed = false;
   bool _isCheckingCards = false;
+  int numberPlayer = 0;
   bool _isLoading = true;
   bool _isFree = true;
+  AudioPlayer au = AudioPlayer();
 
   bool _areAllCardsFlipped() {
     print(_game.matchedCards.every((isFlipped) => false));
@@ -65,26 +76,28 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
 
   void startTimer() {
     timer = Timer.periodic(const Duration(milliseconds: 500), (_) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           final newTime = remainingTime - const Duration(milliseconds: 500);
           if (newTime.isNegative) {
             timer!.cancel();
-            if (mounted)
+            if (mounted) {
               setState(() {
                 isLosed = true;
                 continueVisible = true;
               });
+            }
           } else {
             remainingTime = newTime;
           }
         });
+      }
     });
   }
 
   void win() async {
     double points = (remainingTime.inMilliseconds / 1000);
-    if (widget.contestId == null) {
+    if (widget.contestId == null && widget.roomCode == null) {
       int levelMax = await SharedPreferencesHelper.getFLipCardLevel();
       if (levelMax == widget.level) {
         await SharedPreferencesHelper.saveFLipCardLevel(widget.level + 1);
@@ -108,9 +121,12 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
   late Future _initResource;
   Future<void> initResource() async {
     levelNow = widget.level;
-    await _game.initGame(levelNow, widget.contestId);
+    await _game.initGame(levelNow, widget.contestId, widget.topicId);
     if (widget.contestId != null) {
       _game.gameImg = await _game.initGameImg(0);
+    } else if (widget.roomCode != null) {
+      numberPlayer =
+          (await ApiRoom.getRoomLeaderboard(widget.roomCode!)).length;
     } else {
       _game.gameImg = await _game.initGameImg(levelNow);
     }
@@ -118,6 +134,31 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
       _game.gameImg.length,
       (index) => GlobalKey<FlipCardState>(),
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    au.dispose();
+    DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
+    if (widget.roomCode != null) {
+      _databaseReference
+          .child('room')
+          .child(widget.roomCode!)
+          .child('AmountPlayerDone')
+          .onValue
+          .listen((event) {
+        if (isNotaddAccountInRoom && event.snapshot.exists) {
+          isNotaddAccountInRoom = false;
+          _databaseReference
+              .child('room')
+              .child(widget.roomCode!)
+              .child('AmountPlayerDone')
+              .set(int.parse(event.snapshot.value.toString()) + 1);
+        }
+      });
+    }
   }
 
   void _continue() async {
@@ -143,6 +184,35 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
                   contestId: widget.contestId!)),
           (route) => false,
         );
+      } else if (widget.roomCode != null) {
+        await ApiRoom.addAccountInRoom(
+            widget.roomCode!, (points * 100).toInt());
+        DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
+        _databaseReference
+            .child('room')
+            .child(widget.roomCode!)
+            .child('AmountPlayerDone')
+            .onValue
+            .listen((event) {
+          if (isNotaddAccountInRoom && event.snapshot.exists) {
+            isNotaddAccountInRoom = false;
+            _databaseReference
+                .child('room')
+                .child(widget.roomCode!)
+                .child('AmountPlayerDone')
+                .set(int.parse(event.snapshot.value.toString()) + 1);
+          }
+          if (int.parse(event.snapshot.value.toString()) >= numberPlayer) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    LeaderBoardScreen(gameId: 0, roomCode: widget.roomCode),
+              ),
+              (route) => false,
+            );
+          }
+        });
       } else {
         // ignore: use_build_context_synchronously
         Navigator.pushAndRemoveUntil(
@@ -183,6 +253,34 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
                   contestId: widget.contestId!)),
           (route) => false,
         );
+      } else if (widget.roomCode != null) {
+        await ApiRoom.addAccountInRoom(widget.roomCode!, 0);
+        DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
+        _databaseReference
+            .child('room')
+            .child(widget.roomCode!)
+            .child('AmountPlayerDone')
+            .onValue
+            .listen((event) {
+          if (isNotaddAccountInRoom && event.snapshot.exists) {
+            isNotaddAccountInRoom = false;
+            _databaseReference
+                .child('room')
+                .child(widget.roomCode!)
+                .child('AmountPlayerDone')
+                .set(int.parse(event.snapshot.value.toString()) + 1);
+          }
+          if (int.parse(event.snapshot.value.toString()) >= numberPlayer) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    LeaderBoardScreen(gameId: 0, roomCode: widget.roomCode),
+              ),
+              (route) => false,
+            );
+          }
+        });
       } else {
         // ignore: use_build_context_synchronously
         Navigator.pushAndRemoveUntil(
@@ -207,6 +305,14 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
   @override
   void initState() {
     super.initState();
+    au.setSourceAsset('sound/back1.mp3').then((value) {
+      au.setPlayerMode(PlayerMode.mediaPlayer);
+      au.play(AssetSource('sound/back1.mp3'));
+    });
+
+    au.onPlayerComplete.listen((event) {
+      au.play(AssetSource('sound/back1.mp3'));
+    });
     _game = FlipCardGame();
     _initResource = initResource();
 
@@ -420,6 +526,15 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
     if (_game.matchedCards[index] || _isCheckingCards) {
       return;
     }
+    AudioPlayer au = AudioPlayer();
+    au.setSourceAsset('sound/flip.mp3').then((value) {
+      au.setPlayerMode(PlayerMode.mediaPlayer);
+      au.play(AssetSource('sound/flip.mp3'));
+    });
+
+    au.onPlayerComplete.listen((event) {
+      au.dispose();
+    });
 
     await cardKey.currentState!.toggleCard();
 
