@@ -72,15 +72,12 @@ class ImagesWalkthroughGame {
     }
   }
 
-  Future initGame(int level, int? contestId) async {
+  Future initGame(int level, int? contestId, int? topicId) async {
     if (contestId != null) {
-      print(contestId);
       Contest contest = (await SharedPreferencesHelper.getContests())
           .firstWhere((element) => element.id == contestId);
-      print(contest.name);
       List<AssetOfContest> tmps =
           await SharedPreferencesHelper.getAllContestAssets();
-      print(tmps.length);
       List<String> listTmp = [];
       for (var element
           in tmps.where((element) => element.contestId == contestId)) {
@@ -90,6 +87,14 @@ class ImagesWalkthroughGame {
       print(listTmp.length);
       time = contest.playTime.toDouble();
       imgCount = listTmp.length;
+      gameData = getImageData(imgCount, listTmp);
+    } else if (topicId != null) {
+      List<String> listTmp =
+          await SharedPreferencesHelper.getImageResourceByTopicId(topicId);
+      listTmp.shuffle();
+      print(listTmp.length);
+      time = 84;
+      imgCount = 8;
       gameData = getImageData(imgCount, listTmp);
     } else {
       List<String> listTmp = await SharedPreferencesHelper.getImageResource();

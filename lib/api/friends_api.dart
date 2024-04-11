@@ -139,12 +139,12 @@ class ApiFriends {
     }
   }
 
-  static Future<List<Friendship>> searchFriends(
-      int page, int pageSize, int accountId, String userCode) async {
+  static Future<List<Friendship>> searchFriends(int page, int pageSize,
+      int accountId, String userCode, String userName) async {
     Account? account = await SharedPreferencesHelper.getInfo();
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=1&AccountId=$accountId&UserCode=$userCode'),
+          'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=1&AccountId=$accountId&UserCode=$userCode&UserName=$userCode'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${account!.accessToken}',
@@ -173,7 +173,7 @@ class ApiFriends {
       Account? account2 = await ApiAuthentication.refreshToken();
       final response = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=1&AccountId=$accountId&UserCode=$userCode'),
+            'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=1&AccountId=$accountId&UserCode=$userCode&UserName=$userCode'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2!.accessToken}',

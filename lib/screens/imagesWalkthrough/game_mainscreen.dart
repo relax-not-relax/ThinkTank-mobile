@@ -1,9 +1,11 @@
 import 'dart:async';
 // import 'dart:math';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/api/contest_api.dart';
+import 'package:thinktank_mobile/api/room_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 // import 'package:thinktank_mobile/data/imageswalkthrough_data.dart';
 // import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
@@ -11,6 +13,7 @@ import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/imageswalkthrough.dart';
 import 'package:thinktank_mobile/models/imageswalkthrough_game.dart';
 import 'package:thinktank_mobile/screens/contest/finalresult_screen.dart';
+import 'package:thinktank_mobile/screens/game/leaderboard.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/endgame_screen.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/imageswalkthroughgame_screen.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/startgame_screen.dart';
@@ -24,12 +27,16 @@ class GameMainScreen extends StatefulWidget {
     required this.gameName,
     required this.levelNumber,
     this.contestId,
+    this.roomCode,
+    this.topicId,
   });
 
   final Account account;
   final String gameName;
   final int levelNumber;
   final int? contestId;
+  final String? roomCode;
+  final int? topicId;
 
   @override
   State<GameMainScreen> createState() => _GameMainScreenState();
@@ -43,9 +50,11 @@ class _GameMainScreenState extends State<GameMainScreen> {
   bool _timerStarted = false;
   double percent = 0.0;
   final progressTitle = "Correct";
+  bool isNotaddAccountInRoom = true;
   int total = 0;
   List<String> selectedAnswers = [];
   List<String> matchCheck = [];
+  int numberPlayer = 0;
   int correct = 0;
   List<ImagesWalkthrough> gameSource = [];
   Duration remainingTime = Duration(
@@ -54,7 +63,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
   Duration maxTime = Duration(
     seconds: 0,
   );
-  bool continueVisible = false;
+  bool continueVisible = true;
   bool isLosed = false;
   late ImagesWalkthroughGame _game;
 
@@ -68,6 +77,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
             isLosed = true;
             continueVisible = true;
           });
+          onTimeIsEnd();
         } else {
           remainingTime = newTime;
         }
@@ -77,7 +87,11 @@ class _GameMainScreenState extends State<GameMainScreen> {
 
   late Future _initResource;
   Future<void> initResource() async {
-    await _game.initGame(widget.levelNumber, widget.contestId);
+    await _game.initGame(widget.levelNumber, widget.contestId, widget.topicId);
+    if (widget.roomCode != null) {
+      numberPlayer =
+          (await ApiRoom.getRoomLeaderboard(widget.roomCode!)).length;
+    }
   }
 
   @override
@@ -96,7 +110,10 @@ class _GameMainScreenState extends State<GameMainScreen> {
             total = _game.gameData.length - 1;
             correct = selectedAnswer.length;
             percent = correct / total;
-            print(gameSource[0].answerImgPath);
+            if (!_timerStarted && widget.roomCode != null) {
+              startTimer();
+              _timerStarted = true;
+            }
           },
         ),
       },
@@ -106,7 +123,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
   void win() async {
     double points = (remainingTime.inMilliseconds / 1000);
 
-    if (widget.contestId == null) {
+    if (widget.contestId == null && widget.roomCode == null) {
       int levelMax = await SharedPreferencesHelper.getImagesWalkthroughLevel();
       if (levelMax == widget.levelNumber) {
         await SharedPreferencesHelper.saveImagesWalkthroughLevel(
@@ -147,6 +164,35 @@ class _GameMainScreenState extends State<GameMainScreen> {
                   contestId: widget.contestId!)),
           (route) => false,
         );
+      } else if (widget.roomCode != null) {
+        await ApiRoom.addAccountInRoom(
+            widget.roomCode!, (points * 100).toInt());
+        DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
+        _databaseReference
+            .child('room')
+            .child(widget.roomCode!)
+            .child('AmountPlayerDone')
+            .onValue
+            .listen((event) {
+          if (isNotaddAccountInRoom && event.snapshot.exists) {
+            isNotaddAccountInRoom = false;
+            _databaseReference
+                .child('room')
+                .child(widget.roomCode!)
+                .child('AmountPlayerDone')
+                .set(int.parse(event.snapshot.value.toString()) + 1);
+          }
+          if (int.parse(event.snapshot.value.toString()) >= numberPlayer) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    LeaderBoardScreen(gameId: 0, roomCode: widget.roomCode),
+              ),
+              (route) => false,
+            );
+          }
+        });
       } else {
         // ignore: use_build_context_synchronously
         Navigator.pushAndRemoveUntil(
@@ -191,6 +237,8 @@ class _GameMainScreenState extends State<GameMainScreen> {
                   contestId: widget.contestId!)),
           (route) => false,
         );
+      } else if (widget.roomCode != null) {
+        await ApiRoom.addAccountInRoom(widget.roomCode!, 0);
       } else {
         // ignore: use_build_context_synchronously
         Navigator.pushAndRemoveUntil(
@@ -240,13 +288,15 @@ class _GameMainScreenState extends State<GameMainScreen> {
   }
 
   void incorrectSelect() {
-    timer?.cancel();
+    if (widget.roomCode != null) {
+      timer?.cancel();
+    }
 
     setState(() {
       correct = 0;
       percent = correct / total;
       activeScreen = 'start-screen';
-      if (_timerStarted) {
+      if (_timerStarted && widget.roomCode != null) {
         _timerStarted = false;
       }
     });
@@ -287,6 +337,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
     Widget screenWidget = StartGameScreen(
       startImage: switchScreen,
       source: gameSource,
+      visibleContinue: true,
     );
 
     //Widget screenWidget = ImagesWalkthroughGameScreen();
@@ -295,6 +346,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
       StartGameScreen(
         startImage: switchScreen,
         source: gameSource,
+        visibleContinue: true,
       );
     }
 

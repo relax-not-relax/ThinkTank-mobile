@@ -39,6 +39,7 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
   DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
   bool isJoin = false;
   List<StreamSubscription<DatabaseEvent>> listEvent = [];
+  int gameId = 0;
 
   void onPlay(BuildContext context, Level level) {
     Navigator.push(
@@ -78,6 +79,7 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
             .child(result.code)
             .onValue
             .listen((event) {
+          gameId = int.parse(event.snapshot.child('gameId').value.toString());
           if (event.snapshot.exists && !isJoin) {
             _databaseReference
                 .child('room')
@@ -88,7 +90,7 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
               if (event.snapshot.exists && !isJoin) {
                 isJoin = true;
                 int i = int.parse(event.snapshot.value.toString());
-                if (i >= result.amountPlayer) {
+                if (i >= result.amountPlayer || i == -1) {
                   print("Phòng đầy!!!");
                 } else {
                   _databaseReference
@@ -119,7 +121,10 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return WaitingLobbyScreen(room: result);
+                        return WaitingLobbyScreen(
+                          room: result,
+                          gameId: gameId,
+                        );
                       },
                     ),
                     (route) => false,
