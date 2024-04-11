@@ -21,29 +21,4 @@ class ApiInit {
       return null;
     }
   }
-
-  static Future<List<MusicPasswordSource>> getMusicPasswordSources() async {
-    final response = await http.get(
-      Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/musicPasswordResources'),
-      headers: {'Content-Type': 'application/json'},
-    );
-
-    if (response.statusCode == 200) {
-      final jsonData = json.decode(response.body);
-      final jsonList = jsonData['results'];
-      List<MusicPasswordSource> list = [];
-      for (var element in jsonList) {
-        list.add(
-          MusicPasswordSource(
-            soundLink: element['soundLink'],
-            answer: element['password'],
-          ),
-        );
-      }
-      return list;
-    } else {
-      return [];
-    }
-  }
 }

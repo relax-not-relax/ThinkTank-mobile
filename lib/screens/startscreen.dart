@@ -34,16 +34,6 @@ class StartScreenState extends State<StartScreen>
   bool wait = false;
   bool visibleButton = false;
 
-  Future updateMusicPasswordSource() async {
-    List<MusicPasswordSource> source = await ApiInit.getMusicPasswordSources();
-    await SharedPreferencesHelper.saveMusicPasswordSources(source);
-    List<MusicPasswordSource> musicPasswordSource =
-        await SharedPreferencesHelper.getMusicPasswordSources();
-    for (var element in musicPasswordSource) {
-      print(element.toJson().toString() + '\n');
-    }
-  }
-
   @override
   void initState() {
     super.initState();

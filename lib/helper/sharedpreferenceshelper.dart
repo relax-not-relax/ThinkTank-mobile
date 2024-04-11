@@ -207,15 +207,24 @@ class SharedPreferencesHelper {
     await prefs.setString('notifications', notificationsString);
   }
 
-  static Future<void> saveImageResoure(List<String> flipcardResource) async {
+  static Future<void> saveImageResoure(
+      List<ImageResource> flipcardResource) async {
     if (flipcardResource.isEmpty) return;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? result = prefs.getStringList(imageResourceKey);
     if (result != null && result.isNotEmpty) {
-      result.addAll(flipcardResource);
+      for (var element in flipcardResource) {
+        print(element.toJson().toString());
+        result.add(json.encode(element.toJson()));
+      }
       await prefs.setStringList(imageResourceKey, result);
     } else {
-      await prefs.setStringList(imageResourceKey, flipcardResource);
+      List<String>? result2 = [];
+      for (var element in flipcardResource) {
+        print(element.toJson().toString());
+        result2.add(json.encode(element.toJson()));
+      }
+      await prefs.setStringList(imageResourceKey, result2);
     }
   }
 
@@ -350,7 +359,17 @@ class SharedPreferencesHelper {
   static Future<List<String>> getImageResource() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? result = prefs.getStringList(imageResourceKey);
-    return result ?? [];
+    if (result != null) {
+      List<String> newResult = [];
+      for (var element in result) {
+        ImageResource img =
+            ImageResource.fromJson(json.decode(element.toString()));
+        newResult.add(img.value);
+      }
+      return newResult;
+    } else {
+      return [];
+    }
   }
 
   static Future<List<NotificationItem>> getNotifications() async {
