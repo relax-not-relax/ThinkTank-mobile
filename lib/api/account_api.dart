@@ -111,4 +111,45 @@ class ApiAccount {
       return error;
     }
   }
+
+  static Future<dynamic> getAccountById() async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    final response = await http.get(
+      Uri.parse(
+          'https://thinktank-sep490.azurewebsites.net/api/accounts/${account!.id}'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${account.accessToken}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      print(jsonData);
+      Account _acc = Account.fromJson(jsonData);
+      return _acc;
+    } else if (response.statusCode == 401 || response.statusCode == 403) {
+      Account? account2 = await ApiAuthentication.refreshToken();
+      final response2 = await http.get(
+        Uri.parse(
+            'https://thinktank-sep490.azurewebsites.net/api/accounts/${account2!.id}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${account2.accessToken}',
+        },
+      );
+      if (response2.statusCode == 200) {
+        final jsonData = json.decode(response2.body);
+        print(jsonData);
+        Account _acc = Account.fromJson(jsonData);
+        return _acc;
+      } else {
+        final error = json.decode(response2.body)['error'];
+        return error;
+      }
+    } else {
+      final error = json.decode(response.body)['error'];
+      return error;
+    }
+  }
 }

@@ -383,41 +383,42 @@ class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
       context: context,
       builder: (BuildContext context) {
         return Container(
-            height: MediaQuery.of(context).size.height * 0.50,
-            width: MediaQuery.of(context).size.width,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 15,
+          height: MediaQuery.of(context).size.height * 0.50,
+          width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 15,
+          ),
+          decoration: const BoxDecoration(
+            color: Color.fromARGB(61, 129, 140, 155),
+            borderRadius: BorderRadius.all(
+              Radius.circular(10),
             ),
-            decoration: const BoxDecoration(
-              color: Color.fromARGB(61, 129, 140, 155),
-              borderRadius: BorderRadius.all(
-                Radius.circular(10),
-              ),
-            ),
-            child: GridView.count(
-              crossAxisCount: 3,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              children: icons.map((iconData) {
-                return InkWell(
-                  onTap: () async {
-                    await sendIcon(iconData.iconAvatar);
-                    Navigator.of(context).pop();
-                  },
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(iconData.iconAvatar),
-                        fit: BoxFit.cover,
-                      ),
+          ),
+          child: GridView.count(
+            crossAxisCount: 3,
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+            children: icons.map((iconData) {
+              return InkWell(
+                onTap: () async {
+                  await sendIcon(iconData.iconAvatar);
+                  Navigator.of(context).pop();
+                },
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(iconData.iconAvatar),
+                      fit: BoxFit.cover,
                     ),
                   ),
-                );
-              }).toList(),
-            ));
+                ),
+              );
+            }).toList(),
+          ),
+        );
       },
     );
   }

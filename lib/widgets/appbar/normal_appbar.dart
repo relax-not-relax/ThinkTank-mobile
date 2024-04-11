@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TNormalAppbar extends StatelessWidget implements PreferredSizeWidget {
-  const TNormalAppbar({super.key, required this.title});
+  const TNormalAppbar({
+    super.key,
+    required this.title,
+    required this.showBack,
+  });
 
   final String title;
+  final bool showBack;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +26,7 @@ class TNormalAppbar extends StatelessWidget implements PreferredSizeWidget {
         ),
         child: AppBar(
           backgroundColor: Colors.black,
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: showBack,
           toolbarHeight: 90.0,
           title: Text(
             title,

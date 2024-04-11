@@ -108,7 +108,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: false,
-      appBar: const TNormalAppbar(title: "Change password"),
+      appBar: const TNormalAppbar(
+        title: "Change password",
+        showBack: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(

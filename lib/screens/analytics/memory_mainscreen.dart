@@ -45,7 +45,10 @@ class _MemoryMainScreenState extends State<MemoryMainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: false,
-      appBar: TNormalAppbar(title: "Memory Tracking"),
+      appBar: const TNormalAppbar(
+        title: "Memory Tracking",
+        showBack: false,
+      ),
       body: isLoading
           ? Container(
               width: MediaQuery.of(context).size.width,

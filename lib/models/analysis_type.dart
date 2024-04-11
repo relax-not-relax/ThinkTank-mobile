@@ -22,4 +22,21 @@ class AnalysisType {
       ),
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is AnalysisType &&
+        other.percentOfImagesMemory == percentOfImagesMemory &&
+        other.percentOfAudioMemory == percentOfAudioMemory &&
+        other.percentOfSequentialMemory == percentOfSequentialMemory;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        percentOfImagesMemory,
+        percentOfAudioMemory,
+        percentOfSequentialMemory,
+      );
 }

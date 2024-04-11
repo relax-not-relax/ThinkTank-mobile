@@ -35,15 +35,17 @@ class _NotificationElementState extends State<NotificationElement> {
   }
 
   void readNotification() async {
-    Account? loginInfo = await SharedPreferencesHelper.getInfo();
+    bool status =
+        await ApiNotification.updateStatusNotification(widget.notiEl.id!);
 
-    await ApiNotification.updateStatusNotification(
-        widget.notiEl.id!, loginInfo!.accessToken!);
-
-    if (_isRead == false) {
-      setState(() {
-        _isRead = true;
-      });
+    if (status == true) {
+      if (_isRead == false) {
+        setState(() {
+          _isRead = true;
+        });
+      }
+    } else {
+      print("Something went wrong!");
     }
   }
 
