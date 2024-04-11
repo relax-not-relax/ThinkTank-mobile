@@ -372,6 +372,24 @@ class SharedPreferencesHelper {
     }
   }
 
+  static Future<List<String>> getImageResourceByTopicId(int topicId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? result = prefs.getStringList(imageResourceKey);
+    if (result != null) {
+      List<String> newResult = [];
+      for (var element in result) {
+        ImageResource img =
+            ImageResource.fromJson(json.decode(element.toString()));
+        if (img.topicId == topicId) {
+          newResult.add(img.value);
+        }
+      }
+      return newResult;
+    } else {
+      return [];
+    }
+  }
+
   static Future<List<NotificationItem>> getNotifications() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? notificationsString = prefs.getString('notifications');

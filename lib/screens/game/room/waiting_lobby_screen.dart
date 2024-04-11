@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +8,9 @@ import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/account_in_room.dart';
+import 'package:thinktank_mobile/models/imageswalkthrough.dart';
 import 'package:thinktank_mobile/models/room.dart';
+import 'package:thinktank_mobile/screens/imagesWalkthrough/game_mainscreen.dart';
 import 'package:thinktank_mobile/widgets/appbar/room_appbar.dart';
 import 'package:thinktank_mobile/widgets/game/user_chip.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
@@ -16,9 +20,11 @@ class WaitingLobbyScreen extends StatefulWidget {
   const WaitingLobbyScreen({
     super.key,
     required this.room,
+    required this.gameId,
   });
 
   final Room room;
+  final int gameId;
 
   @override
   State<WaitingLobbyScreen> createState() => _WaitingLobbyScreenState();
@@ -28,8 +34,10 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
   bool? isOwner;
   late Future _initData;
   Account? account;
+  int? topicId;
   DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
   List<AccountInRoom> listMembers = [];
+  List<StreamSubscription<DatabaseEvent>> listEvent = [];
   Future<bool> getData() async {
     account = await SharedPreferencesHelper.getInfo();
     for (AccountInRoom _account in widget.room.accountInRoomResponses) {
@@ -47,11 +55,15 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
 
     _initData = getData();
     _initData.then((value) {
-      _databaseReference
+      listEvent.add(_databaseReference
           .child('room')
           .child(widget.room.code)
           .onValue
           .listen((event) {
+        if (topicId == null && event.snapshot.child('topicId').exists) {
+          topicId = int.parse(event.snapshot.child('topicId').value.toString());
+        }
+
         listMembers.clear();
         for (int i = 1; i < 6; i++) {
           if (event.snapshot.hasChild('us$i') &&
@@ -75,12 +87,46 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
         setState(() {
           listMembers;
         });
-      });
+      }));
       setState(() {
         isOwner = value;
         print(isOwner);
       });
+
+      if (!isOwner!) {
+        listEvent.add(_databaseReference
+            .child('room')
+            .child(widget.room.code)
+            .child('amountPlayer')
+            .onValue
+            .listen((event) {
+          if (int.parse(event.snapshot.value.toString()) == -1) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => GameMainScreen(
+                    account: account!,
+                    gameName: 'Image Walkthrough',
+                    levelNumber: 0,
+                    contestId: null,
+                    roomCode: widget.room.code,
+                    topicId: topicId),
+              ),
+              (route) => false,
+            );
+          }
+        }));
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    for (var element in listEvent) {
+      element.cancel();
+    }
   }
 
   @override
@@ -182,7 +228,37 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
                             ],
                           ),
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              if (listMembers.isEmpty) {
+                                print("Chua du nguoi");
+                              } else {
+                                await _databaseReference
+                                    .child('room')
+                                    .child(widget.room.code)
+                                    .child('amountPlayer')
+                                    .set(-1);
+                                await _databaseReference
+                                    .child('room')
+                                    .child(widget.room.code)
+                                    .child('AmountPlayerDone')
+                                    .set(0);
+
+                                // ignore: use_build_context_synchronously
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => GameMainScreen(
+                                        account: account!,
+                                        gameName: 'Image Walkthrough',
+                                        levelNumber: 0,
+                                        contestId: null,
+                                        roomCode: widget.room.code,
+                                        topicId: topicId),
+                                  ),
+                                  (route) => false,
+                                );
+                              }
+                            },
                             style: button1v1,
                             child: const Text(
                               'START NOW',

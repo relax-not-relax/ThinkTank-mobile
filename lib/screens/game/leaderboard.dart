@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
+import 'package:thinktank_mobile/api/room_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/accountinrank.dart';
@@ -11,8 +12,9 @@ import 'package:thinktank_mobile/widgets/game/leaderboard_user.dart';
 import 'package:thinktank_mobile/widgets/game/top_user.dart';
 
 class LeaderBoardScreen extends StatefulWidget {
-  const LeaderBoardScreen({super.key, required this.gameId});
+  const LeaderBoardScreen({super.key, required this.gameId, this.roomCode});
   final int gameId;
+  final String? roomCode;
 
   @override
   State<LeaderBoardScreen> createState() => _LeaderBoardScreenState();
@@ -48,8 +50,12 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
   bool visibleAll = false;
   late Future _getLeaderboard;
   Future getLeaderboard() async {
-    List<AccountInRank> tmps =
-        await ApiAchieviements.getLeaderBoard(widget.gameId, 1, 20);
+    List<AccountInRank> tmps = [];
+    if (widget.roomCode != null) {
+      tmps = await ApiRoom.getRoomLeaderboard(widget.roomCode!);
+    } else {
+      tmps = await ApiAchieviements.getLeaderBoard(widget.gameId, 1, 20);
+    }
     if (tmps.isEmpty) return;
     switch (tmps.length) {
       case 1:

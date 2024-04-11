@@ -30,7 +30,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
       });
       Account? account = await SharedPreferencesHelper.getInfo();
       List<Friendship> listTmp =
-          await ApiFriends.searchFriends(1, 1000, account!.id, code);
+          await ApiFriends.searchFriends(1, 1000, account!.id, code, code);
       setState(() {
         list = listTmp;
         _isLoading = false;
@@ -116,7 +116,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                   alignment: Alignment.topLeft,
                   child: Text(
                     textAlign: TextAlign.start,
-                    "User's code",
+                    "User's code or User's name",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -141,7 +141,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                     hintStyle: const TextStyle(
                       color: Color.fromRGBO(65, 65, 65, 1),
                     ),
-                    hintText: "User's code",
+                    hintText: "User's code or User's name",
                     contentPadding: const EdgeInsets.all(20),
                     enabledBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)),

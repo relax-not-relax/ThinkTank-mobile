@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/accountinrank.dart';
 import 'package:thinktank_mobile/models/room.dart';
 import 'package:http/http.dart' as http;
 
@@ -173,6 +174,101 @@ class ApiRoom {
         print(response.body);
         Room updatedRoom = Room.fromJson(jsonData);
         return updatedRoom;
+      } else {
+        final error = json.decode(response2.body)['error'];
+        return error;
+      }
+    } else {
+      final error = json.decode(response.body)['error'];
+      print(error);
+      return error;
+    }
+  }
+
+  static Future<List<AccountInRank>> getRoomLeaderboard(String roomCode) async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    List<AccountInRank> result = [];
+    final response = await http.get(
+      Uri.parse(
+          'https://thinktank-sep490.azurewebsites.net/api/rooms/$roomCode/leaderboard'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${account!.accessToken}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      for (var element in jsonData) {
+        result.add(AccountInRank.fromJson(element));
+      }
+      return result;
+    } else if (response.statusCode == 401 || response.statusCode == 403) {
+      Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
+      final response2 = await http.get(
+        Uri.parse(
+            'https://thinktank-sep490.azurewebsites.net/api/rooms/$roomCode/leaderboard'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${account2.accessToken}',
+        },
+      );
+      if (response2.statusCode == 200) {
+        final jsonData = json.decode(response2.body);
+        for (var element in jsonData) {
+          result.add(AccountInRank.fromJson(element));
+        }
+        return result;
+      } else {
+        final error = json.decode(response2.body)['error'];
+        return error;
+      }
+    } else {
+      final error = json.decode(response.body)['error'];
+      print(error);
+      return error;
+    }
+  }
+
+  static Future<void> addAccountInRoom(String code, int mark) async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    var data = {
+      "accountId": account!.id,
+      "duration": 0,
+      "mark": mark,
+      "pieceOfInformation": 0
+    };
+
+    String jsonBody = jsonEncode(data);
+    print(jsonBody);
+
+    final response = await http.put(
+      Uri.parse(
+          'https://thinktank-sep490.azurewebsites.net/api/accountInRoom/$code'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${account.accessToken}',
+      },
+      body: jsonBody,
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    } else if (response.statusCode == 401 || response.statusCode == 403) {
+      Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
+      final response2 = await http.put(
+        Uri.parse(
+            'https://thinktank-sep490.azurewebsites.net/api/accountInRoom/$code'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${account2.accessToken}',
+        },
+        body: jsonBody,
+      );
+      if (response2.statusCode == 200) {
+        return;
       } else {
         final error = json.decode(response2.body)['error'];
         return error;

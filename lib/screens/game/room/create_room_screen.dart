@@ -29,7 +29,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
   final TextEditingController _controller = TextEditingController();
   bool _isFieldValid = true;
   bool isSelecting = false;
-  int selectedPlayers = 2;
+  int selectedPlayers = 3;
   Topic? selectedTopic;
   Game? selectedGame = null;
   GameOfServer? gameOfServer = null;
@@ -128,6 +128,11 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
         await _databaseReference
             .child('room')
             .child(newRoom.code)
+            .child('gameId')
+            .set(selectedGame!.id);
+        await _databaseReference
+            .child('room')
+            .child(newRoom.code)
             .child('roomName')
             .set(newRoom.name);
         await _databaseReference
@@ -160,7 +165,10 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
           context,
           MaterialPageRoute(
             builder: (context) {
-              return WaitingLobbyScreen(room: newRoom);
+              return WaitingLobbyScreen(
+                room: newRoom,
+                gameId: selectedGame!.id,
+              );
             },
           ),
           (route) => false,
@@ -300,7 +308,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                       ),
                       child: DropdownButton<int>(
                         value: selectedPlayers,
-                        items: [2, 3, 4, 5]
+                        items: [3, 4, 5, 6, 7, 8]
                             .map<DropdownMenuItem<int>>((int value) {
                           return DropdownMenuItem<int>(
                             value: value,

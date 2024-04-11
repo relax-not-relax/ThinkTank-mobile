@@ -85,11 +85,10 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         final newTime = remainingTime - const Duration(milliseconds: 500);
         if (newTime.isNegative) {
           timer!.cancel();
-          onTimeIsEnd();
           setState(() {
             isLosed = true;
-            continueVisible = true;
           });
+          onTimeIsEnd();
         } else {
           remainingTime = newTime;
         }
@@ -100,7 +99,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
   late Future _initResource;
   Future<void> initResource() async {
     print("level ${widget.levelNumber}");
-    await _game.initGame(widget.levelNumber, widget.contestId);
+    await _game.initGame(widget.levelNumber, widget.contestId, null);
   }
 
   @override
@@ -198,12 +197,17 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
       (value) => {
         setState(
           () {
+            continueVisible = false;
             maxTime = Duration(seconds: _game.time.round());
             remainingTime = maxTime;
             gameSource = _game.gameData;
             total = _game.gameData.length - 1;
             correct = selectedAnswer.length;
             percent = correct / total;
+            if (!_timerStarted) {
+              startTimer();
+              _timerStarted = true;
+            }
           },
         ),
       },
@@ -481,10 +485,9 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
   }
 
   void incorrectSelect() {
-    timer?.cancel();
-
     setState(() {
       correct = 0;
+      continueVisible = true;
       _databaseReference
           .child('battle')
           .child(widget.roomId)
@@ -492,9 +495,6 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
           .set(correct);
       percent = correct / total;
       activeScreen = 'start-screen';
-      if (_timerStarted) {
-        _timerStarted = false;
-      }
     });
   }
 
@@ -646,6 +646,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
     Widget screenWidget = StartGameScreen(
       startImage: switchScreen,
       source: gameSource,
+      visibleContinue: true,
     );
 
     //Widget screenWidget = ImagesWalkthroughGameScreen();
@@ -654,6 +655,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
       StartGameScreen(
         startImage: switchScreen,
         source: gameSource,
+        visibleContinue: true,
       );
     }
 

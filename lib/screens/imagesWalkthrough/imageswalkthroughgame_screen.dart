@@ -64,7 +64,7 @@ class _ImagesWalkthroughGameScreenState
         shuffle!.shuffle();
       }
     } else {
-      widget.onEndTime();
+      //widget.onEndTime();
     }
   }
 
