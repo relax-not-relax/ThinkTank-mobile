@@ -49,8 +49,6 @@ class _NotiScreenState extends State<NotiScreen> {
   }
 
   void handleReadNotification() async {
-    Account? loginInfo;
-    loginInfo = await SharedPreferencesHelper.getInfo();
     List<NotificationItem> updatedList =
         await ApiNotification.getNotifications();
     await SharedPreferencesHelper.saveNotifications(updatedList);
@@ -60,8 +58,7 @@ class _NotiScreenState extends State<NotiScreen> {
     setState(() {
       _isLoaded = false;
     });
-    Account? loginInfo;
-    loginInfo = await SharedPreferencesHelper.getInfo();
+
     List<NotificationItem> updatedList =
         await ApiNotification.getNotifications();
     await SharedPreferencesHelper.saveNotifications(updatedList);
@@ -80,13 +77,9 @@ class _NotiScreenState extends State<NotiScreen> {
     inputNotifications = await SharedPreferencesHelper.getNotifications();
 
     if (inputNotifications.isNotEmpty) {
-      Account? loginInfo;
-      loginInfo = await SharedPreferencesHelper.getInfo();
-
       for (NotificationItem item in inputNotifications) {
         if (item.status == false) {
-          await ApiNotification.updateStatusNotification(
-              item.id!, loginInfo!.accessToken!);
+          await ApiNotification.updateStatusNotification(item.id!);
         }
       }
 
@@ -111,9 +104,6 @@ class _NotiScreenState extends State<NotiScreen> {
     inputNotifications = await SharedPreferencesHelper.getNotifications();
 
     if (inputNotifications.isNotEmpty) {
-      Account? loginInfo;
-      loginInfo = await SharedPreferencesHelper.getInfo();
-
       List<int> notiIds = [];
       for (NotificationItem item in inputNotifications) {
         notiIds.add(item.id!);
@@ -123,11 +113,14 @@ class _NotiScreenState extends State<NotiScreen> {
         notiIds;
       });
 
-      await ApiNotification.deleteAllNotifications(
-          notiIds, loginInfo!.accessToken!);
+      bool status = await ApiNotification.deleteAllNotifications(notiIds);
 
-      await SharedPreferencesHelper.saveNotifications([]);
-      notifications = [];
+      if (status == true) {
+        await SharedPreferencesHelper.saveNotifications([]);
+        notifications = [];
+      } else {
+        print("Something went wrong!");
+      }
     }
 
     setState(() {

@@ -201,7 +201,10 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
 
     return Scaffold(
       extendBodyBehindAppBar: false,
-      appBar: const TNormalAppbar(title: "Edit profile"),
+      appBar: const TNormalAppbar(
+        title: "Edit profile",
+        showBack: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(

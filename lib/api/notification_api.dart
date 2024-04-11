@@ -54,20 +54,21 @@ class ApiNotification {
     return notifications;
   }
 
-  static Future<void> updateStatusNotification(int id, String authToken) async {
+  static Future<bool> updateStatusNotification(int id) async {
+    Account? account = await SharedPreferencesHelper.getInfo();
     final response = await http.get(
       Uri.parse(
           'https://thinktank-sep490.azurewebsites.net/api/notifications/$id/status'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $authToken',
+        'Authorization': 'Bearer ${account!.accessToken}',
       },
     );
 
     if (response.statusCode == 200) {
       print("Successfully updated!");
+      return true;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
-      Account? account = await SharedPreferencesHelper.getInfo();
       Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
@@ -79,24 +80,31 @@ class ApiNotification {
       );
       if (response2.statusCode == 200) {
         print("Successfully updated!");
+        return true;
+      } else {
+        return false;
       }
+    } else {
+      print("Error");
+      return false;
     }
   }
 
-  static Future<void> deleteAllNotifications(
-      List<int> ids, String authToken) async {
+  static Future<bool> deleteAllNotifications(List<int> ids) async {
+    Account? account = await SharedPreferencesHelper.getInfo();
     String jsonBody = jsonEncode(ids);
     final response = await http.delete(
       Uri.parse('https://thinktank-sep490.azurewebsites.net/api/notifications'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $authToken',
+        'Authorization': 'Bearer ${account!.accessToken}',
       },
       body: jsonBody,
     );
 
     if (response.statusCode == 200) {
       print("Delete all notifications successfully!");
+      return true;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.delete(
@@ -106,11 +114,17 @@ class ApiNotification {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2!.accessToken}}',
         },
-        body: ids,
+        body: jsonBody,
       );
       if (response2.statusCode == 200) {
         print("Delete all notifications successfully!");
+        return true;
+      } else {
+        return false;
       }
+    } else {
+      print("Error delete");
+      return false;
     }
   }
 }

@@ -10,6 +10,7 @@ import 'package:thinktank_mobile/models/achievement.dart';
 import 'package:thinktank_mobile/screens/account/editaccount_screen.dart';
 import 'package:thinktank_mobile/screens/achievement/challenges_screen.dart';
 import 'package:thinktank_mobile/screens/home.dart';
+import 'package:thinktank_mobile/screens/iconShop/icon_shop_screen.dart';
 import 'package:thinktank_mobile/screens/startscreen.dart';
 import 'package:thinktank_mobile/widgets/appbar/normal_appbar.dart';
 import 'package:thinktank_mobile/widgets/others/itemachieve.dart';
@@ -135,8 +136,14 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: account != null
-          ? TNormalAppbar(title: "@${account!.userName}")
-          : TNormalAppbar(title: "@"),
+          ? TNormalAppbar(
+              title: "@${account!.userName}",
+              showBack: false,
+            )
+          : const TNormalAppbar(
+              title: "@",
+              showBack: false,
+            ),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -260,45 +267,78 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
                 const SizedBox(
                   height: 30.0,
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Statistical",
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return IconShopScreen();
+                        },
                       ),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20.0,
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Row(
+                    );
+                  },
+                  child: Stack(
                     children: [
-                      Expanded(
-                        flex: 8,
-                        child: StatisticalItem(
-                            imgPath: "assets/pics/TTcoin.png",
-                            title: "3222",
-                            description: "Coins"),
-                      ),
-                      Expanded(
-                        child: SizedBox(
-                          width: 5,
+                      Container(
+                        width: MediaQuery.of(context).size.width - 40,
+                        height: 200,
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/pics/emoji_shop.png'),
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(15.0)),
                         ),
                       ),
-                      Expanded(
-                        flex: 8,
-                        child: StatisticalItem(
-                            imgPath: "assets/pics/medal.png",
-                            title: "10",
-                            description: "Times in top 3"),
+                      Container(
+                        width: MediaQuery.of(context).size.width - 40,
+                        height: 200,
+                        color: Color.fromARGB(125, 0, 0, 0),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 300,
+                              child: Text(
+                                "Visit Think Tank's store to search for cute emojis",
+                                style: GoogleFonts.roboto(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15,
+                                vertical: 7,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                  5,
+                                ),
+                                color: const Color.fromARGB(255, 240, 122, 63),
+                              ),
+                              child: Text(
+                                "Visit Now",
+                                style: GoogleFonts.roboto(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

@@ -71,6 +71,7 @@ class ApiAnalytics {
       final jsonData = json.decode(response.body);
       print(jsonData);
       AnalysisType typeTracking = AnalysisType.fromJson(jsonData);
+
       return typeTracking;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();

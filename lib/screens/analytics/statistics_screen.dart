@@ -654,7 +654,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           }
         }
 
-        double yValue = count > 0 ? sumValue / count : 0;
+        double yValue =
+            count > 0 ? double.parse((sumValue / count).toStringAsFixed(2)) : 0;
 
         spots.add(FlSpot((weekNumber - 1) * 2.0, yValue));
       }
@@ -668,7 +669,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     print(flSpots);
 
     return LineChartData(
-      lineTouchData: const LineTouchData(enabled: false),
+      lineTouchData: const LineTouchData(enabled: true),
       gridData: FlGridData(
         show: true,
         drawHorizontalLine: true,

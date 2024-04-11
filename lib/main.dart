@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
@@ -17,6 +18,7 @@ import 'package:thinktank_mobile/screens/findanonymous/findanonymous_game.dart';
 import 'package:thinktank_mobile/screens/flipcard/flipcard_game.dart';
 
 import 'package:thinktank_mobile/screens/friend/addfriend_screen.dart';
+import 'package:thinktank_mobile/screens/friend/friend_request_screen.dart';
 import 'package:thinktank_mobile/screens/friend/friend_screen.dart';
 import 'package:thinktank_mobile/screens/game/battle_main_screen.dart';
 import 'package:thinktank_mobile/screens/game/leaderboard.dart';
@@ -24,6 +26,7 @@ import 'package:thinktank_mobile/screens/imagesWalkthrough/battle/game_mainscree
 import 'package:thinktank_mobile/screens/imagesWalkthrough/game_mainscreen.dart';
 
 import 'package:thinktank_mobile/screens/introscreen.dart';
+import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/screens/startscreen.dart';
 import 'package:thinktank_mobile/widgets/game/walkthrough_item.dart';
 import 'package:thinktank_mobile/widgets/others/applifecycleobserver%20.dart';
@@ -41,17 +44,40 @@ void main() async {
       : await Firebase.initializeApp();
   await FirebaseMessageAPI().initNotification();
 
-  runApp(const MyApp());
+  FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+    if (message != null) {
+      print('hahaha');
+      print(message.notification!.title.toString());
+    }
+  });
+
+  runApp(const MyApp(
+    target: '',
+  ));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  const MyApp({
+    super.key,
+    required this.target,
+  });
+
+  final String target;
+
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget startscreen = const CircularProgressIndicator();
+
+  var appRoutes = {
+    '/': (context) => const StartScreen(),
+    '/achievement': (context) => ChallengesScreen(),
+    '/request': (context) => const FriendRequestScreen(),
+    '/contest': (context) => const OptionScreen(),
+  };
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     Account? account = await SharedPreferencesHelper.getInfo();
@@ -100,7 +126,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           ),
           useMaterial3: true,
         ),
-        home: StartScreen(),
+        //home: StartScreen(),
+        initialRoute: '/',
+        routes: appRoutes,
         //home: BattleMainScreen(),
         // home: FindAnonymousGame(
         //   avt: 'asdv',
