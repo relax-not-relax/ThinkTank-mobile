@@ -47,7 +47,7 @@ class ApiAchieviements {
         final jsonData = json.decode(response.body);
         print(jsonData);
       } else {
-        print(response2.body);
+        return null;
       }
     } else {
       print(response.body);

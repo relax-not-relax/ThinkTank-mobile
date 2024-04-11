@@ -46,7 +46,7 @@ class FlipCardGame {
     }
   }
 
-  Future initGame(int level, int? contestId) async {
+  Future initGame(int level, int? contestId, int? topicId) async {
     if (contestId != null) {
       Contest contest = (await SharedPreferencesHelper.getContests())
           .firstWhere((element) => element.id == contestId);
@@ -61,6 +61,15 @@ class FlipCardGame {
       }
       cards_list.shuffle();
       cardCount = cards_list.length * 2;
+      matchedCards = List.filled(cardCount, false);
+      duplicatedCardList = List.from(cards_list)..addAll(cards_list);
+      duplicatedCardList!.shuffle();
+    } else if (topicId != null) {
+      time = 60;
+      cards_list.addAll(
+          await SharedPreferencesHelper.getImageResourceByTopicId(topicId));
+      cards_list.shuffle();
+      cardCount = 12;
       matchedCards = List.filled(cardCount, false);
       duplicatedCardList = List.from(cards_list)..addAll(cards_list);
       duplicatedCardList!.shuffle();

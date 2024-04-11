@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
@@ -38,12 +39,30 @@ class WinScreen extends StatefulWidget {
 
 class WinScreenState extends State<WinScreen> {
   // final winSound = AudioPlayer();
-  // final loseSound = AudioPlayer();
+  AudioPlayer au = AudioPlayer();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    if (widget.isWin) {
+      print('play sound win');
+      au.setSourceAsset('sound/wingame.mp3').then((value) {
+        au.setPlayerMode(PlayerMode.mediaPlayer);
+        au.play(AssetSource('sound/wingame.mp3'));
+      });
+      au.onPlayerComplete.listen((event) {
+        au.dispose();
+      });
+    } else {
+      au.setSourceAsset('sound/losegame.mp3').then((value) {
+        au.setPlayerMode(PlayerMode.mediaPlayer);
+        au.play(AssetSource('sound/losegame.mp3'));
+      });
+      au.onPlayerComplete.listen((event) {
+        au.dispose();
+      });
+    }
     // winSound.setSourceAsset('sound/win.mp3');
     // loseSound.setSourceAsset('sound/lose.mp3');
     // if (widget.isWin) {

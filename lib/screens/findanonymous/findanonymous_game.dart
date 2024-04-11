@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
@@ -137,6 +138,8 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
   bool tryAgainVisible = false;
   int progress = 0;
   bool loadingVisible = false;
+  AudioPlayer au = AudioPlayer();
+  AudioPlayer au2 = AudioPlayer();
   bool showBG = true;
   List<FindAnonymousAsset> listAnswer = [];
   List<String> lisAvt = [];
@@ -172,7 +175,21 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    au2.dispose();
+  }
+
+  @override
   void initState() {
+    au.setSourceAsset('sound/startgame.mp3').then((value) {
+      au.setPlayerMode(PlayerMode.lowLatency);
+      au.play(AssetSource('sound/startgame.mp3'));
+    });
+    au.onPlayerComplete.listen((event) {
+      au.dispose();
+    });
     print('vao vao');
     List<String> listTmp = [];
     setState(() {
@@ -214,9 +231,19 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
           scriptVisibile = true;
           findVisible = true;
         });
+
+        au2.setSourceAsset('sound/back2.mp3').then((value) {
+          au2.setPlayerMode(PlayerMode.mediaPlayer);
+          au2.play(AssetSource('sound/back2.mp3'));
+        });
+
+        au2.onPlayerComplete.listen((event) {
+          au2.play(AssetSource('sound/back2.mp3'));
+        });
       }
     });
     _controller.forward();
+
     super.initState();
   }
 
@@ -316,6 +343,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
     }
     if (isWin) {
       double points = (remainingTime.inMilliseconds / 1000);
+      // ignore: use_build_context_synchronously
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -334,6 +362,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
         (route) => false,
       );
     } else {
+      // ignore: use_build_context_synchronously
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -589,7 +618,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
                     visible: roundVisible,
                     child: Center(
                         child: TextWidget(
-                      'Round ${widget.level}',
+                      'Level ${widget.level}',
                       fontFamily: 'ButtonCustomFont',
                       fontSize: 70,
                       strokeColor: const Color.fromRGBO(255, 212, 96, 1),

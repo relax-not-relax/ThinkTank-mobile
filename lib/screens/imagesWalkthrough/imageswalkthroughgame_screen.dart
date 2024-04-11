@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 //import 'package:thinktank_mobile/data/imageswalkthrough_data.dart';
 import 'package:thinktank_mobile/models/imageswalkthrough.dart';
@@ -71,8 +72,15 @@ class _ImagesWalkthroughGameScreenState
   @override
   void initState() {
     super.initState();
+
     shuffle = List.from(widget.source[currentQuestionIndex].answerImgPath);
     shuffle!.shuffle();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
