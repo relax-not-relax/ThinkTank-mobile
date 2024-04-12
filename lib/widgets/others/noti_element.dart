@@ -64,9 +64,14 @@ class _NotificationElementState extends State<NotificationElement> {
                 .contains("ThinkTank Countervailing With Friend")) {
               List<String> parts = widget.notiEl.title!
                   .split(' '); // Chia chuỗi dựa vào khoảng trắng
-              String roomId = parts.last;
+              String roomAndGame = parts.last;
+
+              List<String> twoParts = roomAndGame.split('/');
+              String roomId = twoParts[0];
+              String gameId = twoParts[1];
 
               print(roomId);
+              print(gameId);
 
               print("true");
               _showConfirmDialog(context, acceptChallenge);
@@ -110,14 +115,24 @@ class _NotificationElementState extends State<NotificationElement> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              widget.notiEl.title!,
-                              style: GoogleFonts.roboto(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16.0,
-                              ),
-                            ),
+                            widget.notiEl.title!.contains(
+                                    "ThinkTank Countervailing With Friend")
+                                ? Text(
+                                    "ThinkTank Countervailing With Friend",
+                                    style: GoogleFonts.roboto(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16.0,
+                                    ),
+                                  )
+                                : Text(
+                                    widget.notiEl.title!,
+                                    style: GoogleFonts.roboto(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16.0,
+                                    ),
+                                  ),
                             Text(
                               widget.notiEl.description!,
                               style: GoogleFonts.roboto(
