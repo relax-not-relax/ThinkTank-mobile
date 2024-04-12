@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/api/friends_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
+import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
+import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/accountbattle.dart';
 import 'package:thinktank_mobile/models/game.dart';
+import 'package:thinktank_mobile/screens/game/battle_main_screen.dart';
 import 'package:thinktank_mobile/widgets/appbar/challenge_appbar.dart';
 import 'package:thinktank_mobile/widgets/game/room_game_selector.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
@@ -36,11 +39,37 @@ class _ChallengePlayerScreenState extends State<ChallengePlayerScreen> {
   }
 
   Future<dynamic> onBattle() async {
+    Account? account = await SharedPreferencesHelper.getInfo();
     dynamic result =
         await ApiFriends.challengeFriend(selectedGame!.id, widget.competitorId);
 
     if (result is AccountBattle) {
-      // Thuc hien action trong truong hop api goi thanh cong
+      result.accountId = 0;
+      result.avatar = null;
+      result.coin = 0;
+      result.username = null;
+      switch (selectedGame!.id) {
+        case 4:
+          // ignore: use_build_context_synchronously
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BattleMainScreen(
+                  account: account!, gameId: 4, competitor: result),
+            ),
+          );
+          break;
+        case 2:
+          // ignore: use_build_context_synchronously
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  BattleMainScreen(account: account!, gameId: 2),
+            ),
+          );
+          break;
+      }
     } else {
       // ignore: use_build_context_synchronously
       _showResizableDialogError(context, result);

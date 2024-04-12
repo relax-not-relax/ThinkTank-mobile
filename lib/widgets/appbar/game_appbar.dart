@@ -5,6 +5,8 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/models/game.dart';
 import 'package:thinktank_mobile/screens/game/game_menu.dart';
+import 'package:thinktank_mobile/screens/home.dart';
+import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:unicons/unicons.dart';
 
@@ -156,7 +158,10 @@ class _TGameAppBarState extends State<TGameAppBar> {
                   context,
                   MaterialPageRoute(
                     builder: (context) {
-                      return GameMenuScreen(game: game!);
+                      return const HomeScreen(
+                        inputScreen: OptionScreen(),
+                        screenIndex: 0,
+                      );
                     },
                   ),
                   (route) => false,

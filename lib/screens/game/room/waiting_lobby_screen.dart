@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/api/room_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/account_in_room.dart';
@@ -251,6 +252,7 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
                               if (listMembers.isEmpty) {
                                 print("Chua du nguoi");
                               } else {
+                                ApiRoom.startGame(widget.room.code, 150);
                                 await _databaseReference
                                     .child('room')
                                     .child(widget.room.code)
