@@ -258,10 +258,12 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                       title: "Name",
                     ),
                     const SizedBox(height: 20),
-                    EditAccountField(
-                      controller: _emailController,
-                      title: "Email",
-                    ),
+                    widget.account.googleId == null
+                        ? EditAccountField(
+                            controller: _emailController,
+                            title: "Email",
+                          )
+                        : Container(),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
