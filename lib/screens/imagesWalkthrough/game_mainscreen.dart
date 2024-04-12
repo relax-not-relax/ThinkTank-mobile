@@ -466,8 +466,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
       backgroundColor: const Color.fromARGB(255, 255, 240, 199),
       appBar: TGameAppBar(
         preferredHeight: MediaQuery.of(context).size.height * 0.26,
-        userAvatar:
-            "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/0%2Fava_test.png?alt=media&token=5929a6ce-f92d-4670-8b7e-954fed01abc0",
+        userAvatar: widget.account.avatar!,
         remainingTime: remainingTime,
         gameName: "Images Walkthrough",
         progressTitle: "Image",

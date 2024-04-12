@@ -356,8 +356,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
       appBar: TGameAppBar(
         preferredHeight: MediaQuery.of(context).size.height * 0.26,
         //userAvatar: widget.account.avatar!,
-        userAvatar:
-            "https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Favatar-trang-4.jpg?alt=media&token=2ab24327-c484-485a-938a-ed30dc3b1688",
+        userAvatar: widget.account.avatar!,
         remainingTime: remainingTime,
         gameName: widget.gameName,
         percent: percent,
