@@ -81,7 +81,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     Account? account = await SharedPreferencesHelper.getInfo();
-    if (state == AppLifecycleState.paused && account != null) {
+    if ((state == AppLifecycleState.inactive ||
+            state == AppLifecycleState.paused) &&
+        account != null) {
       FirebaseRealTime.setOnline(account.id, false);
     }
     if (state == AppLifecycleState.resumed && account != null) {

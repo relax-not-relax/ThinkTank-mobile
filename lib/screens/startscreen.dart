@@ -72,7 +72,9 @@ class StartScreenState extends State<StartScreen>
 
   void displaybutton() async {
     Account? acc = await ApiAuthentication.reLogin();
+
     if (acc != null) {
+      FirebaseRealTime.setOnline(acc.id, true);
       await ApiAchieviements.getLevelOfUser(acc.id, acc.accessToken!);
       await ApiNotification.getNotifications();
       int version = await SharedPreferencesHelper.getResourceVersion();

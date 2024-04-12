@@ -64,8 +64,8 @@ class _ChallengePlayerScreenState extends State<ChallengePlayerScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  BattleMainScreen(account: account!, gameId: 2),
+              builder: (context) => BattleMainScreen(
+                  account: account!, gameId: 2, competitor: result),
             ),
           );
           break;

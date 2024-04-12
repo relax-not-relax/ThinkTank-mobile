@@ -7,6 +7,8 @@ import 'package:thinktank_mobile/models/accountincontest.dart';
 import 'package:thinktank_mobile/models/contest.dart';
 import 'package:thinktank_mobile/screens/contest/contest_menu.dart';
 import 'package:thinktank_mobile/screens/game/game_menu.dart';
+import 'package:thinktank_mobile/screens/home.dart';
+import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/game/coin_div.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
@@ -18,6 +20,7 @@ class FinalResultScreen extends StatefulWidget {
     required this.totalCoin,
     required this.contestId,
     required this.status,
+    this.isRoom,
   });
 
   final int points;
@@ -25,6 +28,7 @@ class FinalResultScreen extends StatefulWidget {
   final int gameId;
   final int totalCoin;
   final int? contestId;
+  final bool? isRoom;
 
   @override
   State<FinalResultScreen> createState() => _FinalResultScreenState();
@@ -173,6 +177,17 @@ class _FinalResultScreenState extends State<FinalResultScreen> {
                                       accountInContest: accountInContest,
                                     )),
                             (route) => false);
+                      } else if (widget.isRoom != null && widget.isRoom!) {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HomeScreen(
+                              inputScreen: OptionScreen(),
+                              screenIndex: 0,
+                            ),
+                          ),
+                          (route) => false,
+                        );
                       } else {
                         switch (widget.gameId) {
                           case 1:
