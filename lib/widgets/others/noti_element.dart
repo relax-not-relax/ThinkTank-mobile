@@ -4,7 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:thinktank_mobile/api/notification_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
+import 'package:thinktank_mobile/models/accountbattle.dart';
 import 'package:thinktank_mobile/models/notification_item.dart';
+import 'package:thinktank_mobile/screens/game/battle_main_screen.dart';
 
 class NotificationElement extends StatefulWidget {
   const NotificationElement({
@@ -49,7 +51,19 @@ class _NotificationElementState extends State<NotificationElement> {
     }
   }
 
-  Future<void> acceptChallenge() async {}
+  Future<void> acceptChallenge(String roomId, int gameId) async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    AccountBattle competitor = AccountBattle(accountId: 1, roomId: roomId);
+    // ignore: use_build_context_synchronously
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BattleMainScreen(
+            account: account!, gameId: gameId, competitor: competitor),
+      ),
+      (route) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,13 +82,15 @@ class _NotificationElementState extends State<NotificationElement> {
 
               List<String> twoParts = roomAndGame.split('/');
               String roomId = twoParts[0];
-              String gameId = twoParts[1];
+              int gameId = int.parse(twoParts[1]);
 
               print(roomId);
               print(gameId);
 
               print("true");
-              _showConfirmDialog(context, acceptChallenge);
+              _showConfirmDialog(context, () {
+                acceptChallenge(roomId, gameId);
+              });
             } else {
               print("false");
               print(widget.notiEl.title);

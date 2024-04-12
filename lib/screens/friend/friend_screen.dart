@@ -450,7 +450,10 @@ class FriendScreenState extends State<FriendScreen> {
                                               context,
                                               fs.userName2 ?? fs.userName1!,
                                               listTmp.indexOf(fs),
-                                              fs.id);
+                                              fs.id,
+                                              fs.accountId2 == 0
+                                                  ? fs.accountId1!
+                                                  : fs.accountId2!);
                                         },
                                       ),
                                     ),
@@ -468,8 +471,8 @@ class FriendScreenState extends State<FriendScreen> {
     );
   }
 
-  Future displayBottomSheet(
-      BuildContext context, String useranme, int index, int friendShipId) {
+  Future displayBottomSheet(BuildContext context, String useranme, int index,
+      int friendShipId, int compeID) {
     return showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -521,6 +524,7 @@ class FriendScreenState extends State<FriendScreen> {
             ),
             InkWell(
               onTap: () {
+                print(compeID);
                 //Trong truong hop nguoi choi thach dau dang offline
                 //_closeDialog(context);
                 //_showResizableDialogOffline(context);
@@ -532,7 +536,7 @@ class FriendScreenState extends State<FriendScreen> {
                     builder: (context) {
                       //Sua theo id cua friend
                       return ChallengePlayerScreen(
-                        competitorId: 1,
+                        competitorId: compeID,
                       );
                     },
                   ),

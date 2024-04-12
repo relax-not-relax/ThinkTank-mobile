@@ -228,7 +228,9 @@ class _ChallengePlayerScreenState extends State<ChallengePlayerScreen> {
                     ],
                   ),
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      onBattle();
+                    },
                     style: button1v1,
                     child: const Text(
                       'BATTLE',
