@@ -254,7 +254,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
           (route) => false,
         );
       } else if (widget.roomCode != null) {
-        await ApiRoom.addAccountInRoom(widget.roomCode!, 0);
+        //await ApiRoom.addAccountInRoom(widget.roomCode!, 0);
         DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
         _databaseReference
             .child('room')
