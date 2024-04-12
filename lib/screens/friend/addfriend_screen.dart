@@ -41,10 +41,15 @@ class AddFriendScreenState extends State<AddFriendScreen> {
   Future<void> add(int index) async {
     LoadingCustom.loading(context);
     Account? account = await SharedPreferencesHelper.getInfo();
-    setState(() {
-      list[index].status = false;
-    });
-    await ApiFriends.addFriend(account!.id, list[index].accountId2!);
+    Friendship? fs =
+        await ApiFriends.addFriend(account!.id, list[index].accountId2!);
+    if (fs != null) {
+      setState(() {
+        list[index].id = fs.id;
+        list[index].status = false;
+      });
+    }
+
     LoadingCustom.loaded(context);
   }
 
@@ -442,8 +447,10 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                                 Navigator.pop(context);
                                 if (type == "approve") {
                                   await accept(friendShipId, index);
-                                } else
+                                } else {
+                                  print(friendShipId);
                                   await denied(friendShipId, index);
+                                }
                               },
                               child: SizedBox(
                                 height: 50,

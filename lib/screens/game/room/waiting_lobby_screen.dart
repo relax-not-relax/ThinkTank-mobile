@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/account_in_room.dart';
+import 'package:thinktank_mobile/models/flipcard.dart';
 import 'package:thinktank_mobile/models/room.dart';
+import 'package:thinktank_mobile/screens/flipcard/flipcard_game.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/game_mainscreen.dart';
 import 'package:thinktank_mobile/widgets/appbar/room_appbar.dart';
 import 'package:thinktank_mobile/widgets/game/user_chip.dart';
@@ -107,6 +109,21 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
                         gameName: 'Image Walkthrough',
                         levelNumber: 0,
                         contestId: null,
+                        roomCode: widget.room.code,
+                        topicId: topicId),
+                  ),
+                  (route) => false,
+                );
+                break;
+              case 1:
+                // ignore: use_build_context_synchronously
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FlipCardGamePlay(
+                        account: account!,
+                        gameName: 'Flipcard',
+                        level: 0,
                         roomCode: widget.room.code,
                         topicId: topicId),
                   ),
@@ -229,6 +246,8 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
                           ),
                           child: ElevatedButton(
                             onPressed: () async {
+                              Account? account =
+                                  await SharedPreferencesHelper.getInfo();
                               if (listMembers.isEmpty) {
                                 print("Chua du nguoi");
                               } else {
@@ -253,6 +272,21 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
                                             gameName: 'Image Walkthrough',
                                             levelNumber: 0,
                                             contestId: null,
+                                            roomCode: widget.room.code,
+                                            topicId: topicId),
+                                      ),
+                                      (route) => false,
+                                    );
+                                    break;
+                                  case 1:
+                                    // ignore: use_build_context_synchronously
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => FlipCardGamePlay(
+                                            account: account!,
+                                            gameName: 'Flipcard',
+                                            level: 0,
                                             roomCode: widget.room.code,
                                             topicId: topicId),
                                       ),
