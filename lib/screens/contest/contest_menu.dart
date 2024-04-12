@@ -51,8 +51,8 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
     super.initState();
     startContest = DateTime.parse(widget.contest.startTime);
     endContest = DateTime.parse(widget.contest.endTime);
-    formatStartDate = DateFormat('yMd').format(startContest);
-    formatEndDate = DateFormat('yMd').format(endContest);
+    formatStartDate = DateFormat('d/M/y').format(startContest);
+    formatEndDate = DateFormat('d/M/y').format(endContest);
   }
 
   void waiting() async {
