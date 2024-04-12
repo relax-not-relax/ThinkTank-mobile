@@ -55,7 +55,10 @@ class _ChallengePlayerScreenState extends State<ChallengePlayerScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => BattleMainScreen(
-                  account: account!, gameId: 4, competitor: result),
+                account: account!,
+                gameId: 4,
+                competitor: result,
+              ),
             ),
           );
           break;
@@ -65,7 +68,10 @@ class _ChallengePlayerScreenState extends State<ChallengePlayerScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => BattleMainScreen(
-                  account: account!, gameId: 2, competitor: result),
+                account: account!,
+                gameId: 2,
+                competitor: result,
+              ),
             ),
           );
           break;

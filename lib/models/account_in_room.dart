@@ -11,7 +11,6 @@ class AccountInRoom {
     required this.mark,
     required this.pieceOfInformation,
   });
-
   final int id;
   final bool isAdmin;
   final int accountId;
