@@ -10,6 +10,7 @@ import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/friendship.dart';
 import 'package:thinktank_mobile/screens/friend/addfriend_screen.dart';
+import 'package:thinktank_mobile/screens/friend/challenge_player_screen.dart';
 import 'package:thinktank_mobile/screens/friend/friend_request_screen.dart';
 import 'package:thinktank_mobile/widgets/others/loadingcustom.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
@@ -472,7 +473,7 @@ class FriendScreenState extends State<FriendScreen> {
     return showModalBottomSheet(
       context: context,
       builder: (context) => Container(
-        height: 130,
+        height: 200,
         padding: const EdgeInsets.symmetric(
           horizontal: 20.0,
           vertical: 40.0,
@@ -507,6 +508,59 @@ class FriendScreenState extends State<FriendScreen> {
                   ),
                   Text(
                     "Remove this friendship",
+                    style: GoogleFonts.roboto(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 15.0,
+            ),
+            InkWell(
+              onTap: () {
+                //Trong truong hop nguoi choi thach dau dang offline
+                //_closeDialog(context);
+                //_showResizableDialogOffline(context);
+
+                //Trong truong hop nguoi choi thach dau dang online
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      //Sua theo id cua friend
+                      return ChallengePlayerScreen(
+                        competitorId: 1,
+                      );
+                    },
+                  ),
+                );
+              },
+              child: Row(
+                children: [
+                  Container(
+                    width: 50.0,
+                    height: 50.0,
+                    //padding: const EdgeInsets.all(20.0),
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(255, 217, 217, 217),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(50.0),
+                      ),
+                    ),
+                    child: const Icon(
+                      IconlyBold.game,
+                      color: Color.fromARGB(255, 45, 64, 89),
+                      size: 30.0,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20.0,
+                  ),
+                  Text(
+                    "Challenge player",
                     style: GoogleFonts.roboto(
                       fontSize: 16.0,
                       fontWeight: FontWeight.w500,
@@ -618,4 +672,59 @@ class FriendScreenState extends State<FriendScreen> {
       },
     );
   }
+}
+
+void _showResizableDialogOffline(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 300,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 30),
+              Image.asset(
+                'assets/pics/offline.png',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Oh no!',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 5,
+                ),
+                child: Text(
+                  "The player is offline!",
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _closeDialog(BuildContext context) {
+  Navigator.of(context).pop();
 }

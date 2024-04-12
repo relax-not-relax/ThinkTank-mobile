@@ -49,6 +49,8 @@ class _NotificationElementState extends State<NotificationElement> {
     }
   }
 
+  Future<void> acceptChallenge() async {}
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -58,8 +60,16 @@ class _NotificationElementState extends State<NotificationElement> {
         ),
         GestureDetector(
           onTap: () {
-            readNotification();
-            widget.handleReadNotification();
+            if (widget.notiEl.title!.trim().toUpperCase() ==
+                "ThinkTank Countervailing With Friend".trim().toUpperCase()) {
+              print("true");
+              _showConfirmDialog(context, acceptChallenge);
+            } else {
+              print("false");
+              print(widget.notiEl.title);
+              readNotification();
+              widget.handleReadNotification();
+            }
           },
           child: Container(
             margin: const EdgeInsets.symmetric(
@@ -142,4 +152,58 @@ class _NotificationElementState extends State<NotificationElement> {
       ],
     );
   }
+}
+
+void _showConfirmDialog(BuildContext context, Function accept) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text(
+          'Confirmation',
+          style: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: Text(
+          'Accept challenge from your friend?',
+          style: GoogleFonts.roboto(
+            fontSize: 14,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Cancel'),
+            child: const Text(
+              'No',
+              style: TextStyle(
+                color: Color.fromARGB(255, 72, 145, 255),
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              _closeDialog(context);
+              accept();
+            },
+            child: const Text(
+              'Yes',
+              style: TextStyle(
+                color: Color.fromARGB(255, 72, 145, 255),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void _closeDialog(BuildContext context) {
+  Navigator.of(context).pop();
 }
