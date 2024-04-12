@@ -304,7 +304,12 @@ class SharedPreferencesHelper {
             .map((jsonItem) =>
                 Contest.fromJson(jsonItem as Map<String, dynamic>))
             .toList();
-        return assets;
+
+        return assets
+            .where((element) =>
+                !DateTime.parse(element.startTime).isAfter(DateTime.now()) &&
+                DateTime.parse(element.endTime).isAfter(DateTime.now()))
+            .toList();
       } catch (e) {
         print('Error parsing notifications from SharedPreferences: $e');
         return [];

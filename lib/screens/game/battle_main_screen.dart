@@ -41,6 +41,15 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
   int _opponentCoins = 0;
   late Future<AccountBattle?> findOpponent;
   DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
+
+  @override
+  void dispose() {
+    if (roomID.isNotEmpty) {
+      BattleAPI.removeCache(widget.account.id, widget.gameId, 20, roomID);
+    }
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -151,11 +160,11 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
               compe.avatar = event.snapshot.child('avt1').value.toString();
               compe.coin =
                   int.parse(event.snapshot.child('coin1').value.toString());
+              joinGame(compe.username!, compe.avatar!, compe.coin!, isUser1,
+                  compe.accountId);
             }
           },
         );
-        joinGame(compe.username!, compe.avatar!, compe.coin!, isUser1,
-            compe.accountId);
       }
     }
   }

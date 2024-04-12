@@ -291,6 +291,7 @@ class LoginScreenState extends State<LoginScreen> {
                                 version, acc.accessToken!);
                             await ContestsAPI.getContets();
                             await ApiIcon.getIconsOfAccount();
+                            FirebaseRealTime.setOnline(acc.id, true);
 
                             _closeDialog(context);
 
@@ -372,6 +373,7 @@ class LoginScreenState extends State<LoginScreen> {
                               .getResourceVersion();
                           await AssetsAPI.addAssets(version, acc.accessToken!);
                           _closeDialog(context);
+                          FirebaseRealTime.setOnline(acc.id, true);
 
                           // ignore: use_build_context_synchronously
                           Navigator.pushAndRemoveUntil(

@@ -110,7 +110,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
   AudioPlayer soundSao = AudioPlayer();
   AudioPlayer soundThang = AudioPlayer();
   String answer = '';
-  int listenTime = 5;
+  int listenTime = 10;
   final audioPlayer = AudioPlayer();
   AudioPlayer au = AudioPlayer();
   String bg = 'assets/pics/musicpassbng.png';
