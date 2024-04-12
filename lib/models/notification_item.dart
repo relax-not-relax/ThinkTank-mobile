@@ -1,5 +1,5 @@
 class NotificationItem {
-  const NotificationItem({
+  NotificationItem({
     required this.id,
     required this.avatar,
     required this.title,
