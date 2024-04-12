@@ -259,6 +259,7 @@ class ApiFriends {
         'Authorization': 'Bearer ${account!.accessToken}',
       },
     );
+    print("delete" + response.statusCode.toString());
     if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
       await http.delete(

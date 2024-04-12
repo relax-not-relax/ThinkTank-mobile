@@ -8,6 +8,8 @@ import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/accountinrank.dart';
 import 'package:thinktank_mobile/screens/game/game_menu.dart';
+import 'package:thinktank_mobile/screens/home.dart';
+import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/game/leaderboard_user.dart';
 import 'package:thinktank_mobile/widgets/game/top_user.dart';
 
@@ -106,6 +108,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+        automaticallyImplyLeading: false,
         elevation: 0,
         iconTheme: const IconThemeData(
           size: 30.0,
@@ -148,13 +151,20 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              // Navigator.pushAndRemoveUntil(
-              //   context,
-              //   MaterialPageRoute(builder: (context) {
-              //     return GameMenuScreen(game: games[]);
-              //   },),
-              //   (route) => false,
-              // );
+              if (widget.roomCode != null) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomeScreen(
+                      inputScreen: OptionScreen(),
+                      screenIndex: 0,
+                    ),
+                  ),
+                  (route) => false,
+                );
+              } else {
+                Navigator.of(context).pop();
+              }
             },
             icon: const Icon(IconlyBold.close_square),
           ),
