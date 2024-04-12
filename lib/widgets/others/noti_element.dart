@@ -60,8 +60,14 @@ class _NotificationElementState extends State<NotificationElement> {
         ),
         GestureDetector(
           onTap: () {
-            if (widget.notiEl.title!.trim().toUpperCase() ==
-                "ThinkTank Countervailing With Friend".trim().toUpperCase()) {
+            if (widget.notiEl.title!
+                .contains("ThinkTank Countervailing With Friend")) {
+              List<String> parts = widget.notiEl.title!
+                  .split(' '); // Chia chuỗi dựa vào khoảng trắng
+              String roomId = parts.last;
+
+              print(roomId);
+
               print("true");
               _showConfirmDialog(context, acceptChallenge);
             } else {

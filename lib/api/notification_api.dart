@@ -22,6 +22,7 @@ class ApiNotification {
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
+      print(jsonData);
       final results = jsonData['results'];
       if (results == null) return [];
       notifications = results
