@@ -55,8 +55,14 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
     List<AccountInRank> tmps = [];
     if (widget.roomCode != null) {
       tmps = await ApiRoom.getRoomLeaderboard(widget.roomCode!);
+      for (int i = 0; i < tmps.length; i++) {
+        tmps[i].rank = i + 1;
+      }
     } else {
       tmps = await ApiAchieviements.getLeaderBoard(widget.gameId, 1, 20);
+      for (int i = 0; i < tmps.length; i++) {
+        tmps[i].rank = i + 1;
+      }
     }
     if (tmps.isEmpty) return;
     switch (tmps.length) {

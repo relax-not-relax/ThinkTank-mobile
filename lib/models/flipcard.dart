@@ -66,8 +66,10 @@ class FlipCardGame {
       duplicatedCardList!.shuffle();
     } else if (topicId != null) {
       time = 150;
-      cards_list.addAll(
-          await SharedPreferencesHelper.getImageResourceByTopicId(topicId));
+      List<String> tmps =
+          (await SharedPreferencesHelper.getImageResourceByTopicId(topicId));
+      tmps.shuffle();
+      cards_list.addAll(tmps.getRange(0, 10));
       cards_list.shuffle();
       cardCount = 20;
       matchedCards = List.filled(cardCount, false);

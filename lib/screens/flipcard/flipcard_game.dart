@@ -16,6 +16,7 @@ import 'package:thinktank_mobile/models/logininfo.dart';
 import 'package:thinktank_mobile/screens/contest/finalresult_screen.dart';
 import 'package:thinktank_mobile/screens/game/leaderboard.dart';
 import 'package:thinktank_mobile/widgets/appbar/game_appbar.dart';
+import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:thinktank_mobile/widgets/others/winscreen.dart';
 
@@ -125,6 +126,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
     if (widget.contestId != null) {
       _game.gameImg = await _game.initGameImg(0);
     } else if (widget.roomCode != null) {
+      _game.gameImg = await _game.initGameImg(0);
       numberPlayer =
           (await ApiRoom.getRoomLeaderboard(widget.roomCode!)).length;
     } else {
@@ -139,7 +141,6 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
     au.dispose();
     DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
     if (widget.roomCode != null) {
@@ -159,6 +160,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
         }
       });
     }
+    super.dispose();
   }
 
   void _continue() async {
@@ -185,6 +187,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
           (route) => false,
         );
       } else if (widget.roomCode != null) {
+        _showResizableDialog(context);
         await ApiRoom.addAccountInRoom(
             widget.roomCode!, (points * 100).toInt());
         DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
@@ -254,6 +257,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
           (route) => false,
         );
       } else if (widget.roomCode != null) {
+        _showResizableDialog(context);
         //await ApiRoom.addAccountInRoom(widget.roomCode!, 0);
         DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
         _databaseReference
@@ -325,6 +329,10 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
               pair = (count ~/ 2).toInt();
               percent = pair / total;
               _isLoading = false;
+              if (!_timerStarted) {
+                startTimer();
+                _timerStarted = true;
+              }
             })
         });
   }
@@ -517,10 +525,6 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
     setState(() {
       _isFree = false;
     });
-    if (!_timerStarted) {
-      startTimer();
-      _timerStarted = true;
-    }
 
     if (_game.matchedCards[index] || _isCheckingCards) {
       return;
@@ -628,4 +632,60 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
 
     print(indexCheck);
   }
+}
+
+void _showResizableDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 400,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/pics/accOragne.png',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Wait for your opponents',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 5,
+                ),
+                child: Text(
+                  'Wait for your opponent to complete the game!',
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const CustomLoadingSpinner(
+                  color: Color.fromARGB(255, 245, 149, 24)),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

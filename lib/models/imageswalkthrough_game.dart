@@ -93,8 +93,8 @@ class ImagesWalkthroughGame {
           await SharedPreferencesHelper.getImageResourceByTopicId(topicId);
       listTmp.shuffle();
       print(listTmp.length);
-      time = 84;
-      imgCount = 8;
+      time = 150;
+      imgCount = 20;
       gameData = getImageData(imgCount, listTmp);
     } else {
       List<String> listTmp = await SharedPreferencesHelper.getImageResource();

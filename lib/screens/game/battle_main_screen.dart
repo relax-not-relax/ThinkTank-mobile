@@ -18,9 +18,13 @@ import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 
 class BattleMainScreen extends StatefulWidget {
   const BattleMainScreen(
-      {super.key, required this.account, required this.gameId});
+      {super.key,
+      required this.account,
+      required this.gameId,
+      this.competitor});
   final Account account;
   final int gameId;
+  final AccountBattle? competitor;
 
   @override
   State<BattleMainScreen> createState() => _BattleMainScreenState();
@@ -31,6 +35,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
   bool isWaiting = true;
   String roomID = '';
   bool isUser1 = true;
+  bool isGetAccount1 = false;
   String _opponentName = '';
   String _opponentAvt = '';
   int _opponentCoins = 0;
@@ -39,12 +44,60 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
   @override
   void initState() {
     super.initState();
-    findOpponent = BattleAPI.findOpponent(widget.account.id, widget.gameId, 20);
-    findOpponent.then((value) {
-      if (value != null && value.accountId == 0) {
-        print(value.roomId);
-        roomID = value.roomId;
-        _databaseReference.child('battle').child(value.roomId).set({
+    if (widget.competitor == null) {
+      findOpponent =
+          BattleAPI.findOpponent(widget.account.id, widget.gameId, 20);
+      findOpponent.then((value) {
+        if (value != null && value.accountId == 0) {
+          print(value.roomId);
+          roomID = value.roomId;
+          _databaseReference.child('battle').child(value.roomId).set({
+            'us1': widget.account.userName,
+            'avt1': widget.account.avatar,
+            'coin1': widget.account.coin,
+            'progress1': 0,
+            'id1': widget.account.id
+          });
+          _databaseReference
+              .child('battle')
+              .child(value.roomId)
+              .onValue
+              .listen((event) {
+            if (event.snapshot.child('us2').exists) {
+              joinGame(
+                  event.snapshot.child('us2').value.toString(),
+                  event.snapshot.child('avt2').value.toString(),
+                  int.parse(event.snapshot.child('coin2').value.toString()),
+                  isUser1,
+                  int.parse(event.snapshot.child('id2').value.toString()));
+            }
+          });
+        }
+        if (value != null && value.accountId != 0) {
+          print(value.roomId);
+          setState(() {
+            isUser1 = false;
+          });
+          roomID = value.roomId;
+          _databaseReference.child('battle').child(value.roomId).update({
+            'us2': widget.account.userName,
+            'avt2': widget.account.avatar,
+            'coin2': widget.account.coin,
+            'progress2': 0,
+            'id2': widget.account.id
+          });
+          joinGame(value.username!, value.avatar!, value.coin!, isUser1,
+              value.accountId);
+        }
+      });
+    } else {
+      if (widget.competitor != null && widget.competitor!.accountId == 0) {
+        print(widget.competitor!.roomId);
+        roomID = widget.competitor!.roomId;
+        _databaseReference
+            .child('battle')
+            .child(widget.competitor!.roomId)
+            .set({
           'us1': widget.account.userName,
           'avt1': widget.account.avatar,
           'coin1': widget.account.coin,
@@ -53,7 +106,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
         });
         _databaseReference
             .child('battle')
-            .child(value.roomId)
+            .child(widget.competitor!.roomId)
             .onValue
             .listen((event) {
           if (event.snapshot.child('us2').exists) {
@@ -66,24 +119,45 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
           }
         });
       }
-      if (value != null && value.accountId != 0) {
-        print(value.roomId);
+      if (widget.competitor != null && widget.competitor!.accountId != 0) {
+        print(widget.competitor!.roomId);
         setState(() {
           isUser1 = false;
         });
-        roomID = value.roomId;
-        _databaseReference.child('battle').child(value.roomId).update({
+        roomID = widget.competitor!.roomId;
+        _databaseReference
+            .child('battle')
+            .child(widget.competitor!.roomId)
+            .update({
           'us2': widget.account.userName,
           'avt2': widget.account.avatar,
           'coin2': widget.account.coin,
           'progress2': 0,
           'id2': widget.account.id
         });
-        joinGame(value.username!, value.avatar!, value.coin!, isUser1,
-            value.accountId);
+        AccountBattle compe =
+            AccountBattle(accountId: 1, roomId: widget.competitor!.roomId);
+        _databaseReference
+            .child('battle')
+            .child(widget.competitor!.roomId)
+            .onValue
+            .listen(
+          (event) {
+            if (!isGetAccount1) {
+              isGetAccount1 = true;
+              compe.accountId =
+                  int.parse(event.snapshot.child('id1').value.toString());
+              compe.username = event.snapshot.child('us1').value.toString();
+              compe.avatar = event.snapshot.child('avt1').value.toString();
+              compe.coin =
+                  int.parse(event.snapshot.child('coin1').value.toString());
+            }
+          },
+        );
+        joinGame(compe.username!, compe.avatar!, compe.coin!, isUser1,
+            compe.accountId);
       }
-      if (value != null) {}
-    });
+    }
   }
 
   void joinGame(String opponentName, String opponentAvt, int coin, bool isUser1,
