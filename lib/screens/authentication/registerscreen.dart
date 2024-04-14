@@ -171,7 +171,7 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
             child: Stack(
               children: [
                 Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     const SizedBox(
                       height: 40,
@@ -193,232 +193,229 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                     ),
                     Container(
                       margin: const EdgeInsets.all(14),
-                      child: Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              const Align(
-                                alignment: Alignment.topLeft,
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Full Name',
-                                      style: titleMini,
-                                      textAlign: TextAlign.left,
-                                    ),
-                                    Text(
-                                      ' *',
-                                      style: TextStyle(
-                                          color: Colors.red, fontSize: 25),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ],
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            const Align(
+                              alignment: Alignment.topLeft,
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Full Name',
+                                    style: titleMini,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  Text(
+                                    ' *',
+                                    style: TextStyle(
+                                        color: Colors.red, fontSize: 25),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            TextField(
+                              controller: _fullnameController,
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.black),
+                              decoration: const InputDecoration(
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.amber),
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.amber),
                                 ),
                               ),
-                              TextField(
-                                controller: _fullnameController,
-                                style: const TextStyle(
-                                    fontSize: 14, color: Colors.black),
-                                decoration: const InputDecoration(
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.amber),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            const Align(
+                              alignment: Alignment.topLeft,
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Username',
+                                    style: titleMini,
+                                    textAlign: TextAlign.left,
                                   ),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.amber),
+                                  Text(
+                                    ' *',
+                                    style: TextStyle(
+                                        color: Colors.red, fontSize: 25),
+                                    textAlign: TextAlign.left,
                                   ),
+                                ],
+                              ),
+                            ),
+                            TextField(
+                              controller: _usernamewController,
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.black),
+                              decoration: const InputDecoration(
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.amber),
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.amber),
                                 ),
                               ),
-                              const SizedBox(
-                                height: 20,
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            const Align(
+                              alignment: Alignment.topLeft,
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Email',
+                                    style: titleMini,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  Text(
+                                    ' *',
+                                    style: TextStyle(
+                                        color: Colors.red, fontSize: 25),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ],
                               ),
-                              const Align(
-                                alignment: Alignment.topLeft,
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Username',
-                                      style: titleMini,
-                                      textAlign: TextAlign.left,
-                                    ),
-                                    Text(
-                                      ' *',
-                                      style: TextStyle(
-                                          color: Colors.red, fontSize: 25),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ],
+                            ),
+                            TextField(
+                              controller: _emailController,
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.black),
+                              decoration: const InputDecoration(
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.amber),
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.amber),
                                 ),
                               ),
-                              TextField(
-                                controller: _usernamewController,
-                                style: const TextStyle(
-                                    fontSize: 14, color: Colors.black),
-                                decoration: const InputDecoration(
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.amber),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            const Align(
+                              alignment: Alignment.topLeft,
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Password',
+                                    style: titleMini,
+                                    textAlign: TextAlign.left,
                                   ),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.amber),
+                                  Text(
+                                    ' *',
+                                    style: TextStyle(
+                                        color: Colors.red, fontSize: 25),
+                                    textAlign: TextAlign.left,
                                   ),
+                                ],
+                              ),
+                            ),
+                            TextField(
+                              controller: _passwordController,
+                              obscureText: _isObscured,
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.black),
+                              decoration: InputDecoration(
+                                focusedBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.amber),
+                                ),
+                                enabledBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.amber),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _isObscured
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isObscured = !_isObscured;
+                                    });
+                                  },
                                 ),
                               ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              const Align(
-                                alignment: Alignment.topLeft,
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Email',
-                                      style: titleMini,
-                                      textAlign: TextAlign.left,
-                                    ),
-                                    Text(
-                                      ' *',
-                                      style: TextStyle(
-                                          color: Colors.red, fontSize: 25),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              TextField(
-                                controller: _emailController,
-                                style: const TextStyle(
-                                    fontSize: 14, color: Colors.black),
-                                decoration: const InputDecoration(
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.amber),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Visibility(
+                                  visible: isIncorrect,
+                                  child: Text(
+                                    error,
+                                    style: const TextStyle(color: Colors.red),
+                                  )),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    height: 1,
+                                    width: 100,
+                                    color:
+                                        const Color.fromRGBO(217, 217, 217, 1),
                                   ),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.amber),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              const Align(
-                                alignment: Alignment.topLeft,
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Password',
-                                      style: titleMini,
-                                      textAlign: TextAlign.left,
+                                  const Text(
+                                    '   or   ',
+                                    style: TextStyle(
+                                      color: Color.fromRGBO(217, 217, 217, 1),
                                     ),
-                                    Text(
-                                      ' *',
-                                      style: TextStyle(
-                                          color: Colors.red, fontSize: 25),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              TextField(
-                                controller: _passwordController,
-                                obscureText: _isObscured,
-                                style: const TextStyle(
-                                    fontSize: 14, color: Colors.black),
-                                decoration: InputDecoration(
-                                  focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.amber),
                                   ),
-                                  enabledBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.amber),
+                                  Container(
+                                    height: 1,
+                                    width: 100,
+                                    color:
+                                        const Color.fromRGBO(217, 217, 217, 1),
                                   ),
-                                  suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _isObscured
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _isObscured = !_isObscured;
-                                      });
-                                    },
-                                  ),
-                                ),
+                                ],
                               ),
-                              const SizedBox(
-                                height: 10,
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 20),
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(255, 255, 255, 255),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(10)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color:
+                                        const Color.fromARGB(1, 202, 202, 202)
+                                            .withOpacity(0.2),
+                                    spreadRadius: 4,
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 3),
+                                  )
+                                ],
                               ),
-                              Align(
-                                alignment: Alignment.topLeft,
-                                child: Visibility(
-                                    visible: isIncorrect,
-                                    child: Text(
-                                      error,
-                                      style: const TextStyle(color: Colors.red),
-                                    )),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(top: 20),
+                              child: ElevatedButton(
+                                style: buttonGoogle,
+                                onPressed: () {
+                                  _showResizableDialog(context);
+                                },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Container(
-                                      height: 1,
-                                      width: 100,
-                                      color: const Color.fromRGBO(
-                                          217, 217, 217, 1),
-                                    ),
+                                    Image.asset('assets/pics/google.png',
+                                        height: 25),
                                     const Text(
-                                      '   or   ',
-                                      style: TextStyle(
-                                        color: Color.fromRGBO(217, 217, 217, 1),
-                                      ),
-                                    ),
-                                    Container(
-                                      height: 1,
-                                      width: 100,
-                                      color: const Color.fromRGBO(
-                                          217, 217, 217, 1),
+                                      '   Continue with Google',
+                                      style: TextStyle(color: Colors.black),
                                     ),
                                   ],
                                 ),
                               ),
-                              Container(
-                                margin: const EdgeInsets.only(top: 20),
-                                decoration: BoxDecoration(
-                                  color:
-                                      const Color.fromARGB(255, 255, 255, 255),
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(10)),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color:
-                                          const Color.fromARGB(1, 202, 202, 202)
-                                              .withOpacity(0.2),
-                                      spreadRadius: 4,
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 3),
-                                    )
-                                  ],
-                                ),
-                                child: ElevatedButton(
-                                  style: buttonGoogle,
-                                  onPressed: () {
-                                    _showResizableDialog(context);
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset('assets/pics/google.png',
-                                          height: 25),
-                                      const Text(
-                                        '   Continue with Google',
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
