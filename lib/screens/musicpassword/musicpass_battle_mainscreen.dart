@@ -33,6 +33,7 @@ class MusicPasswordGameBattle extends StatefulWidget {
     required this.opponentAvt,
     required this.opponentId,
     required this.isUSer1,
+    this.isWithFriend,
   });
   final MusicPassword info;
   final Account account;
@@ -43,6 +44,7 @@ class MusicPasswordGameBattle extends StatefulWidget {
   final String opponentAvt;
   final int opponentId;
   final bool isUSer1;
+  final bool? isWithFriend;
 
   @override
   State<StatefulWidget> createState() {
@@ -243,11 +245,13 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
           context,
           MaterialPageRoute(
               builder: (context) => FinalResultScreen(
-                  points: points.toInt(),
-                  status: 'win',
-                  gameId: 2,
-                  totalCoin: account.coin!,
-                  contestId: null)),
+                    points: points.toInt(),
+                    status: 'win',
+                    gameId: 2,
+                    totalCoin: account.coin!,
+                    contestId: null,
+                    isWithFriend: widget.isWithFriend,
+                  )),
           (route) => false,
         );
       }
@@ -281,11 +285,13 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
               context,
               MaterialPageRoute(
                   builder: (context) => FinalResultScreen(
-                      points: points.toInt(),
-                      status: 'win',
-                      gameId: 2,
-                      totalCoin: account.coin!,
-                      contestId: null)),
+                        points: points.toInt(),
+                        status: 'win',
+                        gameId: 2,
+                        totalCoin: account.coin!,
+                        contestId: null,
+                        isWithFriend: widget.isWithFriend,
+                      )),
               (route) => false,
             );
           } else if (remainingTime.inMilliseconds <
@@ -309,11 +315,13 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
               context,
               MaterialPageRoute(
                   builder: (context) => FinalResultScreen(
-                      points: points.toInt(),
-                      status: 'lose',
-                      gameId: 2,
-                      totalCoin: account.coin!,
-                      contestId: null)),
+                        points: points.toInt(),
+                        status: 'lose',
+                        gameId: 2,
+                        totalCoin: account.coin!,
+                        contestId: null,
+                        isWithFriend: widget.isWithFriend,
+                      )),
               (route) => false,
             );
           } else {
@@ -334,11 +342,13 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
               context,
               MaterialPageRoute(
                   builder: (context) => FinalResultScreen(
-                      points: points.toInt(),
-                      status: 'draw',
-                      gameId: 2,
-                      totalCoin: account!.coin!,
-                      contestId: null)),
+                        points: points.toInt(),
+                        status: 'draw',
+                        gameId: 2,
+                        totalCoin: account!.coin!,
+                        contestId: null,
+                        isWithFriend: widget.isWithFriend,
+                      )),
               (route) => false,
             );
           }
@@ -362,11 +372,13 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
             context,
             MaterialPageRoute(
                 builder: (context) => FinalResultScreen(
-                    points: points.toInt(),
-                    status: 'win',
-                    gameId: 2,
-                    totalCoin: account.coin!,
-                    contestId: null)),
+                      points: points.toInt(),
+                      status: 'win',
+                      gameId: 2,
+                      totalCoin: account.coin!,
+                      contestId: null,
+                      isWithFriend: widget.isWithFriend,
+                    )),
             (route) => false,
           );
         }
@@ -400,11 +412,13 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
               context,
               MaterialPageRoute(
                   builder: (context) => FinalResultScreen(
-                      points: points.toInt(),
-                      status: 'win',
-                      gameId: 2,
-                      totalCoin: account.coin!,
-                      contestId: null)),
+                        points: points.toInt(),
+                        status: 'win',
+                        gameId: 2,
+                        totalCoin: account.coin!,
+                        contestId: null,
+                        isWithFriend: widget.isWithFriend,
+                      )),
               (route) => false,
             );
           } else if (remainingTime.inMilliseconds <
@@ -428,11 +442,13 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
               context,
               MaterialPageRoute(
                   builder: (context) => FinalResultScreen(
-                      points: points.toInt(),
-                      status: 'lose',
-                      gameId: 4,
-                      totalCoin: account.coin!,
-                      contestId: null)),
+                        points: points.toInt(),
+                        status: 'lose',
+                        gameId: 4,
+                        totalCoin: account.coin!,
+                        contestId: null,
+                        isWithFriend: widget.isWithFriend,
+                      )),
               (route) => false,
             );
           } else {
@@ -454,11 +470,13 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
               context,
               MaterialPageRoute(
                   builder: (context) => FinalResultScreen(
-                      points: points.toInt(),
-                      status: 'draw',
-                      gameId: 2,
-                      totalCoin: account!.coin!,
-                      contestId: null)),
+                        points: points.toInt(),
+                        status: 'draw',
+                        gameId: 2,
+                        totalCoin: account!.coin!,
+                        contestId: null,
+                        isWithFriend: widget.isWithFriend,
+                      )),
               (route) => false,
             );
           }
@@ -510,11 +528,13 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
           context,
           MaterialPageRoute(
               builder: (context) => FinalResultScreen(
-                  points: 0,
-                  status: 'draw',
-                  gameId: 4,
-                  totalCoin: account!.coin!,
-                  contestId: null)),
+                    points: 0,
+                    status: 'draw',
+                    gameId: 4,
+                    totalCoin: account!.coin!,
+                    contestId: null,
+                    isWithFriend: widget.isWithFriend,
+                  )),
           (route) => false,
         );
       }
@@ -546,12 +566,14 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (context) => const FinalResultScreen(
-                    points: 0,
-                    status: 'lose',
-                    gameId: 2,
-                    totalCoin: 0,
-                    contestId: null)),
+                builder: (context) => FinalResultScreen(
+                      points: 0,
+                      status: 'lose',
+                      gameId: 2,
+                      totalCoin: 0,
+                      contestId: null,
+                      isWithFriend: widget.isWithFriend,
+                    )),
             (route) => false,
           );
         }
@@ -582,12 +604,14 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (context) => const FinalResultScreen(
-                    points: 0,
-                    status: 'lose',
-                    gameId: 4,
-                    totalCoin: 0,
-                    contestId: null)),
+                builder: (context) => FinalResultScreen(
+                      points: 0,
+                      status: 'lose',
+                      gameId: 4,
+                      totalCoin: 0,
+                      contestId: null,
+                      isWithFriend: widget.isWithFriend,
+                    )),
             (route) => false,
           );
         }
@@ -711,11 +735,13 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
               .substring(0, widget.opponentName.length) ==
           widget.opponentName) {
         listMessage.add(MessageChat(
-            isOwner: false,
-            content: event.snapshot.value
-                .toString()
-                .substring(widget.opponentName.length + 3),
-            name: widget.opponentName));
+          isOwner: false,
+          content: event.snapshot.value
+              .toString()
+              .substring(widget.opponentName.length + 3),
+          name: widget.opponentName,
+          idOpponent: widget.opponentId,
+        ));
         setState(() {
           chatVisible = true;
           listMessage;
@@ -729,11 +755,13 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
         });
       } else {
         listMessage.add(MessageChat(
-            isOwner: true,
-            content: event.snapshot.value
-                .toString()
-                .substring(widget.account.userName.length + 3),
-            name: widget.account.userName));
+          isOwner: true,
+          content: event.snapshot.value
+              .toString()
+              .substring(widget.account.userName.length + 3),
+          name: widget.account.userName,
+          idOpponent: null,
+        ));
         setState(() {
           listMessage;
         });

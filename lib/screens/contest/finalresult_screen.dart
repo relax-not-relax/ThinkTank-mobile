@@ -21,6 +21,7 @@ class FinalResultScreen extends StatefulWidget {
     required this.contestId,
     required this.status,
     this.isRoom,
+    this.isWithFriend,
   });
 
   final int points;
@@ -29,6 +30,7 @@ class FinalResultScreen extends StatefulWidget {
   final int totalCoin;
   final int? contestId;
   final bool? isRoom;
+  final bool? isWithFriend;
 
   @override
   State<FinalResultScreen> createState() => _FinalResultScreenState();
@@ -177,7 +179,9 @@ class _FinalResultScreenState extends State<FinalResultScreen> {
                                       accountInContest: accountInContest,
                                     )),
                             (route) => false);
-                      } else if (widget.isRoom != null && widget.isRoom!) {
+                      } else if ((widget.isRoom != null && widget.isRoom!) ||
+                          (widget.isWithFriend != null &&
+                              widget.isWithFriend!)) {
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(

@@ -1,15 +1,10 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/findanonymous.dart';
 import 'package:thinktank_mobile/models/findanounymous_assets.dart';
-
-import 'package:thinktank_mobile/models/level.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
-
 import 'package:thinktank_mobile/models/account.dart';
-
 import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/screens/findanonymous/findanonymous_game.dart';
 import 'package:thinktank_mobile/screens/flipcard/flipcard_game.dart';
@@ -94,12 +89,13 @@ class LevelItem extends StatelessWidget {
                       var data = await getMusicPassword(levelNumber);
 
                       // ignore: use_build_context_synchronously
-                      Navigator.push(
+                      Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                           builder: (context) => MusicPasswordGamePlay(
                               info: data, account: account!, gameName: game),
                         ),
+                        (route) => false,
                       );
                       break;
                     case 'Find The Anonymous':
@@ -108,7 +104,7 @@ class LevelItem extends StatelessWidget {
                       print('longlong');
 
                       // ignore: use_build_context_synchronously
-                      Navigator.push(
+                      Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                           builder: (context) => FindAnonymousGame(
@@ -118,6 +114,7 @@ class LevelItem extends StatelessWidget {
                               numberOfAnswer: m,
                               time: data.time),
                         ),
+                        (route) => false,
                       );
                       // Navigator.push(
                       //   context,
@@ -132,7 +129,7 @@ class LevelItem extends StatelessWidget {
                       break;
                     case 'Flip Card Challenge':
                       // ignore: use_build_context_synchronously
-                      Navigator.push(
+                      Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                           builder: (context) => FlipCardGamePlay(
@@ -141,11 +138,12 @@ class LevelItem extends StatelessWidget {
                             level: levelNumber,
                           ),
                         ),
+                        (route) => false,
                       );
                       break;
                     case 'Images Walkthrough':
                       // ignore: use_build_context_synchronously
-                      Navigator.push(
+                      Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
                           builder: (context) => GameMainScreen(
@@ -155,6 +153,7 @@ class LevelItem extends StatelessWidget {
                             contestId: null,
                           ),
                         ),
+                        (route) => false,
                       );
                       break;
                   }

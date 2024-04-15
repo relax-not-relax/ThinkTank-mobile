@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:iconly/iconly.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/api/contest_api.dart';
@@ -571,19 +572,27 @@ class MusicPasswordGamePlayState extends State<MusicPasswordGamePlay>
                             top: 20,
                           ),
                           height: 50,
-                          width: 140,
+                          width: 100,
                           decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
                             color: Color.fromRGBO(122, 122, 122, 0.63),
                           ),
                           padding: const EdgeInsets.all(10),
                           child: Center(
-                            child: Text(
-                              'Listen ($listenTime)',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.volume_up_rounded,
+                                    size: 30, color: Colors.white),
+                                Text(
+                                  '($listenTime)',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
                             ),
                           ),
                         ),

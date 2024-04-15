@@ -51,15 +51,67 @@ class _NotificationElementState extends State<NotificationElement> {
     }
   }
 
+  void _showReject(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(0),
+          content: Container(
+            width: 250,
+            height: 300,
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                color: Color.fromARGB(255, 249, 249, 249)),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                Image.asset(
+                  'assets/pics/accOragne.png',
+                  height: 150,
+                  width: 150,
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "Can't play",
+                  style: TextStyle(
+                      color: Color.fromRGBO(234, 84, 85, 1),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
+                const Text(
+                  'Your coin is not enough to play',
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> acceptChallenge(String roomId, int gameId) async {
     Account? account = await SharedPreferencesHelper.getInfo();
+    if (account!.coin! < 20) {
+      _showReject(context);
+      return;
+    }
     AccountBattle competitor = AccountBattle(accountId: 1, roomId: roomId);
     // ignore: use_build_context_synchronously
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
         builder: (context) => BattleMainScreen(
-            account: account!, gameId: gameId, competitor: competitor),
+            account: account!,
+            gameId: gameId,
+            competitor: competitor,
+            isWithFriend: true),
       ),
       (route) => false,
     );

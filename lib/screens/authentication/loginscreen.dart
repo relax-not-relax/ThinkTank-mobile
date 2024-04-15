@@ -274,11 +274,16 @@ class LoginScreenState extends State<LoginScreen> {
                         style: buttonGoogleVer2(context),
                         onPressed: () async {
                           _showResizableDialog(context);
+
                           Account? acc =
                               await ApiAuthentication.loginWithGoogle();
                           if (acc == null) {
                             _closeDialog(context);
                           } else {
+                            if (acc.status == false) {
+                              _showReject(context);
+                              return;
+                            }
                             setState(() {
                               _isIncorrect = false;
                             });
@@ -355,6 +360,10 @@ class LoginScreenState extends State<LoginScreen> {
                           });
                           _closeDialog(context);
                         } else {
+                          if (acc.status == false) {
+                            _showReject(context);
+                            return;
+                          }
                           if (isRemember) {
                             await SharedPreferencesHelper.saveAccount(
                                 LoginInfo(password: pass, username: usn));
@@ -409,6 +418,51 @@ class LoginScreenState extends State<LoginScreen> {
 
 void _closeDialog(BuildContext context) {
   Navigator.of(context).pop();
+}
+
+void _showReject(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 300,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/pics/accOragne.png',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                "Your account is baned",
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Text(
+                "You can't not enter to game",
+                style: TextStyle(
+                    color: Color.fromRGBO(129, 140, 155, 1),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
 
 void _showResizableDialog(BuildContext context) {
