@@ -5,6 +5,7 @@ import 'package:thinktank_mobile/api/friends_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/friendship.dart';
+import 'package:thinktank_mobile/screens/friend/friend_screen.dart';
 import 'package:thinktank_mobile/widgets/others/loadingcustom.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
@@ -54,23 +55,36 @@ class AddFriendScreenState extends State<AddFriendScreen> {
   }
 
   Future<void> denied(int friendShipId, int index) async {
-    LoadingCustom.loading(context);
-    Account? account = await SharedPreferencesHelper.getInfo();
+    //_closeDialog(context);
+    _showDenyDialog(context);
+
+    await ApiFriends.deleteFriend(friendShipId);
+
+    // ignore: use_build_context_synchronously
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        _closeDialog(context);
+      }
+    });
     setState(() {
       list[index].status = null;
     });
-    await ApiFriends.deleteFriend(friendShipId);
-    LoadingCustom.loaded(context);
   }
 
   Future<void> accept(int friendShipId, int index) async {
-    LoadingCustom.loading(context);
-    Account? account = await SharedPreferencesHelper.getInfo();
+    //_closeDialog(context);
+    _showAcceptDialog(context);
+
+    await ApiFriends.acceptFriend(friendShipId);
+
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        _closeDialog(context);
+      }
+    });
     setState(() {
       list[index].status = true;
     });
-    await ApiFriends.acceptFriend(friendShipId);
-    LoadingCustom.loaded(context);
   }
 
   @override
@@ -174,7 +188,7 @@ class AddFriendScreenState extends State<AddFriendScreen> {
               Expanded(
                 child: _isLoading
                     ? const Center(
-                        child: const CustomLoadingSpinner(
+                        child: CustomLoadingSpinner(
                             color: Color.fromARGB(255, 245, 149, 24)),
                       )
                     : SingleChildScrollView(
@@ -210,8 +224,10 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                                                 Border.all(color: Colors.black),
                                             image: DecorationImage(
                                               image: NetworkImage(
-                                                  element.avatar2 ??
-                                                      element.avatar1!),
+                                                element.avatar2 ??
+                                                    element.avatar1!,
+                                              ),
+                                              fit: BoxFit.cover,
                                             ),
                                           ),
                                         ),
@@ -270,12 +286,23 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                                           width: 100,
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              _showResizableDialog(
-                                                  context,
-                                                  element.userName2!,
-                                                  element.id,
-                                                  list.indexOf(element),
-                                                  "added");
+                                              // _showResizableDialog(
+                                              //     context,
+                                              //     element.userName2!,
+                                              //     element.id,
+                                              //     list.indexOf(element),
+                                              //     "added");
+                                              _showConfirmDialog(
+                                                context,
+                                                () {
+                                                  denied(element.id,
+                                                      list.indexOf(element));
+                                                },
+                                                () =>
+                                                    Navigator.of(context).pop(),
+                                                element.userName2!,
+                                                false,
+                                              );
                                             },
                                             style: buttonAdded,
                                             child: const Center(
@@ -302,12 +329,25 @@ class AddFriendScreenState extends State<AddFriendScreen> {
                                           width: 120,
                                           child: ElevatedButton(
                                             onPressed: () async {
-                                              _showResizableDialog(
-                                                  context,
-                                                  element.userName1!,
-                                                  element.id,
-                                                  list.indexOf(element),
-                                                  "approve");
+                                              // _showResizableDialog(
+                                              //     context,
+                                              //     element.userName1!,
+                                              //     element.id,
+                                              //     list.indexOf(element),
+                                              //     "approve");
+                                              _showConfirmDialog(
+                                                context,
+                                                () {
+                                                  accept(element.id,
+                                                      list.indexOf(element));
+                                                },
+                                                () {
+                                                  denied(element.id,
+                                                      list.indexOf(element));
+                                                },
+                                                element.userName1!,
+                                                true,
+                                              );
                                             },
                                             style: buttonApprove,
                                             child: const Center(
@@ -361,123 +401,174 @@ class AddFriendScreenState extends State<AddFriendScreen> {
       ),
     );
   }
+}
 
-  void _showResizableDialog(BuildContext context, String username,
-      int friendShipId, int index, String type) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.all(0),
-          content: Container(
-            width: 250,
-            height: 140,
-            decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-                color: Color.fromARGB(255, 249, 249, 249)),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 15,
+void _showAcceptDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 400,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                "assets/pics/addfriend.png",
+                height: 150,
+                width: 150,
               ),
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        type == "approve"
-                            ? ('Accept $username as a friend')
-                            : "Cancle the request to $username?",
-                        style: const TextStyle(
-                            color: Color.fromRGBO(129, 140, 155, 1),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Expanded(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                              color: Color.fromARGB(255, 202, 202, 202),
-                              width: 1),
-                        ),
-                      ),
-                      margin: const EdgeInsets.only(
-                        bottom: 10,
-                      ),
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            InkWell(
-                              onTap: () async {
-                                Navigator.pop(context);
-                                if (type == "approve")
-                                  await denied(friendShipId, index);
-                              },
-                              child: SizedBox(
-                                height: 50,
-                                width: 125,
-                                child: Center(
-                                  child: Text(
-                                    type == "approve" ? ('Reject') : "No",
-                                    style: const TextStyle(
-                                      color: Color.fromRGBO(255, 58, 58, 1),
-                                      fontSize: 16,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () async {
-                                Navigator.pop(context);
-                                if (type == "approve") {
-                                  await accept(friendShipId, index);
-                                } else {
-                                  print(friendShipId);
-                                  await denied(friendShipId, index);
-                                }
-                              },
-                              child: SizedBox(
-                                height: 50,
-                                width: 125,
-                                child: Center(
-                                  child: Text(
-                                    type == "approve" ? ('Accept') : "Yes",
-                                    style: const TextStyle(
-                                      color: Color.fromRGBO(72, 145, 255, 1),
-                                      fontSize: 16,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                ],
+              const SizedBox(height: 10),
+              const Text(
+                'Please wait...',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 14,
+                ),
+                child: Text(
+                  'The Think Tank community is stronger thanks to you!',
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const CustomLoadingSpinner(
+                  color: Color.fromARGB(255, 245, 149, 24)),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _showDenyDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 400,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                "assets/pics/deny.png",
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Please wait...',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 14,
+                ),
+                child: Text(
+                  "Our friendship failed, it's a pity!",
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const CustomLoadingSpinner(
+                  color: Color.fromARGB(255, 245, 149, 24)),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _showConfirmDialog(BuildContext context, Function accept, Function deny,
+    String userName, bool isAdded) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text(
+          'Confirmation',
+          style: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: Text(
+          isAdded
+              ? 'Accept $userName as a friend?'
+              : 'Cancel friend request to $userName?',
+          style: GoogleFonts.roboto(
+            fontSize: 14,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              _closeDialog(context);
+              deny();
+            },
+            child: Text(
+              isAdded ? 'Reject' : 'No',
+              style: const TextStyle(
+                color: Color.fromRGBO(255, 58, 58, 1),
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),
-        );
-      },
-    );
-  }
+          TextButton(
+            onPressed: () {
+              _closeDialog(context);
+              accept();
+            },
+            child: Text(
+              isAdded ? 'Accept' : 'Yes',
+              style: const TextStyle(
+                color: Color.fromARGB(255, 72, 145, 255),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void _closeDialog(BuildContext context) {
+  Navigator.of(context).pop();
 }

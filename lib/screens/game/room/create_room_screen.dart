@@ -364,18 +364,37 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: games.sublist(0, 3).map(
-                    (game) {
-                      return RoomGameSelector(
-                        gameSelector: game,
-                        onSelectGame: () {
-                          onSelectGame(game);
-                        },
-                        isSelected: selectedGame == game,
-                      );
-                    },
-                  ).toList(),
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  // children: games.sublist(0, 3).map(
+                  //   (game) {
+                  //     return RoomGameSelector(
+                  //       gameSelector: game,
+                  //       onSelectGame: () {
+                  //         onSelectGame(game);
+                  //       },
+                  //       isSelected: selectedGame == game,
+                  //     );
+                  //   },
+                  // ).toList(),
+                  children: [
+                    RoomGameSelector(
+                      gameSelector: games[0],
+                      onSelectGame: () {
+                        onSelectGame(games[0]);
+                      },
+                      isSelected: selectedGame == games[0],
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    RoomGameSelector(
+                      gameSelector: games[2],
+                      onSelectGame: () {
+                        onSelectGame(games[2]);
+                      },
+                      isSelected: selectedGame == games[2],
+                    ),
+                  ],
                 ),
               ),
               Row(
