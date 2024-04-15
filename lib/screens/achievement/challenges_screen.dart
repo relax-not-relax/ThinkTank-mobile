@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:thinktank_mobile/api/account_api.dart';
 import 'package:thinktank_mobile/api/challenges_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
@@ -61,16 +62,22 @@ class ChallengesScreenState extends State<ChallengesScreen>
   late TabController _tabController;
   List<Challenge> list = [];
   late Future<void> _getChallenges;
+  Account? account = null;
+  late Future _initAccount;
   int coin = 0;
 
+  Future<dynamic> getAccount() async {
+    dynamic result = await ApiAccount.getAccountById();
+    if (result is Account) {
+      return result;
+    }
+  }
+
   Future<void> getChallenges() async {
-    Account? acc = await SharedPreferencesHelper.getInfo();
-    coin = acc!.coin ?? 0;
     list = await ApiChallenges.getChallenges();
     if (mounted) {
       setState(() {
         list;
-        coin;
       });
     }
   }
@@ -80,6 +87,13 @@ class ChallengesScreenState extends State<ChallengesScreen>
     super.initState();
     _getChallenges = getChallenges();
     _getChallenges.then((value) => {});
+    _initAccount = getAccount();
+    _initAccount.then((value) {
+      setState(() {
+        account = value;
+        coin = account!.coin!;
+      });
+    });
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -132,17 +146,31 @@ class ChallengesScreenState extends State<ChallengesScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: false,
-      appBar: AvhievementAppBar(
-        coins: coin,
-        progress: list
-            .where((element) =>
-                ((element.completedLevel == null)
-                    ? 0
-                    : element.completedLevel! / element.completedMilestone) ==
-                1)
-            .length,
-        appBarHeight: MediaQuery.of(context).size.height * 0.45,
-      ),
+      appBar: account != null
+          ? AvhievementAppBar(
+              coins: coin,
+              progress: list
+                  .where((element) =>
+                      ((element.completedLevel == null)
+                          ? 0
+                          : element.completedLevel! /
+                              element.completedMilestone) ==
+                      1)
+                  .length,
+              appBarHeight: MediaQuery.of(context).size.height * 0.45,
+            )
+          : AvhievementAppBar(
+              coins: 0,
+              progress: list
+                  .where((element) =>
+                      ((element.completedLevel == null)
+                          ? 0
+                          : element.completedLevel! /
+                              element.completedMilestone) ==
+                      1)
+                  .length,
+              appBarHeight: MediaQuery.of(context).size.height * 0.45,
+            ),
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
@@ -377,7 +405,8 @@ class ItemAchieve extends StatelessWidget {
                               lineHeight: 25.0,
                               animationDuration: 1000,
                               animateFromLastPercent: true,
-                              percent: progress / total,
+                              percent:
+                                  (progress / total < 1) ? 0 : progress / total,
                               barRadius: const Radius.circular(10.0),
                               progressColor:
                                   const Color.fromRGBO(255, 199, 0, 1),
@@ -388,7 +417,9 @@ class ItemAchieve extends StatelessWidget {
                               height: 25,
                               child: Center(
                                 child: Text(
-                                  '$progress/$total',
+                                  (progress / total < 1)
+                                      ? '0/$total'
+                                      : '$progress/$total',
                                   style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,

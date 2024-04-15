@@ -5,23 +5,24 @@ import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/accountbattle.dart';
+import 'package:thinktank_mobile/models/friend_response.dart';
 import 'package:thinktank_mobile/models/friendship.dart';
 
 class ApiFriends {
-  static Future<List<Friendship>> getFriends(
-      int page, int pageSize, int accountId) async {
+  static Future<FriendResponse> getFriends(int page, int pageSize) async {
     Account? account = await SharedPreferencesHelper.getInfo();
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=2&AccountId=$accountId'),
+          'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=2&AccountId=${account!.id}'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${account!.accessToken}',
+        'Authorization': 'Bearer ${account.accessToken}',
       },
     );
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       final jsonList = jsonData['results'];
+      final total = jsonData['totalNumberOfRecords'] as int;
       List<Friendship> list = [];
       for (var element in jsonList) {
         list.add(
@@ -37,20 +38,24 @@ class ApiFriends {
           ),
         );
       }
-      return list;
+      FriendResponse friendResponse =
+          FriendResponse(friends: list, totalNumberOfRecords: total);
+      return friendResponse;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=2&AccountId=$accountId'),
+            'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=2&AccountId=${account2!.id}'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account2!.accessToken}',
+          'Authorization': 'Bearer ${account2.accessToken}',
         },
       );
       if (response2.statusCode == 200) {
         final jsonData = json.decode(response2.body);
         final jsonList = jsonData['results'];
+        final total = jsonData['totalNumberOfRecords'] as int;
         List<Friendship> list = [];
         for (var element in jsonList) {
           list.add(
@@ -66,23 +71,26 @@ class ApiFriends {
             ),
           );
         }
-        return list;
-      } else
-        return [];
+        FriendResponse friendResponse2 =
+            FriendResponse(friends: list, totalNumberOfRecords: total);
+        return friendResponse2;
+      } else {
+        return FriendResponse(friends: [], totalNumberOfRecords: 0);
+      }
     } else {
-      return [];
+      return FriendResponse(friends: [], totalNumberOfRecords: 0);
     }
   }
 
   static Future<List<Friendship>> searchRequest(
-      int page, int pageSize, int accountId, String userCode) async {
+      int page, int pageSize, String userCode) async {
     Account? account = await SharedPreferencesHelper.getInfo();
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=3&AccountId=$accountId&UserCode=$userCode'),
+          'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=3&AccountId=${account!.id}&UserCode=$userCode'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${account!.accessToken}',
+        'Authorization': 'Bearer ${account.accessToken}',
       },
     );
     if (response.statusCode == 200) {
@@ -106,12 +114,13 @@ class ApiFriends {
       return list;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=3&AccountId=$accountId&UserCode=$userCode'),
+            'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=3&AccountId=${account2!.id}&UserCode=$userCode'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account2!.accessToken}',
+          'Authorization': 'Bearer ${account2.accessToken}',
         },
       );
       if (response2.statusCode == 200) {
@@ -143,6 +152,7 @@ class ApiFriends {
   static Future<List<Friendship>> searchFriends(int page, int pageSize,
       int accountId, String userCode, String userName) async {
     Account? account = await SharedPreferencesHelper.getInfo();
+
     final response = await http.get(
       Uri.parse(
           'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=1&AccountId=$accountId&UserCode=$userCode&UserName=$userCode'),
@@ -172,6 +182,7 @@ class ApiFriends {
       return list;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
       final response = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/friends?Page=$page&PageSize=$pageSize&Status=1&AccountId=$accountId&UserCode=$userCode&UserName=$userCode'),
@@ -229,6 +240,7 @@ class ApiFriends {
       return Friendship.fromJson(jsonData);
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.post(
         Uri.parse('https://thinktank-sep490.azurewebsites.net/api/friends'),
         headers: {
@@ -262,6 +274,7 @@ class ApiFriends {
     print("delete" + response.statusCode.toString());
     if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
       await http.delete(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/friends/$friendId'),
@@ -288,6 +301,7 @@ class ApiFriends {
       return Friendship.fromJson(jsonData);
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/friends/$friendShipId/status'),
@@ -321,6 +335,7 @@ class ApiFriends {
       return AccountBattle.fromJson(jsonData);
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/${account2!.id},$gameId,$competitorId/countervailing-mode-with-friend'),

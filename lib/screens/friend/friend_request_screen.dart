@@ -22,60 +22,46 @@ class FriendRequestScreen extends StatefulWidget {
 class FriendRequestScreenState extends State<FriendRequestScreen> {
   List<Friendship> list = [];
   List<Friendship> listTmp = [];
-  TextEditingController _codeController = TextEditingController();
   bool _isLoading = true;
 
-  Future<void> search(String username) async {
-    setState(() {
-      list = listTmp
-          .where((element) =>
-              element.userName1 != null &&
-              element.userName1!.contains(username))
-          .toList();
-    });
-  }
-
   Future<List<Friendship>> getListRequest() async {
-    Account? account = await SharedPreferencesHelper.getInfo();
-    listTmp = await ApiFriends.searchRequest(1, 1000, account!.id, "");
+    listTmp = await ApiFriends.searchRequest(1, 1000, "");
     return listTmp.where((element) => element.accountId1 != null).toList();
   }
 
   late Future<List<Friendship>> _getRequest;
 
   Future<void> accept(int friendShipId, int index) async {
-    LoadingCustom.loading(context);
-    Account? account = await SharedPreferencesHelper.getInfo();
-    setState(() {
-      listTmp.removeAt(index);
-      list = listTmp
-          .where((element) =>
-              element.userName1 != null &&
-              element.userName1!.contains(_codeController.text))
-          .toList();
-    });
+    _showAcceptDialog(context);
+
     await ApiFriends.acceptFriend(friendShipId);
-    // ignore: use_build_context_synchronously
-    LoadingCustom.loaded(context);
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        _closeDialog(context);
+      }
+    });
+    setState(() {
+      list[index].status = true;
+      list = listTmp.where((element) => element.userName1 != null).toList();
+    });
   }
 
   Future<void> denied(int friendShipId, int index) async {
-    LoadingCustom.loading(context);
-    Account? account = await SharedPreferencesHelper.getInfo();
-    setState(() {
-      listTmp.removeAt(index);
-      list = listTmp
-          .where((element) =>
-              element.userName1 != null &&
-              element.userName1!.contains(_codeController.text))
-          .toList();
-    });
+    _showDenyDialog(context);
+
     await ApiFriends.deleteFriend(friendShipId);
+    listTmp = await ApiFriends.searchRequest(1, 1000, "");
     // ignore: use_build_context_synchronously
-    LoadingCustom.loaded(context);
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        _closeDialog(context);
+        setState(() {
+          list = listTmp.where((element) => element.userName1 != null).toList();
+        });
+      }
+    });
   }
 
-  int countFriend = 0;
   @override
   void initState() {
     super.initState();
@@ -139,64 +125,6 @@ class FriendRequestScreenState extends State<FriendRequestScreen> {
           ),
           child: Column(
             children: [
-              Container(
-                margin: const EdgeInsets.only(top: 10, left: 15, bottom: 10),
-                child: const Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    textAlign: TextAlign.start,
-                    "Username",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width - 20,
-                decoration: const BoxDecoration(
-                  color: Color.fromRGBO(18, 19, 21, 1),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20),
-                  ),
-                ),
-                child: TextField(
-                  onChanged: (value) {
-                    search(value);
-                  },
-                  controller: _codeController,
-                  style: const TextStyle(
-                      color: Color.fromARGB(255, 255, 255, 255)),
-                  decoration: InputDecoration(
-                    hintStyle: const TextStyle(
-                      color: Color.fromRGBO(65, 65, 65, 1),
-                    ),
-                    hintText: "Username",
-                    contentPadding: const EdgeInsets.all(20),
-                    enabledBorder: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      borderSide: BorderSide(
-                          color: Color.fromRGBO(65, 65, 65, 1), width: 1.0),
-                    ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      borderSide: BorderSide(
-                          color: Color.fromRGBO(65, 65, 65, 1), width: 1.0),
-                    ),
-                    prefixIcon: IconButton(
-                      icon: const Icon(
-                        IconlyLight.search,
-                        size: 30,
-                      ),
-                      onPressed: () {
-                        search(_codeController.text);
-                      },
-                    ),
-                  ),
-                ),
-              ),
               Expanded(
                 child: _isLoading
                     ? const Center(
@@ -236,8 +164,10 @@ class FriendRequestScreenState extends State<FriendRequestScreen> {
                                                 Border.all(color: Colors.black),
                                             image: DecorationImage(
                                               image: NetworkImage(
-                                                  element.avatar2 ??
-                                                      element.avatar1!),
+                                                element.avatar2 ??
+                                                    element.avatar1!,
+                                              ),
+                                              fit: BoxFit.cover,
                                             ),
                                           ),
                                         ),
@@ -267,11 +197,17 @@ class FriendRequestScreenState extends State<FriendRequestScreen> {
                                           width: 120,
                                           child: ElevatedButton(
                                             onPressed: () async {
-                                              _showResizableDialog(
+                                              _showConfirmDialog(
                                                 context,
+                                                () {
+                                                  accept(element.id,
+                                                      list.indexOf(element));
+                                                },
+                                                () {
+                                                  denied(element.id,
+                                                      list.indexOf(element));
+                                                },
                                                 element.userName1!,
-                                                element.id,
-                                                listTmp.indexOf(element),
                                               );
                                             },
                                             style: buttonApprove,
@@ -326,115 +262,172 @@ class FriendRequestScreenState extends State<FriendRequestScreen> {
       ),
     );
   }
+}
 
-  void _showResizableDialog(
-      BuildContext context, String username, int friendShipId, int index) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.all(0),
-          content: Container(
-            width: 250,
-            height: 140,
-            decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(10),
-                ),
-                color: Color.fromARGB(255, 249, 249, 249)),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 15,
+void _showAcceptDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 400,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                "assets/pics/addfriend.png",
+                height: 150,
+                width: 150,
               ),
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        'Accept $username as a friend?',
-                        style: const TextStyle(
-                            color: Color.fromRGBO(129, 140, 155, 1),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Expanded(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                              color: Color.fromARGB(255, 202, 202, 202),
-                              width: 1),
-                        ),
-                      ),
-                      margin: const EdgeInsets.only(
-                        bottom: 10,
-                      ),
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            InkWell(
-                              onTap: () async {
-                                Navigator.pop(context);
-                                await denied(friendShipId, index);
-                              },
-                              child: const SizedBox(
-                                height: 50,
-                                width: 125,
-                                child: Center(
-                                  child: Text(
-                                    'Reject',
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(255, 58, 58, 1),
-                                      fontSize: 16,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () async {
-                                Navigator.pop(context);
-                                await accept(friendShipId, index);
-                              },
-                              child: const SizedBox(
-                                height: 50,
-                                width: 125,
-                                child: Center(
-                                  child: Text(
-                                    'Accept',
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(72, 145, 255, 1),
-                                      fontSize: 16,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                ],
+              const SizedBox(height: 10),
+              const Text(
+                'Please wait...',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 14,
+                ),
+                child: Text(
+                  'The Think Tank community is stronger thanks to you!',
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const CustomLoadingSpinner(
+                  color: Color.fromARGB(255, 245, 149, 24)),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _showDenyDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 400,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                "assets/pics/deny.png",
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Please wait...',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 14,
+                ),
+                child: Text(
+                  "Our friendship failed, it's a pity!",
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const CustomLoadingSpinner(
+                  color: Color.fromARGB(255, 245, 149, 24)),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _showConfirmDialog(
+    BuildContext context, Function accept, Function deny, String userName) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text(
+          'Confirmation',
+          style: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: Text(
+          'Accept $userName as a friend?',
+          style: GoogleFonts.roboto(
+            fontSize: 14,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              _closeDialog(context);
+              deny();
+            },
+            child: const Text(
+              'Reject',
+              style: TextStyle(
+                color: Color.fromRGBO(255, 58, 58, 1),
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),
-        );
-      },
-    );
-  }
+          TextButton(
+            onPressed: () {
+              _closeDialog(context);
+              accept();
+            },
+            child: const Text(
+              'Accept',
+              style: TextStyle(
+                color: Color.fromARGB(255, 72, 145, 255),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void _closeDialog(BuildContext context) {
+  Navigator.of(context).pop();
 }
