@@ -74,6 +74,13 @@ class StartScreenState extends State<StartScreen>
     Account? acc = await ApiAuthentication.reLogin();
 
     if (acc != null) {
+      if (acc.status == false) {
+        setState(() {
+          wait = false;
+          visibleButton = true;
+        });
+        _controller2.forward();
+      }
       FirebaseRealTime.setOnline(acc.id, true);
       await ApiAchieviements.getLevelOfUser(acc.id, acc.accessToken!);
       await ApiNotification.getNotifications();

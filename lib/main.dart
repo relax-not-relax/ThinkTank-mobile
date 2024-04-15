@@ -4,32 +4,14 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
-import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
-import 'package:thinktank_mobile/models/musicpasssource.dart';
-import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/screens/achievement/challenges_screen.dart';
-import 'package:thinktank_mobile/screens/achievement/missioncomplete_screen.dart';
-import 'package:thinktank_mobile/screens/contest/finalresult_screen.dart';
-import 'package:thinktank_mobile/screens/contest/leaderboardcontest_screen.dart';
 import 'package:thinktank_mobile/screens/findanonymous/cardprovider.dart';
-import 'package:thinktank_mobile/screens/findanonymous/findanonymous_game.dart';
-import 'package:thinktank_mobile/screens/flipcard/flipcard_game.dart';
-
-import 'package:thinktank_mobile/screens/friend/addfriend_screen.dart';
 import 'package:thinktank_mobile/screens/friend/friend_request_screen.dart';
-import 'package:thinktank_mobile/screens/friend/friend_screen.dart';
-import 'package:thinktank_mobile/screens/game/battle_main_screen.dart';
-import 'package:thinktank_mobile/screens/game/leaderboard.dart';
-import 'package:thinktank_mobile/screens/imagesWalkthrough/battle/game_mainscreen.dart';
-import 'package:thinktank_mobile/screens/imagesWalkthrough/game_mainscreen.dart';
-
 import 'package:thinktank_mobile/screens/introscreen.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/screens/startscreen.dart';
-import 'package:thinktank_mobile/widgets/game/walkthrough_item.dart';
-import 'package:thinktank_mobile/widgets/others/applifecycleobserver%20.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -81,12 +63,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     Account? account = await SharedPreferencesHelper.getInfo();
-    if ((state == AppLifecycleState.inactive ||
-            state == AppLifecycleState.paused) &&
-        account != null) {
+
+    if ((state == AppLifecycleState.inactive) && account != null) {
       FirebaseRealTime.setOnline(account.id, false);
     }
-    if (state == AppLifecycleState.resumed && account != null) {
+    if ((state == AppLifecycleState.resumed) && account != null) {
       FirebaseRealTime.setOnline(account.id, true);
     }
   }

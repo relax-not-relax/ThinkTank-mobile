@@ -51,6 +51,45 @@ class BattleAPI {
     }
   }
 
+  static Future<bool> report(
+      int accountId2, String title, String description) async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    Map<String, dynamic> data = {
+      "description": description,
+      "accountId1": account!.id,
+      "accountId2": accountId2,
+      "title": title
+    };
+
+    String jsonBody = jsonEncode(data);
+    final response = await http.post(
+        Uri.parse('https://thinktank-sep490.azurewebsites.net/api/reports'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${account!.accessToken}',
+        },
+        body: jsonBody);
+    if (response.statusCode == 200) {
+      return true;
+    } else if (response.statusCode == 401 || response.statusCode == 403) {
+      Account? account2 = await ApiAuthentication.refreshToken();
+      final response2 = await http.post(
+          Uri.parse('https://thinktank-sep490.azurewebsites.net/api/reports'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${account2!.accessToken}',
+          },
+          body: jsonBody);
+      if (response2.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
   static Future<void> removeCache(
       int accountId, int gameId, int coins, String roomCode) async {
     Account? account = await SharedPreferencesHelper.getInfo();

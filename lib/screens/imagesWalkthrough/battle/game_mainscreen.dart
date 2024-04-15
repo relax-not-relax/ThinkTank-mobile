@@ -26,6 +26,7 @@ class GameBattleMainScreen extends StatefulWidget {
     required this.opponentAvt,
     required this.isUSer1,
     required this.opponentId,
+    this.isWithFriend,
   });
 
   //final Account account;
@@ -39,6 +40,7 @@ class GameBattleMainScreen extends StatefulWidget {
   final String opponentAvt;
   final int opponentId;
   final bool isUSer1;
+  final bool? isWithFriend;
 
   @override
   State<GameBattleMainScreen> createState() => _GameBattleMainScreenState();
@@ -119,11 +121,13 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
               .substring(0, widget.opponentName.length) ==
           widget.opponentName) {
         listMessage.add(MessageChat(
-            isOwner: false,
-            content: event.snapshot.value
-                .toString()
-                .substring(widget.opponentName.length + 3),
-            name: widget.opponentName));
+          isOwner: false,
+          content: event.snapshot.value
+              .toString()
+              .substring(widget.opponentName.length + 3),
+          name: widget.opponentName,
+          idOpponent: widget.opponentId,
+        ));
         setState(() {
           chatVisible = true;
           listMessage;
@@ -137,11 +141,13 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         });
       } else {
         listMessage.add(MessageChat(
-            isOwner: true,
-            content: event.snapshot.value
-                .toString()
-                .substring(widget.account.userName.length + 3),
-            name: widget.account.userName));
+          isOwner: true,
+          content: event.snapshot.value
+              .toString()
+              .substring(widget.account.userName.length + 3),
+          name: widget.account.userName,
+          idOpponent: null,
+        ));
         setState(() {
           listMessage;
         });
@@ -255,11 +261,13 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
           context,
           MaterialPageRoute(
               builder: (context) => FinalResultScreen(
-                  points: points.toInt(),
-                  status: 'win',
-                  gameId: 4,
-                  totalCoin: account.coin!,
-                  contestId: widget.contestId)),
+                    points: points.toInt(),
+                    status: 'win',
+                    gameId: 4,
+                    totalCoin: account.coin!,
+                    contestId: widget.contestId,
+                    isWithFriend: widget.isWithFriend,
+                  )),
           (route) => false,
         );
       }
@@ -293,11 +301,13 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) => FinalResultScreen(
-                      points: points.toInt(),
-                      status: 'win',
-                      gameId: 4,
-                      totalCoin: account.coin!,
-                      contestId: widget.contestId)),
+                        points: points.toInt(),
+                        status: 'win',
+                        gameId: 4,
+                        totalCoin: account.coin!,
+                        contestId: widget.contestId,
+                        isWithFriend: widget.isWithFriend,
+                      )),
               (route) => false,
             );
           } else if (remainingTime.inMilliseconds <
@@ -321,11 +331,13 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) => FinalResultScreen(
-                      points: points.toInt(),
-                      status: 'lose',
-                      gameId: 4,
-                      totalCoin: account.coin!,
-                      contestId: widget.contestId)),
+                        points: points.toInt(),
+                        status: 'lose',
+                        gameId: 4,
+                        totalCoin: account.coin!,
+                        contestId: widget.contestId,
+                        isWithFriend: widget.isWithFriend,
+                      )),
               (route) => false,
             );
           } else {
@@ -346,11 +358,13 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) => FinalResultScreen(
-                      points: points.toInt(),
-                      status: 'draw',
-                      gameId: 4,
-                      totalCoin: account!.coin!,
-                      contestId: widget.contestId)),
+                        points: points.toInt(),
+                        status: 'draw',
+                        gameId: 4,
+                        totalCoin: account!.coin!,
+                        contestId: widget.contestId,
+                        isWithFriend: widget.isWithFriend,
+                      )),
               (route) => false,
             );
           }
@@ -385,11 +399,13 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) => FinalResultScreen(
-                      points: points.toInt(),
-                      status: 'win',
-                      gameId: 4,
-                      totalCoin: account.coin!,
-                      contestId: widget.contestId)),
+                        points: points.toInt(),
+                        status: 'win',
+                        gameId: 4,
+                        totalCoin: account.coin!,
+                        contestId: widget.contestId,
+                        isWithFriend: widget.isWithFriend,
+                      )),
               (route) => false,
             );
           } else if (remainingTime.inMilliseconds <
@@ -413,11 +429,13 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) => FinalResultScreen(
-                      points: points.toInt(),
-                      status: 'lose',
-                      gameId: 4,
-                      totalCoin: account.coin!,
-                      contestId: widget.contestId)),
+                        points: points.toInt(),
+                        status: 'lose',
+                        gameId: 4,
+                        totalCoin: account.coin!,
+                        contestId: widget.contestId,
+                        isWithFriend: widget.isWithFriend,
+                      )),
               (route) => false,
             );
           } else {
@@ -438,11 +456,13 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) => FinalResultScreen(
-                      points: points.toInt(),
-                      status: 'draw',
-                      gameId: 4,
-                      totalCoin: account!.coin!,
-                      contestId: widget.contestId)),
+                        points: points.toInt(),
+                        status: 'draw',
+                        gameId: 4,
+                        totalCoin: account!.coin!,
+                        contestId: widget.contestId,
+                        isWithFriend: widget.isWithFriend,
+                      )),
               (route) => false,
             );
           }
@@ -450,12 +470,6 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
       }));
     }
   }
-
-  void _continue() async {
-    double points = (remainingTime.inMilliseconds / 1000);
-  }
-
-  void _continueLosed() async {}
 
   void switchScreen() {
     if (isLosed == false) {
@@ -542,11 +556,13 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
           context,
           MaterialPageRoute(
               builder: (context) => FinalResultScreen(
-                  points: 0,
-                  status: 'draw',
-                  gameId: 4,
-                  totalCoin: account!.coin!,
-                  contestId: widget.contestId)),
+                    points: 0,
+                    status: 'draw',
+                    gameId: 4,
+                    totalCoin: account!.coin!,
+                    contestId: widget.contestId,
+                    isWithFriend: widget.isWithFriend,
+                  )),
           (route) => false,
         );
       }
@@ -578,11 +594,13 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => FinalResultScreen(
-                    points: 0,
-                    status: 'lose',
-                    gameId: 4,
-                    totalCoin: 0,
-                    contestId: widget.contestId)),
+                      points: 0,
+                      status: 'lose',
+                      gameId: 4,
+                      totalCoin: 0,
+                      contestId: widget.contestId,
+                      isWithFriend: widget.isWithFriend,
+                    )),
             (route) => false,
           );
         }
@@ -614,11 +632,13 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => FinalResultScreen(
-                    points: 0,
-                    status: 'lose',
-                    gameId: 4,
-                    totalCoin: 0,
-                    contestId: widget.contestId)),
+                      points: 0,
+                      status: 'lose',
+                      gameId: 4,
+                      totalCoin: 0,
+                      contestId: widget.contestId,
+                      isWithFriend: widget.isWithFriend,
+                    )),
             (route) => false,
           );
         }
@@ -688,13 +708,13 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         source: gameSource,
         isEnd: isLosed,
         onEndTime: () {},
-        onDone: _continue,
+        onDone: () {},
       );
     }
 
     if (activeScreen == 'end-screen') {
       screenWidget = EndGameScreen(
-        onContinue: _continueLosed,
+        onContinue: () {},
       );
     }
 

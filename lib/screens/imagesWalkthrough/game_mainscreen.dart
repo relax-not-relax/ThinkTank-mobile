@@ -195,6 +195,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
           }
           _showResizableDialog(context);
           if (int.parse(event.snapshot.value.toString()) >= numberPlayer) {
+            Future.delayed(Duration(seconds: 5));
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
@@ -276,6 +277,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
         );
       } else if (widget.roomCode != null) {
         DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
+
         _databaseReference
             .child('room')
             .child(widget.roomCode!)
@@ -292,6 +294,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
           }
           _showResizableDialog(context);
           if (int.parse(event.snapshot.value.toString()) >= numberPlayer) {
+            Future.delayed(Duration(seconds: 5));
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
@@ -323,7 +326,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
     }
   }
 
-  void switchScreen() {
+  void switchScreen() async {
     if (isLosed == false) {
       setState(() {
         activeScreen = 'questions-screen';
@@ -341,6 +344,8 @@ class _GameMainScreenState extends State<GameMainScreen> {
           _timerStarted = false;
         }
       });
+      await Future.delayed(Duration(seconds: 3));
+      _continueLosed();
     }
   }
 
@@ -382,7 +387,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
     }
   }
 
-  void onTimeIsEnd() {
+  void onTimeIsEnd() async {
     timer?.cancel();
 
     setState(() {
@@ -393,6 +398,8 @@ class _GameMainScreenState extends State<GameMainScreen> {
         _timerStarted = false;
       }
     });
+    await Future.delayed(Duration(seconds: 3));
+    _continueLosed();
   }
 
   @override
@@ -436,6 +443,8 @@ class _GameMainScreenState extends State<GameMainScreen> {
             timer = null;
           });
           win();
+          await Future.delayed(Duration(seconds: 3));
+          _continue();
         },
         onInCorrectAnswer: () {
           AudioPlayer au = AudioPlayer();
@@ -451,7 +460,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
         onEndTime: () {
           onTimeIsEnd();
         },
-        onDone: _continue,
+        onDone: () {},
       );
     }
 

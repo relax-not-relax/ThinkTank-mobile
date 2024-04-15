@@ -85,7 +85,8 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
             if (mounted) {
               setState(() {
                 isLosed = true;
-                continueVisible = true;
+                Future.delayed(Duration(seconds: 3));
+                _continue();
               });
             }
           } else {
@@ -113,10 +114,10 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
           //widget.account.accessToken!,
           _game.cardCount ~/ 2);
     }
-    if (mounted)
-      setState(() {
-        continueVisible = true;
-      });
+    if (mounted) {
+      Future.delayed(Duration(seconds: 2));
+      _continue();
+    }
   }
 
   late Future _initResource;
@@ -206,6 +207,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
                 .set(int.parse(event.snapshot.value.toString()) + 1);
           }
           if (int.parse(event.snapshot.value.toString()) >= numberPlayer) {
+            Future.delayed(Duration(seconds: 5));
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
@@ -275,6 +277,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
                 .set(int.parse(event.snapshot.value.toString()) + 1);
           }
           if (int.parse(event.snapshot.value.toString()) >= numberPlayer) {
+            Future.delayed(Duration(seconds: 5));
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(

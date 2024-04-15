@@ -62,7 +62,14 @@ class _AnonymousCardState extends State<AnonymousCard> {
             duration: Duration(milliseconds: miliseconds),
             curve: Curves.easeInOut,
             transform: rotatedMatrix..translate(position.dx, position.dy),
-            child: buildCard(),
+            child: Center(
+              child: Stack(
+                children: [
+                  buildCard(),
+                  Container(width: 300, child: buildStamps()),
+                ],
+              ),
+            ),
           );
         }),
         onPanStart: (details) {
@@ -79,15 +86,50 @@ class _AnonymousCardState extends State<AnonymousCard> {
         },
       );
 
-  Widget buildCard() => Container(
-        height: MediaQuery.of(context).size.height * 0.55,
-        width: MediaQuery.of(context).size.width * 0.8,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-          child: Image.file(File(widget.avtlink), fit: BoxFit.cover),
+  Widget buildStamps() {
+    final provider = Provider.of<CardProvider>(context);
+    final status = provider.getStatus();
+    switch (status) {
+      case CardStatus.confirm:
+        final child = buildStamp(color: Colors.green, text: 'CONFIRM');
+        return child;
+      case CardStatus.skip:
+        final child =
+            buildStamp(color: Color.fromARGB(255, 189, 0, 0), text: 'SKIP');
+        return child;
+      default:
+        return Container();
+    }
+  }
+
+  Widget buildStamp(
+      {double angle = 0, required Color color, required String text}) {
+    return Container(
+      margin: const EdgeInsets.only(top: 30, left: 60),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+          border: Border.all(color: color, width: 4),
+          borderRadius: BorderRadius.circular(12)),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style:
+            TextStyle(color: color, fontSize: 48, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget buildCard() => Center(
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.55,
+          width: MediaQuery.of(context).size.width * 0.8,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            child: Image.file(File(widget.avtlink), fit: BoxFit.cover),
+          ),
         ),
       );
 }
@@ -270,6 +312,8 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
       timer?.cancel();
       isWin = false;
     });
+    Future.delayed(const Duration(seconds: 3));
+    continueFinish();
   }
 
   void continueFinish() async {
@@ -410,10 +454,8 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
         widget.contestId!,
       );
     }
-
-    setState(() {
-      continueVisible = true;
-    });
+    Future.delayed(const Duration(seconds: 3));
+    continueFinish();
   }
 
   void confirm(String imgLink) {
@@ -599,7 +641,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
                   child: Container(
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
-                    color: Color.fromARGB(48, 0, 0, 0),
+                    color: const Color.fromARGB(48, 0, 0, 0),
                     child: const Center(
                         child: CustomLoadingSpinner(
                             color: Color.fromARGB(255, 245, 149, 24))),
@@ -721,9 +763,10 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
             child: Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(color: Color.fromARGB(186, 0, 0, 0)),
+              decoration:
+                  const BoxDecoration(color: Color.fromARGB(186, 0, 0, 0)),
               child: Container(
-                margin: EdgeInsets.only(bottom: 30),
+                margin: const EdgeInsets.only(bottom: 30),
                 child: Stack(
                   children: [
                     Center(
@@ -734,43 +777,43 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Visibility(
-                            visible: tryAgainVisible,
-                            child: SizedBox(
-                              height: 76,
-                              width: 336,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Color.fromRGBO(45, 64, 89, 1),
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(100),
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.8),
-                                      blurRadius: 7,
-                                      offset: const Offset(0, 5),
-                                    ),
-                                  ],
-                                ),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    reset();
-                                  },
-                                  style: buttonLose,
-                                  child: const Text(
-                                    'TRY AGAIN',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.w900,
-                                      fontFamily: 'ButtonCustomFont',
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                          // Visibility(
+                          //   visible: tryAgainVisible,
+                          //   child: SizedBox(
+                          //     height: 76,
+                          //     width: 336,
+                          //     child: Container(
+                          //       decoration: BoxDecoration(
+                          //         color: const Color.fromRGBO(45, 64, 89, 1),
+                          //         borderRadius: const BorderRadius.all(
+                          //           Radius.circular(100),
+                          //         ),
+                          //         boxShadow: [
+                          //           BoxShadow(
+                          //             color: Colors.black.withOpacity(0.8),
+                          //             blurRadius: 7,
+                          //             offset: const Offset(0, 5),
+                          //           ),
+                          //         ],
+                          //       ),
+                          //       child: ElevatedButton(
+                          //         onPressed: () {
+                          //           reset();
+                          //         },
+                          //         style: buttonLose,
+                          //         child: const Text(
+                          //           'TRY AGAIN',
+                          //           style: TextStyle(
+                          //             color: Colors.white,
+                          //             fontSize: 30,
+                          //             fontWeight: FontWeight.w900,
+                          //             fontFamily: 'ButtonCustomFont',
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
                           const SizedBox(
                             height: 20,
                           ),

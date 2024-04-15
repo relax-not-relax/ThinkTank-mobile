@@ -134,7 +134,6 @@ class ApiRoom {
     var data = [
       {
         "accountId": account!.id,
-        "roomId": 0,
         "duration": 0,
         "mark": 0,
         "pieceOfInformation": 0
@@ -234,6 +233,10 @@ class ApiRoom {
   static Future<void> startGame(String roomCode, int time) async {
     Account? account = await SharedPreferencesHelper.getInfo();
     List<AccountInRank> result = [];
+    print('${account!.id},${roomCode},$time');
+    print(
+        'https://thinktank-sep490.azurewebsites.net/api/rooms/${account!.id},${roomCode},$time/started-room');
+    print('Call API start game rồi');
     final response = await http.get(
       Uri.parse(
           'https://thinktank-sep490.azurewebsites.net/api/rooms/${account!.id},${roomCode},$time/started-room'),
@@ -242,6 +245,8 @@ class ApiRoom {
         'Authorization': 'Bearer ${account!.accessToken}',
       },
     );
+    print(response.statusCode);
+    print(response.body);
 
     if (response.statusCode == 200) {
       return;

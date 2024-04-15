@@ -21,10 +21,12 @@ class BattleMainScreen extends StatefulWidget {
       {super.key,
       required this.account,
       required this.gameId,
-      this.competitor});
+      this.competitor,
+      this.isWithFriend});
   final Account account;
   final int gameId;
   final AccountBattle? competitor;
+  final bool? isWithFriend;
 
   @override
   State<BattleMainScreen> createState() => _BattleMainScreenState();
@@ -202,6 +204,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
               levelNumber: 2,
               roomId: roomID,
               opponentId: opponentId,
+              isWithFriend: widget.isWithFriend,
             ),
           ),
           (route) => false,
@@ -227,6 +230,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
               roomId: roomID,
               opponentId: opponentId,
               info: data,
+              isWithFriend: widget.isWithFriend,
             ),
           ),
           (route) => false,
@@ -244,7 +248,9 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               leading: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
                 icon: const Icon(
                   Icons.arrow_back_outlined,
                   color: Colors.white,

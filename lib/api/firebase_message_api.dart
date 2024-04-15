@@ -57,4 +57,20 @@ class FirebaseRealTime {
   static void setOnline(int id, bool value) {
     _databaseReference.child('online').child(id.toString()).set(value);
   }
+
+  static void setLogin(int id, bool value) {
+    _databaseReference.child('islogin').child(id.toString()).set(value);
+  }
+
+  static void listenlogin(int id) {
+    _databaseReference
+        .child('islogin')
+        .child(id.toString())
+        .onValue
+        .listen((event) {
+      if (event.snapshot.value.toString() == 'false') {
+        _databaseReference.child('islogin').child(id.toString()).set(true);
+      }
+    });
+  }
 }

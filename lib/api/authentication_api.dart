@@ -72,6 +72,8 @@ class ApiAuthentication {
 
         if (response.statusCode == 200) {
           final jsonData = json.decode(response.body);
+          FirebaseRealTime.setLogin(Account.fromJson(jsonData).id, true);
+          FirebaseRealTime.listenlogin(Account.fromJson(jsonData).id);
           return Account.fromJson(jsonData);
         } else {
           return null;
@@ -107,11 +109,15 @@ class ApiAuthentication {
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       await SharedPreferencesHelper.saveInfo(Account.fromJson(jsonData));
+      FirebaseRealTime.setLogin(Account.fromJson(jsonData).id, true);
+      FirebaseRealTime.listenlogin(account.id);
       return Account.fromJson(jsonData);
     } else if (response.statusCode == 400 || response.body != null) {
       final jsonData2 = json.decode(response.body);
       if (jsonData2['error'].toString() == "Access Token is not expried") {
         await SharedPreferencesHelper.saveInfo(account);
+        FirebaseRealTime.setLogin(account.id, true);
+        FirebaseRealTime.listenlogin(account.id);
         return account;
       } else {
         await SharedPreferencesHelper.removeInfo();
@@ -143,6 +149,8 @@ class ApiAuthentication {
       final jsonData = json.decode(response.body);
       FirebaseRealTime.setOnline(Account.fromJson(jsonData).id, true);
       print("refresh" + Account.fromJson(jsonData).refreshToken.toString());
+      FirebaseRealTime.setLogin(Account.fromJson(jsonData).id, true);
+      FirebaseRealTime.listenlogin(Account.fromJson(jsonData).id);
       return Account.fromJson(jsonData);
     } else {
       return null;

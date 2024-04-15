@@ -1,15 +1,10 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:synchronized/synchronized.dart';
-import 'package:thinktank_mobile/api/icon_api.dart';
+import 'package:thinktank_mobile/api/battle_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/icon.dart';
-import 'package:thinktank_mobile/screens/game/game_menu.dart';
-import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:unicons/unicons.dart';
 
@@ -18,38 +13,160 @@ class MessageChat extends StatelessWidget {
       {super.key,
       required this.isOwner,
       required this.content,
-      required this.name});
+      required this.name,
+      required this.idOpponent});
   final bool isOwner;
   final String content;
   final String name;
+  final int? idOpponent;
+
+  Future<void> report(
+      BuildContext context, int idOpponent, String content) async {
+    print('call API');
+    Future.delayed(Duration(seconds: 2));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 10, left: 10),
-      child: Row(
-        children: [
-          Text(
-            '$name: ',
-            style: TextStyle(
-                fontSize: 18,
-                color: isOwner
-                    ? const Color.fromARGB(255, 0, 0, 0)
-                    : const Color.fromARGB(255, 240, 122, 63),
-                fontWeight: FontWeight.bold),
-          ),
-          Text(
-            content,
-            style: TextStyle(
-                fontSize: 18,
-                color: isOwner
-                    ? const Color.fromARGB(255, 0, 0, 0)
-                    : const Color.fromARGB(255, 87, 87, 87)),
-          ),
-        ],
+    return InkWell(
+      onLongPress: () async {
+        if (idOpponent != null) {
+          _showReportConfirm(context, idOpponent!, content);
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.only(top: 10, left: 10),
+        child: Row(
+          children: [
+            Text(
+              '$name: ',
+              style: TextStyle(
+                  fontSize: 18,
+                  color: isOwner
+                      ? const Color.fromARGB(255, 0, 0, 0)
+                      : const Color.fromARGB(255, 240, 122, 63),
+                  fontWeight: FontWeight.bold),
+            ),
+            Text(
+              content,
+              style: TextStyle(
+                  fontSize: 18,
+                  color: isOwner
+                      ? const Color.fromARGB(255, 0, 0, 0)
+                      : const Color.fromARGB(255, 87, 87, 87)),
+            ),
+          ],
+        ),
       ),
     );
   }
+}
+
+void _showReportConfirm(BuildContext context, int idOpponent, String content) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text(
+          'Report',
+          style: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: Text(
+          'Are you sure to report this message?',
+          style: GoogleFonts.roboto(
+            fontSize: 14,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Cancel'),
+            child: const Text(
+              'No',
+              style: TextStyle(
+                color: Color.fromARGB(255, 72, 145, 255),
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              // if (await BattleAPI.report(
+              //     idOpponent, 'Toxic Message', 'Message: $content')) {
+              //   _showDialogReport(context, 'Report Success');
+              // } else {
+              //   _showDialogReport(context, "You can't report many time");
+              // }
+              // Future.delayed(Duration(seconds: 5));
+              _closeDialog(context);
+              //print('asdasd');
+              //_closeDialog(context);
+            },
+            child: const Text(
+              'Yes',
+              style: TextStyle(
+                color: Color.fromARGB(255, 72, 145, 255),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void _closeDialog(BuildContext context) {
+  Navigator.of(context).pop();
+}
+
+void _showDialogReport(BuildContext context, String content) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 400,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/pics/accOragne.png',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Report result',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              Text(
+                content,
+                style: const TextStyle(
+                    color: Color.fromRGBO(129, 140, 155, 1),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
 
 class TBattleGameAppBar extends StatefulWidget implements PreferredSizeWidget {
