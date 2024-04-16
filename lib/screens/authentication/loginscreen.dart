@@ -39,6 +39,7 @@ class LoginScreenState extends State<LoginScreen> {
   bool _isObscured = true;
   bool isRemember = false;
   bool _isIncorrect = false;
+  String error = '';
   late StreamSubscription stream;
 
   @override
@@ -57,6 +58,7 @@ class LoginScreenState extends State<LoginScreen> {
         print('sai');
         setState(() {
           _isIncorrect = true;
+          error = 'Incorrect username or password!';
         });
         _closeDialog(context);
       } else {
@@ -221,9 +223,9 @@ class LoginScreenState extends State<LoginScreen> {
                     ),
                     Visibility(
                       visible: _isIncorrect,
-                      child: const Text(
-                        'Incorrect username or password!',
-                        style: TextStyle(color: Colors.red),
+                      child: Text(
+                        error,
+                        style: const TextStyle(color: Colors.red),
                       ),
                     ),
                     const SizedBox(
@@ -426,7 +428,11 @@ class LoginScreenState extends State<LoginScreen> {
                               .listen((event) {
                             if (event.snapshot.value.toString() == 'true') {
                               isLogin = true;
-                              print('Dang dang nhap noin khac');
+                              setState(() {
+                                _isIncorrect = true;
+                                error =
+                                    'The account is logged in on another device.';
+                              });
                               loginUsername(isLogin, usn, pass);
                             } else {
                               print('oke');
@@ -439,9 +445,9 @@ class LoginScreenState extends State<LoginScreen> {
                           print('sai');
                           setState(() {
                             _isIncorrect = true;
+                            error = 'Incorrect username or password!';
                           });
                           _closeDialog(context);
-
                           return;
                         }
                       },
