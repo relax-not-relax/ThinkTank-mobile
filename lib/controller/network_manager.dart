@@ -12,6 +12,7 @@ class NetworkManager {
   static BuildContext? currentContext;
   static late StreamSubscription<List<ConnectivityResult>>
       _connectivitySubscription;
+  static List<String> check = [];
 
   static void init() {
     _connectivitySubscription =
@@ -25,12 +26,27 @@ class NetworkManager {
   static void updateConnectionStatus(List<ConnectivityResult> result) {
     if (result[0].toString() == "ConnectivityResult.none") {
       print("Network Error");
-      _showResizableDialog(currentContext!);
+
       // if (currentContext != null) {
       //   _showResizableDialog(currentContext!);
       // }
+      if (check.isEmpty) {
+        check.add(result[0].toString());
+        print("No internet connection");
+        _showResizableDialog(currentContext!);
+      } else {
+        check.clear();
+        check.add(result[0].toString());
+        print("Lost internet connection");
+        _showResizableDialog(currentContext!);
+      }
     } else {
-      print("Da ket noi");
+      if (check.isEmpty) {
+        print("Online");
+      } else if (check.isNotEmpty && check[0] == "ConnectivityResult.none") {
+        SystemNavigator.pop();
+        print("Reconnect");
+      }
     }
   }
 
@@ -53,20 +69,20 @@ class NetworkManager {
                 children: [
                   const SizedBox(height: 20),
                   Image.asset(
-                    'assets/pics/accOragne.png',
+                    'assets/pics/offline.png',
                     height: 150,
                     width: 150,
                   ),
                   const SizedBox(height: 10),
                   const Text(
-                    'Please wait...',
+                    'Network Error',
                     style: TextStyle(
                         color: Color.fromRGBO(234, 84, 85, 1),
                         fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),
                   const Text(
-                    'Please wait a moment, Logouting...',
+                    'Your device is offline, please check your connection.',
                     style: TextStyle(
                         color: Color.fromRGBO(129, 140, 155, 1),
                         fontSize: 14,
