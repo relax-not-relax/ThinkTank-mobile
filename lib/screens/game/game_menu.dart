@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/api/room_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
@@ -82,63 +83,69 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
           gameId = int.parse(event.snapshot.child('gameId').value.toString());
           int topicId =
               int.parse(event.snapshot.child('topicId').value.toString());
+          SharedPreferencesHelper.checkTopic(topicId).then((value) {
+            if (value) {
+              if (event.snapshot.exists && !isJoin && mounted) {
+                _databaseReference
+                    .child('room')
+                    .child(result.code)
+                    .child('amountPlayer')
+                    .onValue
+                    .listen((event) {
+                  if (event.snapshot.exists && !isJoin && mounted) {
+                    isJoin = true;
+                    int i = int.parse(event.snapshot.value.toString());
 
-          if (event.snapshot.exists && !isJoin) {
-            _databaseReference
-                .child('room')
-                .child(result.code)
-                .child('amountPlayer')
-                .onValue
-                .listen((event) {
-              if (event.snapshot.exists && !isJoin) {
-                isJoin = true;
-                int i = int.parse(event.snapshot.value.toString());
-
-                if (i >= result.amountPlayer || i == -1) {
-                  print("Phòng đầy!!!");
-                } else {
-                  _databaseReference
-                      .child('room')
-                      .child(result.code)
-                      .child('us${i + 1}')
-                      .child('name')
-                      .set(account!.userName);
-                  _databaseReference
-                      .child('room')
-                      .child(result.code)
-                      .child('us${i + 1}')
-                      .child('done')
-                      .set(false);
-                  _databaseReference
-                      .child('room')
-                      .child(result.code)
-                      .child('us${i + 1}')
-                      .child('avt')
-                      .set(account.avatar);
-                  _databaseReference
-                      .child('room')
-                      .child(result.code)
-                      .child('amountPlayer')
-                      .set(i + 1);
-                  // ignore: use_build_context_synchronously
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return WaitingLobbyScreen(
-                          room: result,
-                          gameId: gameId,
-                        );
-                      },
-                    ),
-                    (route) => false,
-                  );
-                }
+                    if (i >= result.amountPlayer || i == -1) {
+                      print("Phòng đầy!!!");
+                    } else {
+                      _databaseReference
+                          .child('room')
+                          .child(result.code)
+                          .child('us${i + 1}')
+                          .child('name')
+                          .set(account!.userName);
+                      _databaseReference
+                          .child('room')
+                          .child(result.code)
+                          .child('us${i + 1}')
+                          .child('done')
+                          .set(false);
+                      _databaseReference
+                          .child('room')
+                          .child(result.code)
+                          .child('us${i + 1}')
+                          .child('avt')
+                          .set(account.avatar);
+                      _databaseReference
+                          .child('room')
+                          .child(result.code)
+                          .child('amountPlayer')
+                          .set(i + 1);
+                      // ignore: use_build_context_synchronously
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return WaitingLobbyScreen(
+                              room: result,
+                              gameId: gameId,
+                            );
+                          },
+                        ),
+                        (route) => false,
+                      );
+                    }
+                  }
+                });
+              } else {
+                print('Phòng đã giải tán');
               }
-            });
-          } else {
-            print('Phòng đã giải tán');
-          }
+            } else {
+              _showResizableDialogError(context,
+                  "you don't have topic of this room to join, please reset app!");
+            }
+          });
         }));
       } else {
         // ignore: use_build_context_synchronously

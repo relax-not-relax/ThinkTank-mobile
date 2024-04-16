@@ -1,8 +1,10 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
+import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/api/room_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
@@ -18,11 +20,13 @@ class TRoomAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.preferredHeight,
     required this.room,
     required this.isOwner,
+    required this.index,
   });
 
   final double preferredHeight;
   final Room room;
   final bool isOwner;
+  final int index;
 
   @override
   State<TRoomAppBar> createState() => _TRoomAppBarState();
@@ -53,6 +57,9 @@ class _TRoomAppBarState extends State<TRoomAppBar> {
 
   Future<void> cancelRoom() async {
     _showResizableDialog(context, true);
+    final DatabaseReference _databaseReference =
+        FirebaseDatabase.instance.ref();
+    _databaseReference.child('room').child(widget.room.code).remove();
     bool status = await ApiRoom.cancelRoom(widget.room.id);
     if (status) {
       // ignore: use_build_context_synchronously
@@ -75,6 +82,31 @@ class _TRoomAppBarState extends State<TRoomAppBar> {
     _showResizableDialog(context, false);
     dynamic result = await ApiRoom.leaveRoom(widget.room.id);
     if (result is Room) {
+      final DatabaseReference _databaseReference =
+          FirebaseDatabase.instance.ref();
+      _databaseReference
+          .child('room')
+          .child(widget.room.code)
+          .child('us${widget.index}')
+          .remove();
+      bool isLeave = false;
+      _databaseReference
+          .child('room')
+          .child(widget.room.code)
+          .child('amountPlayer')
+          .onValue
+          .listen(
+        (event) {
+          if (event.snapshot.exists && isLeave == false && mounted) {
+            isLeave = true;
+            _databaseReference
+                .child('room')
+                .child(widget.room.code)
+                .child('amountPlayer')
+                .set(int.parse(event.snapshot.value.toString()) - 1);
+          }
+        },
+      );
       // ignore: use_build_context_synchronously
       _closeDialog(context);
       // ignore: use_build_context_synchronously
@@ -90,10 +122,6 @@ class _TRoomAppBarState extends State<TRoomAppBar> {
     } else {
 // ignore: use_build_context_synchronously
       _closeDialog(context);
-      Future.delayed(const Duration(seconds: 0), () {
-        // ignore: use_build_context_synchronously
-        _showResizableDialogError(context, result);
-      });
     }
   }
 

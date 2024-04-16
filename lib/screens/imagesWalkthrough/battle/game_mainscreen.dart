@@ -117,9 +117,10 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         .listen((event) async {
       print(event.snapshot.value.toString());
       if (event.snapshot.value
-              .toString()
-              .substring(0, widget.opponentName.length) ==
-          widget.opponentName) {
+                  .toString()
+                  .substring(0, widget.opponentName.length) ==
+              widget.opponentName &&
+          mounted) {
         listMessage.add(MessageChat(
           isOwner: false,
           content: event.snapshot.value
@@ -162,9 +163,10 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         .listen((event) async {
       print(event.snapshot.value.toString());
       if (event.snapshot.value
-              .toString()
-              .substring(0, widget.opponentName.length) ==
-          widget.opponentName) {
+                  .toString()
+                  .substring(0, widget.opponentName.length) ==
+              widget.opponentName &&
+          mounted) {
         setState(() {
           chatVisible = true;
           isICon = true;
@@ -194,7 +196,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         .onValue
         .listen((event) {
       setState(() {
-        if (int.parse(event.snapshot.value.toString()) >= 0) {
+        if (int.parse(event.snapshot.value.toString()) >= 0 && mounted) {
           correctOpponent = int.parse(event.snapshot.value.toString());
         }
       });
@@ -241,7 +243,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         .child(progressOpponentId)
         .onValue
         .listen((event) async {
-      if (int.parse(event.snapshot.value.toString()) == -1) {
+      if (int.parse(event.snapshot.value.toString()) == -1 && mounted) {
         print('Thắng rồi');
         Account? account = await SharedPreferencesHelper.getInfo();
         account!.coin = account.coin! + 20;
@@ -279,7 +281,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
           .child('time2')
           .onValue
           .listen((event) async {
-        if (event.snapshot.exists) {
+        if (event.snapshot.exists && mounted) {
           if (remainingTime.inMilliseconds >
               int.parse(event.snapshot.value.toString())) {
             print('Thắng do còn nhiều time hơn');
@@ -377,7 +379,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
           .child('time1')
           .onValue
           .listen((event) async {
-        if (event.snapshot.exists) {
+        if (event.snapshot.exists && mounted) {
           if (remainingTime.inMilliseconds >
               int.parse(event.snapshot.value.toString())) {
             print('Thắng do còn nhiều time hơn');
@@ -538,7 +540,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         .child(progressOpponentId)
         .onValue
         .listen((event) async {
-      if (int.parse(event.snapshot.value.toString()) == -1) {
+      if (int.parse(event.snapshot.value.toString()) == -1 && mounted) {
         print('Hòa - Cả 2 đều không hoàn thành');
         Account? account = await SharedPreferencesHelper.getInfo();
         isCompleted = true;
@@ -574,7 +576,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
           .child('time2')
           .onValue
           .listen((event) async {
-        if (event.snapshot.exists) {
+        if (event.snapshot.exists && mounted) {
           print('Thua rồi');
           Account? account = await SharedPreferencesHelper.getInfo();
           account!.coin = account.coin! - 20;
@@ -612,7 +614,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
           .child('time1')
           .onValue
           .listen((event) async {
-        if (event.snapshot.exists) {
+        if (event.snapshot.exists && mounted) {
           print('Thua rồi');
           Account? account = await SharedPreferencesHelper.getInfo();
           account!.coin = account.coin! - 20;

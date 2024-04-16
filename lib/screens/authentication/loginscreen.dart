@@ -96,9 +96,6 @@ class LoginScreenState extends State<LoginScreen> {
         );
       }
     } else {
-      setState(() {
-        _isIncorrect = false;
-      });
       _closeDialog(context);
     }
   }
@@ -426,7 +423,8 @@ class LoginScreenState extends State<LoginScreen> {
                               .child(id.toString())
                               .onValue
                               .listen((event) {
-                            if (event.snapshot.value.toString() == 'true') {
+                            if (event.snapshot.value.toString() == 'true' &&
+                                mounted) {
                               isLogin = true;
                               setState(() {
                                 _isIncorrect = true;

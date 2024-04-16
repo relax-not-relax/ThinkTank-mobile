@@ -87,6 +87,12 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
         context,
         "Make sure you have inputted all room required information!",
       );
+    } else if (!await SharedPreferencesHelper.checkTopic(selectedTopic!.id)) {
+      // ignore: use_build_context_synchronously
+      _showResizableDialogError(
+        context,
+        "You don't have this topic. Please reset app",
+      );
     } else {
       _showResizableDialog(context);
 
