@@ -126,15 +126,15 @@ class SharedPreferencesHelper {
     }
   }
 
-  static Future<void> saveImageSources(List<ImageResource> sources) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    List<Map<String, dynamic>> jsonList =
-        sources.map((source) => source.toJson()).toList();
-
-    String jsonString = jsonEncode(jsonList);
-
-    await prefs.setStringList(imageSource, [jsonString]);
+  static Future<void> removeImageResoure(
+      List<ImageResource> flipcardResource) async {
+    if (flipcardResource.isEmpty) return;
+    List<ImageResource> listResource = await getImageResourceObject();
+    if (listResource.isNotEmpty) {
+      listResource.removeWhere(
+          (element) => flipcardResource.any((ele) => ele.id == element.id));
+    }
+    await saveImageResoure(listResource);
   }
 
   static Future<void> saveFLipCardLevel(int level) async {
@@ -226,6 +226,37 @@ class SharedPreferencesHelper {
       }
       await prefs.setStringList(imageResourceKey, result2);
     }
+  }
+
+  static Future<void> saveAllImageResoure(
+      List<ImageResource> flipcardResource) async {
+    if (flipcardResource.isEmpty) return;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? result2 = [];
+    for (var element in flipcardResource) {
+      print(element.toJson().toString());
+      result2.add(json.encode(element.toJson()));
+    }
+    await prefs.setStringList(imageResourceKey, result2);
+  }
+
+  static Future<void> removeAnonymousResoure(
+      List<FindAnonymousAsset> resource) async {
+    if (resource.isEmpty) return;
+    List<FindAnonymousAsset> listResource = await getAnonymousAssets();
+    listResource
+        .removeWhere((element) => resource.any((ele) => ele.id == element.id));
+    await saveAnonymousResoure(listResource);
+  }
+
+  static Future<void> saveAllAnonymousResoure(
+      List<FindAnonymousAsset> resource) async {
+    if (resource.isEmpty) return;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<Map<String, dynamic>> jsonList2 =
+        resource.map((assets) => assets.toJson()).toList();
+    String assets = json.encode(jsonList2);
+    await prefs.setString(anonymousResourcenKey, assets);
   }
 
   static Future<void> saveAnonymousResoure(
@@ -377,6 +408,20 @@ class SharedPreferencesHelper {
     }
   }
 
+  static Future<List<ImageResource>> getImageResourceObject() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? result = prefs.getStringList(imageResourceKey);
+    if (result != null) {
+      List<ImageResource> newResult = [];
+      for (var element in result) {
+        newResult.add(ImageResource.fromJson(json.decode(element.toString())));
+      }
+      return newResult;
+    } else {
+      return [];
+    }
+  }
+
   static Future<List<String>> getImageResourceByTopicId(int topicId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? result = prefs.getStringList(imageResourceKey);
@@ -429,6 +474,20 @@ class SharedPreferencesHelper {
 
     await prefs.setString(musicPassSource, jsonString);
     print(jsonString);
+  }
+
+  static Future<void> removeMusicPasswordSources(
+      List<MusicPasswordSource> sources) async {
+    if (sources.isEmpty) return;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<MusicPasswordSource> listSource = await getMusicPasswordSources();
+    listSource
+        .removeWhere((element) => sources.any((ele) => ele.id == element.id));
+
+    List<Map<String, dynamic>> jsonList =
+        listSource.map((listSource) => listSource.toJson()).toList();
+    String jsonString = jsonEncode(jsonList);
+    await prefs.setString(musicPassSource, jsonString);
   }
 
   static Future<void> saveMusicPasswordLevel(int level) async {

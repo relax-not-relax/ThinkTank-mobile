@@ -8,7 +8,6 @@ import 'package:thinktank_mobile/models/findanounymous_assets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:thinktank_mobile/models/image_resource.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
-import 'package:thinktank_mobile/models/musicpassword.dart';
 
 class AssetsAPI {
   static Future<String> saveImageToDevice(String imageUrl, String name) async {
@@ -77,47 +76,94 @@ class AssetsAPI {
       List<FindAnonymousAsset> listAnomymous = [];
       List<ImageResource> listPathImageSource = [];
       List<MusicPasswordSource> listMusicpassword = [];
+      List<FindAnonymousAsset> listRemoveAnomymous = [];
+      List<ImageResource> listRemovePathImageSource = [];
+      List<MusicPasswordSource> listRemoveMusicpassword = [];
       for (var element in jsonList) {
         if (int.parse(element['version'].toString()) > maxVersion) {
           maxVersion = int.parse(element['version'].toString());
         }
         switch (int.parse(element['gameId'].toString())) {
           case 1:
-            String path = await saveImageToDevice(
-                element['value'], element['id'].toString());
-            print(path);
-            int topicId = int.parse(element['topicId'].toString());
-            listPathImageSource
-                .add(ImageResource(topicId: topicId, value: path));
+            if (bool.parse(element['status'].toString())) {
+              String path = await saveImageToDevice(
+                  element['value'], element['id'].toString());
+              print(path);
+              int topicId = int.parse(element['topicId'].toString());
+              listPathImageSource.add(ImageResource(
+                  id: int.parse(element['id'].toString()),
+                  topicId: topicId,
+                  value: path));
+            } else {
+              listRemovePathImageSource.add(ImageResource(
+                  id: int.parse(element['id'].toString()),
+                  topicId: 0,
+                  value: ''));
+            }
+
             break;
           case 2:
-            String path = await saveAudioToDevice(
-                element['value'], element['id'].toString());
-            print(path);
-            MusicPasswordSource musicPasswordSource = MusicPasswordSource(
-                soundLink: path,
-                answer: element['answer'].toString(),
-                topicId: int.parse(element['topicId'].toString()));
-            listMusicpassword.add(musicPasswordSource);
+            if (bool.parse(element['status'].toString())) {
+              String path = await saveAudioToDevice(
+                  element['value'], element['id'].toString());
+              print(path);
+              MusicPasswordSource musicPasswordSource = MusicPasswordSource(
+                  soundLink: path,
+                  answer: element['answer'].toString(),
+                  topicId: int.parse(element['topicId'].toString()),
+                  id: int.parse(element['id'].toString()));
+              listMusicpassword.add(musicPasswordSource);
+            } else {
+              MusicPasswordSource musicPasswordSource = MusicPasswordSource(
+                  soundLink: '',
+                  answer: element['answer'].toString(),
+                  topicId: int.parse(element['topicId'].toString()),
+                  id: int.parse(element['id'].toString()));
+              listRemoveMusicpassword.add(musicPasswordSource);
+            }
+
             break;
           case 4:
-            String path = await saveImageToDevice(
-                element['value'], element['id'].toString());
-            int topicId = int.parse(element['topicId'].toString());
-            listPathImageSource
-                .add(ImageResource(topicId: topicId, value: path));
+            if (bool.parse(element['status'].toString())) {
+              String path = await saveImageToDevice(
+                  element['value'], element['id'].toString());
+              int topicId = int.parse(element['topicId'].toString());
+              listPathImageSource.add(ImageResource(
+                  id: int.parse(element['id'].toString()),
+                  topicId: topicId,
+                  value: path));
+            } else {
+              listRemovePathImageSource.add(ImageResource(
+                  id: int.parse(element['id'].toString()),
+                  topicId: 0,
+                  value: ''));
+            }
             break;
           case 5:
-            FindAnonymousAsset asset =
-                await ConvertToFindAnonymousAssets(element);
-            listAnomymous.add(asset);
+            if (bool.parse(element['status'].toString())) {
+              FindAnonymousAsset asset =
+                  await ConvertToFindAnonymousAssets(element);
+              listAnomymous.add(asset);
+            } else {
+              listRemoveAnomymous.add(FindAnonymousAsset(
+                  id: int.parse(element['id'].toString()),
+                  description: '',
+                  numberOfDescription: 1,
+                  imgPath: '',
+                  topicId: 0));
+            }
             break;
         }
       }
+      await SharedPreferencesHelper.saveResourceVersion(maxVersion);
       await SharedPreferencesHelper.saveImageResoure(listPathImageSource);
       await SharedPreferencesHelper.saveAnonymousResoure(listAnomymous);
-      await SharedPreferencesHelper.saveResourceVersion(maxVersion);
       await SharedPreferencesHelper.saveMusicPasswordSources(listMusicpassword);
+      await SharedPreferencesHelper.removeImageResoure(
+          listRemovePathImageSource);
+      await SharedPreferencesHelper.removeAnonymousResoure(listRemoveAnomymous);
+      await SharedPreferencesHelper.removeMusicPasswordSources(
+          listRemoveMusicpassword);
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
@@ -134,48 +180,96 @@ class AssetsAPI {
         List<FindAnonymousAsset> listAnomymous = [];
         List<ImageResource> listPathImageSource = [];
         List<MusicPasswordSource> listMusicpassword = [];
+        List<FindAnonymousAsset> listRemoveAnomymous = [];
+        List<ImageResource> listRemovePathImageSource = [];
+        List<MusicPasswordSource> listRemoveMusicpassword = [];
         for (var element in jsonList) {
           if (int.parse(element['version'].toString()) > maxVersion) {
             maxVersion = int.parse(element['version'].toString());
           }
           switch (int.parse(element['gameId'].toString())) {
             case 1:
-              String path = await saveImageToDevice(
-                  element['value'], element['id'].toString());
-              print(path);
-              int topicId = int.parse(element['topicId'].toString());
-              listPathImageSource
-                  .add(ImageResource(topicId: topicId, value: path));
+              if (bool.parse(element['status'].toString())) {
+                String path = await saveImageToDevice(
+                    element['value'], element['id'].toString());
+                print(path);
+                int topicId = int.parse(element['topicId'].toString());
+                listPathImageSource.add(ImageResource(
+                    id: int.parse(element['id'].toString()),
+                    topicId: topicId,
+                    value: path));
+              } else {
+                listRemovePathImageSource.add(ImageResource(
+                    id: int.parse(element['id'].toString()),
+                    topicId: 0,
+                    value: ''));
+              }
+
               break;
             case 2:
-              String path = await saveAudioToDevice(
-                  element['value'], element['id'].toString());
-              print(path);
-              MusicPasswordSource musicPasswordSource = MusicPasswordSource(
-                  soundLink: path,
-                  answer: element['answer'].toString(),
-                  topicId: int.parse(element['topicId'].toString()));
-              listMusicpassword.add(musicPasswordSource);
+              if (bool.parse(element['status'].toString())) {
+                String path = await saveAudioToDevice(
+                    element['value'], element['id'].toString());
+                print(path);
+                MusicPasswordSource musicPasswordSource = MusicPasswordSource(
+                    soundLink: path,
+                    answer: element['answer'].toString(),
+                    topicId: int.parse(element['topicId'].toString()),
+                    id: int.parse(element['id'].toString()));
+                listMusicpassword.add(musicPasswordSource);
+              } else {
+                MusicPasswordSource musicPasswordSource = MusicPasswordSource(
+                    soundLink: '',
+                    answer: element['answer'].toString(),
+                    topicId: int.parse(element['topicId'].toString()),
+                    id: int.parse(element['id'].toString()));
+                listRemoveMusicpassword.add(musicPasswordSource);
+              }
+
               break;
             case 4:
-              String path = await saveImageToDevice(
-                  element['value'], element['id'].toString());
-              int topicId = int.parse(element['topicId'].toString());
-              listPathImageSource
-                  .add(ImageResource(topicId: topicId, value: path));
+              if (bool.parse(element['status'].toString())) {
+                String path = await saveImageToDevice(
+                    element['value'], element['id'].toString());
+                int topicId = int.parse(element['topicId'].toString());
+                listPathImageSource.add(ImageResource(
+                    id: int.parse(element['id'].toString()),
+                    topicId: topicId,
+                    value: path));
+              } else {
+                listRemovePathImageSource.add(ImageResource(
+                    id: int.parse(element['id'].toString()),
+                    topicId: 0,
+                    value: ''));
+              }
               break;
             case 5:
-              FindAnonymousAsset asset =
-                  await ConvertToFindAnonymousAssets(element);
-              listAnomymous.add(asset);
+              if (bool.parse(element['status'].toString())) {
+                FindAnonymousAsset asset =
+                    await ConvertToFindAnonymousAssets(element);
+                listAnomymous.add(asset);
+              } else {
+                listRemoveAnomymous.add(FindAnonymousAsset(
+                    id: int.parse(element['id'].toString()),
+                    description: '',
+                    numberOfDescription: 1,
+                    imgPath: '',
+                    topicId: 0));
+              }
               break;
           }
         }
+        await SharedPreferencesHelper.saveResourceVersion(maxVersion);
         await SharedPreferencesHelper.saveImageResoure(listPathImageSource);
         await SharedPreferencesHelper.saveAnonymousResoure(listAnomymous);
         await SharedPreferencesHelper.saveMusicPasswordSources(
             listMusicpassword);
-        await SharedPreferencesHelper.saveResourceVersion(maxVersion);
+        await SharedPreferencesHelper.removeImageResoure(
+            listRemovePathImageSource);
+        await SharedPreferencesHelper.removeAnonymousResoure(
+            listRemoveAnomymous);
+        await SharedPreferencesHelper.removeMusicPasswordSources(
+            listRemoveMusicpassword);
       } else {
         print(response2.body);
       }
