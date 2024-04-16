@@ -128,13 +128,16 @@ class SharedPreferencesHelper {
 
   static Future<void> removeImageResoure(
       List<ImageResource> flipcardResource) async {
+    print('remove1' + flipcardResource.length.toString());
     if (flipcardResource.isEmpty) return;
     List<ImageResource> listResource = await getImageResourceObject();
+    print('remove2' + listResource.length.toString());
     if (listResource.isNotEmpty) {
       listResource.removeWhere(
           (element) => flipcardResource.any((ele) => ele.id == element.id));
     }
-    await saveImageResoure(listResource);
+    print('remove3' + listResource.length.toString());
+    await saveAllImageResoure(listResource);
   }
 
   static Future<void> saveFLipCardLevel(int level) async {
@@ -218,12 +221,14 @@ class SharedPreferencesHelper {
         result.add(json.encode(element.toJson()));
       }
       await prefs.setStringList(imageResourceKey, result);
+      print(result.toString());
     } else {
       List<String>? result2 = [];
       for (var element in flipcardResource) {
         print(element.toJson().toString());
         result2.add(json.encode(element.toJson()));
       }
+      print(result2.toString());
       await prefs.setStringList(imageResourceKey, result2);
     }
   }
@@ -246,7 +251,7 @@ class SharedPreferencesHelper {
     List<FindAnonymousAsset> listResource = await getAnonymousAssets();
     listResource
         .removeWhere((element) => resource.any((ele) => ele.id == element.id));
-    await saveAnonymousResoure(listResource);
+    await saveAllAnonymousResoure(listResource);
   }
 
   static Future<void> saveAllAnonymousResoure(
@@ -437,6 +442,24 @@ class SharedPreferencesHelper {
       return newResult;
     } else {
       return [];
+    }
+  }
+
+  static Future<bool> checkTopic(int topicId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? result = prefs.getStringList(imageResourceKey);
+    if (result != null) {
+      for (var element in result) {
+        ImageResource img =
+            ImageResource.fromJson(json.decode(element.toString()));
+        if (img.topicId == topicId) {
+          print('debugbug' + img.id.toString());
+          return true;
+        }
+      }
+      return false;
+    } else {
+      return false;
     }
   }
 

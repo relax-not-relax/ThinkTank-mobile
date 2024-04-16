@@ -8,7 +8,9 @@ import 'package:thinktank_mobile/models/account_in_room.dart';
 import 'package:thinktank_mobile/models/flipcard.dart';
 import 'package:thinktank_mobile/models/room.dart';
 import 'package:thinktank_mobile/screens/flipcard/flipcard_game.dart';
+import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/game_mainscreen.dart';
+import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/appbar/room_appbar.dart';
 import 'package:thinktank_mobile/widgets/game/user_chip.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
@@ -33,6 +35,7 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
   late Future _initData;
   Account? account;
   int? topicId;
+  int index = 0;
   DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
   List<AccountInRoom> listMembers = [];
   List<StreamSubscription<DatabaseEvent>> listEvent = [];
@@ -58,7 +61,29 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
           .child(widget.room.code)
           .onValue
           .listen((event) {
-        if (topicId == null && event.snapshot.child('topicId').exists) {
+        if (!event.snapshot.exists && mounted) {
+          _showResizableDialog(context);
+          Future.delayed(const Duration(seconds: 4)).then((value) {
+            if (mounted) {
+              _closeDialog(context);
+            }
+            if (mounted) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HomeScreen(
+                    inputScreen: OptionScreen(),
+                    screenIndex: 0,
+                  ),
+                ),
+                (route) => false,
+              );
+            }
+          });
+        }
+        if (topicId == null &&
+            event.snapshot.child('topicId').exists &&
+            mounted) {
           topicId = int.parse(event.snapshot.child('topicId').value.toString());
         }
 
@@ -66,7 +91,8 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
         for (int i = 1; i < 6; i++) {
           if (event.snapshot.hasChild('us$i') &&
               event.snapshot.child('us$i').child('name').value.toString() !=
-                  account!.userName) {
+                  account!.userName &&
+              mounted) {
             AccountInRoom accountInRoom = AccountInRoom(
                 id: i,
                 isAdmin: false,
@@ -81,9 +107,17 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
                     event.snapshot.child('us$i').child('avt').value.toString());
             listMembers.add(accountInRoom);
           }
+          if (event.snapshot.hasChild('us$i') &&
+              event.snapshot.child('us$i').child('name').value.toString() ==
+                  account!.userName &&
+              mounted) {
+            index = i;
+          }
         }
+
         setState(() {
           listMembers;
+          index;
         });
       }));
       setState(() {
@@ -98,7 +132,9 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
             .child('amountPlayer')
             .onValue
             .listen((event) {
-          if (int.parse(event.snapshot.value.toString()) == -1) {
+          if (event.snapshot.exists &&
+              int.parse(event.snapshot.value.toString()) == -1 &&
+              mounted) {
             switch (widget.gameId) {
               case 4:
                 // ignore: use_build_context_synchronously
@@ -155,6 +191,7 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
         preferredHeight: MediaQuery.of(context).size.height * 0.23,
         room: widget.room,
         isOwner: isOwner ?? false,
+        index: index,
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,
@@ -319,4 +356,58 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
       ),
     );
   }
+}
+
+void _closeDialog(BuildContext context) {
+  Navigator.of(context).pop();
+}
+
+void _showResizableDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 400,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/pics/accOragne.png',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Room is cancle by owner',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Text(
+                'Please wait a moment...',
+                style: TextStyle(
+                    color: Color.fromRGBO(129, 140, 155, 1),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const CustomLoadingSpinner(
+                  color: Color.fromARGB(255, 245, 149, 24)),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

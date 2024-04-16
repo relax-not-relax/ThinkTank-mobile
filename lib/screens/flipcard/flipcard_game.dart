@@ -151,7 +151,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
           .child('AmountPlayerDone')
           .onValue
           .listen((event) {
-        if (isNotaddAccountInRoom && event.snapshot.exists) {
+        if (isNotaddAccountInRoom && event.snapshot.exists && mounted) {
           isNotaddAccountInRoom = false;
           _databaseReference
               .child('room')
@@ -198,7 +198,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
             .child('AmountPlayerDone')
             .onValue
             .listen((event) {
-          if (isNotaddAccountInRoom && event.snapshot.exists) {
+          if (isNotaddAccountInRoom && event.snapshot.exists && mounted) {
             isNotaddAccountInRoom = false;
             _databaseReference
                 .child('room')
@@ -206,7 +206,8 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
                 .child('AmountPlayerDone')
                 .set(int.parse(event.snapshot.value.toString()) + 1);
           }
-          if (int.parse(event.snapshot.value.toString()) >= numberPlayer) {
+          if (int.parse(event.snapshot.value.toString()) >= numberPlayer &&
+              mounted) {
             Future.delayed(Duration(seconds: 5));
             Navigator.pushAndRemoveUntil(
               context,
@@ -268,7 +269,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
             .child('AmountPlayerDone')
             .onValue
             .listen((event) {
-          if (isNotaddAccountInRoom && event.snapshot.exists) {
+          if (isNotaddAccountInRoom && event.snapshot.exists && mounted) {
             isNotaddAccountInRoom = false;
             _databaseReference
                 .child('room')
@@ -276,7 +277,8 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
                 .child('AmountPlayerDone')
                 .set(int.parse(event.snapshot.value.toString()) + 1);
           }
-          if (int.parse(event.snapshot.value.toString()) >= numberPlayer) {
+          if (int.parse(event.snapshot.value.toString()) >= numberPlayer &&
+              mounted) {
             Future.delayed(Duration(seconds: 5));
             Navigator.pushAndRemoveUntil(
               context,

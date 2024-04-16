@@ -194,7 +194,8 @@ class _GameMainScreenState extends State<GameMainScreen> {
                 .set(int.parse(event.snapshot.value.toString()) + 1);
           }
           _showResizableDialog(context);
-          if (int.parse(event.snapshot.value.toString()) >= numberPlayer) {
+          if (int.parse(event.snapshot.value.toString()) >= numberPlayer &&
+              mounted) {
             Future.delayed(Duration(seconds: 5));
             Navigator.pushAndRemoveUntil(
               context,
@@ -293,7 +294,8 @@ class _GameMainScreenState extends State<GameMainScreen> {
                 .set(int.parse(event.snapshot.value.toString()) + 1);
           }
           _showResizableDialog(context);
-          if (int.parse(event.snapshot.value.toString()) >= numberPlayer) {
+          if (int.parse(event.snapshot.value.toString()) >= numberPlayer &&
+              mounted) {
             Future.delayed(Duration(seconds: 5));
             Navigator.pushAndRemoveUntil(
               context,

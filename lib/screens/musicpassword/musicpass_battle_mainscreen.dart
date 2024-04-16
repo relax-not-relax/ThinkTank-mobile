@@ -224,7 +224,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
         .child(progressOpponentId)
         .onValue
         .listen((event) async {
-      if (int.parse(event.snapshot.value.toString()) == 0) {
+      if (int.parse(event.snapshot.value.toString()) == 0 && mounted) {
         print('Thắng rồi');
         Account? account = await SharedPreferencesHelper.getInfo();
         account!.coin = account.coin! + 20;
@@ -263,7 +263,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
           .child('time2')
           .onValue
           .listen((event) async {
-        if (event.snapshot.exists) {
+        if (event.snapshot.exists && mounted) {
           if (remainingTime.inMilliseconds >
               int.parse(event.snapshot.value.toString())) {
             print('Thắng do còn nhiều time hơn');
@@ -390,7 +390,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
           .child('time1')
           .onValue
           .listen((event) async {
-        if (event.snapshot.exists) {
+        if (event.snapshot.exists && mounted) {
           if (remainingTime.inMilliseconds >
               int.parse(event.snapshot.value.toString())) {
             print('Thắng do còn nhiều time hơn');
@@ -444,7 +444,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
                   builder: (context) => FinalResultScreen(
                         points: points.toInt(),
                         status: 'lose',
-                        gameId: 4,
+                        gameId: 2,
                         totalCoin: account.coin!,
                         contestId: null,
                         isWithFriend: widget.isWithFriend,
@@ -510,7 +510,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
         .child(progressOpponentId)
         .onValue
         .listen((event) async {
-      if (int.parse(event.snapshot.value.toString()) == 0) {
+      if (int.parse(event.snapshot.value.toString()) == 0 && mounted) {
         print('Hòa - Cả 2 đều không hoàn thành');
         Account? account = await SharedPreferencesHelper.getInfo();
         isCompleted = true;
@@ -530,7 +530,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
               builder: (context) => FinalResultScreen(
                     points: 0,
                     status: 'draw',
-                    gameId: 4,
+                    gameId: 2,
                     totalCoin: account!.coin!,
                     contestId: null,
                     isWithFriend: widget.isWithFriend,
@@ -547,7 +547,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
           .child('time2')
           .onValue
           .listen((event) async {
-        if (event.snapshot.exists) {
+        if (event.snapshot.exists && mounted) {
           print('Thua rồi');
           Account? account = await SharedPreferencesHelper.getInfo();
           account!.coin = account.coin! - 20;
@@ -585,7 +585,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
           .child('time1')
           .onValue
           .listen((event) async {
-        if (event.snapshot.exists) {
+        if (event.snapshot.exists && mounted) {
           print('Thua rồi');
           Account? account = await SharedPreferencesHelper.getInfo();
           account!.coin = account.coin! - 20;
@@ -607,7 +607,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
                 builder: (context) => FinalResultScreen(
                       points: 0,
                       status: 'lose',
-                      gameId: 4,
+                      gameId: 2,
                       totalCoin: 0,
                       contestId: null,
                       isWithFriend: widget.isWithFriend,
@@ -730,10 +730,13 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
         .onChildAdded
         .listen((event) async {
       print(event.snapshot.value.toString());
-      if (event.snapshot.value
-              .toString()
-              .substring(0, widget.opponentName.length) ==
-          widget.opponentName) {
+      if (event.snapshot.value.toString().length >=
+              widget.opponentName.length &&
+          event.snapshot.value
+                  .toString()
+                  .substring(0, widget.opponentName.length) ==
+              widget.opponentName &&
+          mounted) {
         listMessage.add(MessageChat(
           isOwner: false,
           content: event.snapshot.value
@@ -775,9 +778,10 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
         .listen((event) async {
       print(event.snapshot.value.toString());
       if (event.snapshot.value
-              .toString()
-              .substring(0, widget.opponentName.length) ==
-          widget.opponentName) {
+                  .toString()
+                  .substring(0, widget.opponentName.length) ==
+              widget.opponentName &&
+          mounted) {
         setState(() {
           chatVisible = true;
           isIcon = true;
@@ -812,7 +816,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
         .onValue
         .listen((event) {
       setState(() {
-        if (int.parse(event.snapshot.value.toString()) >= 0) {
+        if (int.parse(event.snapshot.value.toString()) >= 0 && mounted) {
           progressOpponent = int.parse(event.snapshot.value.toString());
         }
       });

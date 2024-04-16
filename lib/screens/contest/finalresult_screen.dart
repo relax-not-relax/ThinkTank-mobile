@@ -193,6 +193,7 @@ class _FinalResultScreenState extends State<FinalResultScreen> {
                           (route) => false,
                         );
                       } else {
+                        print('gameid ${widget.gameId}');
                         switch (widget.gameId) {
                           case 1:
                             Navigator.pushReplacement(

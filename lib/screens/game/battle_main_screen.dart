@@ -74,7 +74,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
               .child(value.roomId)
               .onValue
               .listen((event) {
-            if (event.snapshot.child('us2').exists) {
+            if (event.snapshot.child('us2').exists && mounted) {
               joinGame(
                   event.snapshot.child('us2').value.toString(),
                   event.snapshot.child('avt2').value.toString(),
@@ -120,7 +120,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
             .child(widget.competitor!.roomId)
             .onValue
             .listen((event) {
-          if (event.snapshot.child('us2').exists) {
+          if (event.snapshot.child('us2').exists && mounted) {
             joinGame(
                 event.snapshot.child('us2').value.toString(),
                 event.snapshot.child('avt2').value.toString(),
