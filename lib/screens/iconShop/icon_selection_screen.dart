@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/api/icon_api.dart';
 import 'package:thinktank_mobile/models/icon.dart';
@@ -88,6 +89,7 @@ class _IconSelectionScreenState extends State<IconSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return isLoading || iconsOfShop.isEmpty
         ? Container(
             width: MediaQuery.of(context).size.width,

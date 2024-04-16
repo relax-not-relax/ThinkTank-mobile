@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/api/game_api.dart';
 import 'package:thinktank_mobile/api/room_api.dart';
@@ -185,6 +186,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 240, 199),
       extendBodyBehindAppBar: false,

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/screens/authentication/registerscreen.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
@@ -99,6 +100,7 @@ class ForgotPassScreenState extends State<ForgotPassScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Scaffold(
       body: SingleChildScrollView(
         physics: const NeverScrollableScrollPhysics(),
@@ -321,6 +323,7 @@ class OTPResetPassScreenState extends State<OTPResetPassScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Scaffold(
       body: SingleChildScrollView(
         physics: const NeverScrollableScrollPhysics(),
@@ -552,6 +555,7 @@ class NewPassScreenState extends State<NewPassScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Scaffold(
       body: SingleChildScrollView(
         physics: const NeverScrollableScrollPhysics(),

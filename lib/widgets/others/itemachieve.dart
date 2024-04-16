@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class ItemAchieveAccount extends StatelessWidget {
@@ -24,6 +25,7 @@ class ItemAchieveAccount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Container(
       height: 150,
       padding: const EdgeInsets.all(15),

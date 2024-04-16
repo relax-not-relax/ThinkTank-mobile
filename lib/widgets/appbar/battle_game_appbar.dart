@@ -1,10 +1,12 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:thinktank_mobile/api/battle_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/icon.dart';
+import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:unicons/unicons.dart';
 
@@ -21,17 +23,29 @@ class MessageChat extends StatelessWidget {
   final int? idOpponent;
 
   Future<void> report(
-      BuildContext context, int idOpponent, String content) async {
-    print('call API');
-    Future.delayed(Duration(seconds: 2));
+      BuildContext context, int idOpponent, String message) async {
+    _showResizableDialog(context);
+    bool result = await BattleAPI.report(idOpponent, 'Toxic Message', message);
+    if (result == true) {
+      // ignore: use_build_context_synchronously
+      _closeDialog(context);
+      // ignore: use_build_context_synchronously
+      _showDialogReport(context);
+    } else {
+      // ignore: use_build_context_synchronously
+      _closeDialog(context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return InkWell(
       onLongPress: () async {
         if (idOpponent != null) {
-          _showReportConfirm(context, idOpponent!, content);
+          _showReportConfirm(context, () {
+            report(context, idOpponent!, content);
+          });
         }
       },
       child: Container(
@@ -62,7 +76,7 @@ class MessageChat extends StatelessWidget {
   }
 }
 
-void _showReportConfirm(BuildContext context, int idOpponent, String content) {
+void _showReportConfirm(BuildContext context, Function accept) {
   showDialog(
     context: context,
     barrierDismissible: true,
@@ -77,7 +91,7 @@ void _showReportConfirm(BuildContext context, int idOpponent, String content) {
           ),
         ),
         content: Text(
-          'Are you sure to report this message?',
+          'Are you sure to report this message as words lacking standards?',
           style: GoogleFonts.roboto(
             fontSize: 14,
           ),
@@ -95,16 +109,10 @@ void _showReportConfirm(BuildContext context, int idOpponent, String content) {
           ),
           TextButton(
             onPressed: () async {
-              // if (await BattleAPI.report(
-              //     idOpponent, 'Toxic Message', 'Message: $content')) {
-              //   _showDialogReport(context, 'Report Success');
-              // } else {
-              //   _showDialogReport(context, "You can't report many time");
-              // }
-              // Future.delayed(Duration(seconds: 5));
               _closeDialog(context);
               //print('asdasd');
               //_closeDialog(context);
+              accept();
             },
             child: const Text(
               'Yes',
@@ -124,7 +132,63 @@ void _closeDialog(BuildContext context) {
   Navigator.of(context).pop();
 }
 
-void _showDialogReport(BuildContext context, String content) {
+void _showResizableDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 400,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/pics/report.png',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Please wait...',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                child: Text(
+                  'Your feedback about inappropriate behavior will help the ThinkTank community become more civilized!',
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const CustomLoadingSpinner(
+                  color: Color.fromARGB(255, 245, 149, 24)),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _showDialogReport(BuildContext context) {
   showDialog(
     context: context,
     barrierDismissible: true,
@@ -141,7 +205,7 @@ void _showDialogReport(BuildContext context, String content) {
             children: [
               const SizedBox(height: 20),
               Image.asset(
-                'assets/pics/accOragne.png',
+                'assets/pics/admin.png',
                 height: 150,
                 width: 150,
               ),
@@ -153,13 +217,19 @@ void _showDialogReport(BuildContext context, String content) {
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
               ),
-              Text(
-                content,
-                style: const TextStyle(
-                    color: Color.fromRGBO(129, 140, 155, 1),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400),
-                textAlign: TextAlign.center,
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                child: Text(
+                  'We received your feedback, we appreciate your contribution!',
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
               ),
             ],
           ),
@@ -224,118 +294,6 @@ class TBattleGameAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
   bool isLoading = true;
   List<IconApp> icons = [];
-
-  Future displayBottomSheet(BuildContext context) {
-    return showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.55,
-        width: MediaQuery.of(context).size.width,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 14.0,
-          vertical: 15.0,
-        ),
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
-          ),
-          color: Color.fromARGB(255, 255, 255, 255),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 180.0,
-              height: 180.0,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/pics/brainCry.png"),
-                ),
-              ),
-            ),
-            Text(
-              "Wait, you're about to win!",
-              style: GoogleFonts.inter(
-                color: Colors.black,
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(
-              height: 5.0,
-            ),
-            Expanded(
-              child: Text(
-                "Quitting the game midway can affect your memory improvement progress.",
-                style: GoogleFonts.roboto(
-                  color: const Color.fromARGB(255, 70, 70, 70),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(50),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color.fromARGB(255, 58, 82, 114),
-                    spreadRadius: 0,
-                    blurRadius: 0,
-                    offset: Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: ElevatedButton(
-                style: buttonYesBottomSheet(context),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  widget.onResume();
-                },
-                child: const Text(
-                  "Continue the game",
-                  style: TextStyle(
-                    fontFamily: 'ButtonCustomFont',
-                    fontSize: 20,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 8.0,
-            ),
-            TextButton(
-              onPressed: () {
-                // Navigator.pushAndRemoveUntil(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) {
-                //       return GameMenuScreen(game: game!);
-                //     },
-                //   ),
-                //   (route) => false,
-                // );
-              },
-              child: Text(
-                "Quit game",
-                style: GoogleFonts.roboto(
-                  color: const Color.fromARGB(255, 234, 84, 84),
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Future displayBottomSheetChat(BuildContext context, String roomId) {
     TextEditingController messageContoller = TextEditingController();
@@ -542,6 +500,7 @@ class _TBattleGameAppBarState extends State<TBattleGameAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     final minutesStr =
         (widget.remainingTime.inMinutes % 60).toString().padLeft(2, '0');
     final secondsStr =

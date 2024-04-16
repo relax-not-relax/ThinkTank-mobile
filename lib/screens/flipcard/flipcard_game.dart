@@ -5,6 +5,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/api/contest_api.dart';
@@ -361,6 +362,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Scaffold(
       backgroundColor: continueVisible == false
           ? const Color.fromARGB(255, 255, 240, 199)

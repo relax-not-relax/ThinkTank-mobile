@@ -29,6 +29,7 @@ class BattleAPI {
       return AccountBattle.fromJson(jsonData);
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$accountId,$gameId,$coins/opponent-of-account'),
@@ -62,30 +63,37 @@ class BattleAPI {
     };
 
     String jsonBody = jsonEncode(data);
+    print(jsonBody);
     final response = await http.post(
-        Uri.parse('https://thinktank-sep490.azurewebsites.net/api/reports'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${account!.accessToken}',
-        },
-        body: jsonBody);
+      Uri.parse('https://thinktank-sep490.azurewebsites.net/api/reports'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${account.accessToken}',
+      },
+      body: jsonBody,
+    );
     if (response.statusCode == 200) {
+      print("Sent");
       return true;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.post(
           Uri.parse('https://thinktank-sep490.azurewebsites.net/api/reports'),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${account2!.accessToken}',
+            'Authorization': 'Bearer ${account2.accessToken}',
           },
           body: jsonBody);
       if (response2.statusCode == 200) {
+        print("Sent");
         return true;
       } else {
+        print("Unsent");
         return false;
       }
     } else {
+      print("Unsent");
       return false;
     }
   }
@@ -106,6 +114,7 @@ class BattleAPI {
       return;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$accountId,$gameId,$coins,$roomCode/account-removed'),
@@ -155,6 +164,7 @@ class BattleAPI {
       print('da add');
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.post(
           Uri.parse(
               'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1'),

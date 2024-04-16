@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 
 class Indicator extends StatelessWidget {
   const Indicator({
@@ -17,6 +18,7 @@ class Indicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Row(
       children: <Widget>[
         Container(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
@@ -39,6 +40,7 @@ class FinalResultScreen extends StatefulWidget {
 class _FinalResultScreenState extends State<FinalResultScreen> {
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Scaffold(
       body: Container(
         width: MediaQuery.of(context).size.width,

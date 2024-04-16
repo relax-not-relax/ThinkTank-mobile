@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
@@ -32,6 +33,7 @@ class TAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _TAppBarState extends State<TAppBar> {
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return ClipRRect(
       borderRadius: const BorderRadius.only(
         bottomLeft: Radius.circular(20.0),

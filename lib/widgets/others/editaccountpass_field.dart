@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 //import 'package:thinktank_mobile/screens/account/changepassword_screen.dart';
 
@@ -21,6 +22,7 @@ class EditAccountPassField extends StatefulWidget {
 class _EditAccountPassFieldState extends State<EditAccountPassField> {
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

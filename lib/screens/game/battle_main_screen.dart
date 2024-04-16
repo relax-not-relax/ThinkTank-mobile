@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:thinktank_mobile/api/battle_api.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
@@ -242,6 +243,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return isLoading == true
         ? Scaffold(
             extendBodyBehindAppBar: true,

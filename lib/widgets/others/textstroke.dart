@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 
 class TextWidget extends StatelessWidget {
   String text;
@@ -37,6 +38,7 @@ class TextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     // to make a stroke text we need stack between 2 text..
     // 1 for text & one for stroke effect
     return Stack(

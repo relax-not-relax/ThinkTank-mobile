@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:thinktank_mobile/models/analysis_type.dart';
 import 'package:thinktank_mobile/widgets/analyst/indicator.dart';
 
@@ -20,6 +21,7 @@ class _PieChartMemoryState extends State<PieChartMemory> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return AspectRatio(
       aspectRatio: 2,
       child: Row(

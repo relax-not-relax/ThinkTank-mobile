@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 
 class WalkThroughItem extends StatelessWidget {
   const WalkThroughItem({
@@ -18,6 +19,7 @@ class WalkThroughItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     Color _boxColor = Colors.black;
 
     switch (itemIndex) {

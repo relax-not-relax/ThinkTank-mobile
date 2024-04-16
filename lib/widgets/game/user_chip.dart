@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/models/account_in_room.dart';
@@ -14,6 +15,7 @@ class UserChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 17, vertical: 12),
       decoration: BoxDecoration(

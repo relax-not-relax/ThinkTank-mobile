@@ -31,7 +31,7 @@ class ApiAnalytics {
       return results;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
-
+      SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/analyses?AccountId=${account2!.id}&GameId=$gameId&FilterMonth=$filterMonth&FilterYear=$filterYear'),

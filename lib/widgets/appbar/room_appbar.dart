@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
@@ -127,6 +128,7 @@ class _TRoomAppBarState extends State<TRoomAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     Future displayBottomSheet(BuildContext context) {
       return showModalBottomSheet(
         context: context,

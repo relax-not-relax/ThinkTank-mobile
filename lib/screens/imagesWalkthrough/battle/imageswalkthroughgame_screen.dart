@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 //import 'package:thinktank_mobile/data/imageswalkthrough_data.dart';
 import 'package:thinktank_mobile/models/imageswalkthrough.dart';
 import 'package:thinktank_mobile/widgets/game/walkthrough_item.dart';
@@ -77,6 +78,7 @@ class _ImagesWalkthroughBattleGameScreenState
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     double itemHeight = 170;
     double itemWidth = MediaQuery.of(context).size.width / 2;
     int itemCount = widget.source[0].answerImgPath.length;

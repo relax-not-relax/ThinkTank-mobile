@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class EditAccountField extends StatefulWidget {
@@ -44,6 +45,7 @@ class _EditAccountFieldState extends State<EditAccountField> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

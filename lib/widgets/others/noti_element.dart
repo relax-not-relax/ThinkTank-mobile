@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:thinktank_mobile/api/notification_api.dart';
@@ -119,6 +120,7 @@ class _NotificationElementState extends State<NotificationElement> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Column(
       children: [
         const SizedBox(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MemoryType extends StatelessWidget {
@@ -8,6 +9,7 @@ class MemoryType extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 23, vertical: 8),
       decoration: const BoxDecoration(
