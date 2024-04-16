@@ -80,6 +80,9 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
             .onValue
             .listen((event) {
           gameId = int.parse(event.snapshot.child('gameId').value.toString());
+          int topicId =
+              int.parse(event.snapshot.child('topicId').value.toString());
+
           if (event.snapshot.exists && !isJoin) {
             _databaseReference
                 .child('room')
@@ -90,6 +93,7 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
               if (event.snapshot.exists && !isJoin) {
                 isJoin = true;
                 int i = int.parse(event.snapshot.value.toString());
+
                 if (i >= result.amountPlayer || i == -1) {
                   print("Phòng đầy!!!");
                 } else {
