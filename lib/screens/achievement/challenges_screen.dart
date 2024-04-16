@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:thinktank_mobile/api/account_api.dart';
@@ -144,6 +145,7 @@ class ChallengesScreenState extends State<ChallengesScreen>
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: account != null
@@ -329,6 +331,7 @@ class ItemAchieve extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Container(
       height: 150,
       padding: const EdgeInsets.all(15),
@@ -406,7 +409,9 @@ class ItemAchieve extends StatelessWidget {
                               animationDuration: 1000,
                               animateFromLastPercent: true,
                               percent:
-                                  (progress / total < 1) ? 0 : progress / total,
+                                  (progress / total < 0 || progress / total > 1)
+                                      ? 0
+                                      : progress / total,
                               barRadius: const Radius.circular(10.0),
                               progressColor:
                                   const Color.fromRGBO(255, 199, 0, 1),
@@ -417,7 +422,7 @@ class ItemAchieve extends StatelessWidget {
                               height: 25,
                               child: Center(
                                 child: Text(
-                                  (progress / total < 1)
+                                  (progress / total < 0 || progress / total > 1)
                                       ? '0/$total'
                                       : '$progress/$total',
                                   style: const TextStyle(
@@ -512,6 +517,7 @@ class ItemBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     final DateTime parsedTime = DateTime.parse(time);
 
     // Format the DateTime object to "January 2024" style
@@ -605,6 +611,7 @@ class AvhievementAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return PreferredSize(
       preferredSize: Size.fromHeight(appBarHeight),
       child: ClipRRect(

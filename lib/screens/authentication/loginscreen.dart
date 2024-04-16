@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/api/assets_api.dart';
@@ -9,6 +10,7 @@ import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/api/icon_api.dart';
 import 'package:thinktank_mobile/api/notification_api.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/contest.dart';
@@ -19,7 +21,7 @@ import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
-import 'package:flutter/material.dart';
+
 import 'package:firebase_database/firebase_database.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -117,6 +119,8 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
+
     return Scaffold(
       body: SingleChildScrollView(
         physics: const NeverScrollableScrollPhysics(),

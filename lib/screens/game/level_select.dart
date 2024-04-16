@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/models/level.dart';
 import 'package:thinktank_mobile/screens/game/game_menu.dart';
@@ -18,6 +19,7 @@ class LevelSelectScreen extends StatefulWidget {
 class _LevelSelectScreenState extends State<LevelSelectScreen> {
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:thinktank_mobile/api/account_api.dart';
@@ -68,6 +69,7 @@ class _IconShopScreenState extends State<IconShopScreen>
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     Color getColor(bool isSelected) => isSelected ? Colors.white : Colors.grey;
 
     return Scaffold(

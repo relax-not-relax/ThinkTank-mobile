@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -184,6 +185,7 @@ class _TGameAppBarState extends State<TGameAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     final minutesStr =
         (widget.remainingTime.inMinutes % 60).toString().padLeft(2, '0');
     final secondsStr =

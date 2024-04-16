@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/api/challenges_api.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/achievement.dart';
@@ -133,6 +135,7 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: account != null

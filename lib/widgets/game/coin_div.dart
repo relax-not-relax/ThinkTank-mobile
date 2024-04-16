@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CoinDiv extends StatelessWidget {
@@ -17,6 +18,7 @@ class CoinDiv extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,

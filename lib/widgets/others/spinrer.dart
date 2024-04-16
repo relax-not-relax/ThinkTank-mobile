@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 
 class CustomLoadingSpinner extends StatelessWidget {
   const CustomLoadingSpinner({
@@ -10,6 +11,7 @@ class CustomLoadingSpinner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return SizedBox(
       width: 60.0,
       height: 60.0,

@@ -1,9 +1,14 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/screens/achievement/challenges_screen.dart';
@@ -12,6 +17,10 @@ import 'package:thinktank_mobile/screens/friend/friend_request_screen.dart';
 import 'package:thinktank_mobile/screens/introscreen.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
 import 'package:thinktank_mobile/screens/startscreen.dart';
+import 'package:thinktank_mobile/widgets/others/spinrer.dart';
+import 'package:thinktank_mobile/widgets/others/style_button.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'dart:developer' as developer;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,18 +42,13 @@ void main() async {
     }
   });
 
-  runApp(const MyApp(
-    target: '',
-  ));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({
     super.key,
-    required this.target,
   });
-
-  final String target;
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -52,13 +56,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget startscreen = const CircularProgressIndicator();
-
-  var appRoutes = {
-    '/': (context) => const StartScreen(),
-    '/achievement': (context) => ChallengesScreen(),
-    '/request': (context) => const FriendRequestScreen(),
-    '/contest': (context) => const OptionScreen(),
-  };
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
@@ -75,12 +72,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    NetworkManager.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+    NetworkManager.init();
+
     WidgetsBinding.instance.addObserver(this);
     SharedPreferencesHelper.getFirstUse().then((value) {
       if (value) {
@@ -97,6 +97,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return ChangeNotifierProvider(
       create: (context) => CardProvider(),
       child: MaterialApp(
@@ -109,29 +110,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           ),
           useMaterial3: true,
         ),
-        //home: StartScreen(),
-        initialRoute: '/',
-        routes: appRoutes,
-        //home: BattleMainScreen(),
-        // home: FindAnonymousGame(
-        //   avt: 'asdv',
-        //   listAnswer: [
-        //     AnswerAnonymous(
-        //         imageLink:
-        //             'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Farticle-1359443-0D2418FE000005DC-509_306x449.jpg?alt=media&token=e53b3a59-61a0-48ce-a941-cb86c596d15a',
-        //         description: '- Williem'),
-        //     AnswerAnonymous(
-        //         imageLink:
-        //             'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Fbatistuta.jpg?alt=media&token=0b9374d1-5e2e-4d61-a3be-fce6ffb20552',
-        //         description: '- Batistuta'),
-        //   ],
-        //   listAvt: const [
-        //     'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Fbatistuta.jpg?alt=media&token=0b9374d1-5e2e-4d61-a3be-fce6ffb20552',
-        //     'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Farticle-1359443-0D2418FE000005DC-509_306x449.jpg?alt=media&token=e53b3a59-61a0-48ce-a941-cb86c596d15a',
-        //     'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Fmaradona.jpg?alt=media&token=b61a55b6-90c5-4777-afbc-0a85e9e4ac4a',
-        //     'https://firebasestorage.googleapis.com/v0/b/thinktank-79ead.appspot.com/o/System%2Fthanhluong.jpg?alt=media&token=9413ea91-a12a-4476-85f1-080f8ba8f9c6',
-        //   ],
-        // ),
+        home: StartScreen(),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
@@ -169,6 +170,7 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     Widget content = Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,

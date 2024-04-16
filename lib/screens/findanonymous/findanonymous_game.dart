@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/api/contest_api.dart';
@@ -574,6 +575,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     final provider = Provider.of<CardProvider>(context);
     provider.urlImages = lisAvt;
     provider.confirmSet = confirm;

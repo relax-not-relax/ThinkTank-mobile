@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
@@ -133,6 +134,7 @@ class FriendScreenState extends State<FriendScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: PreferredSize(

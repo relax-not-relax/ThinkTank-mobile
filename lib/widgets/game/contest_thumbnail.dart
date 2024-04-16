@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/accountincontest.dart';
@@ -32,6 +33,7 @@ class ContestThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return InkWell(
       onTap: () {
         openContest(context);

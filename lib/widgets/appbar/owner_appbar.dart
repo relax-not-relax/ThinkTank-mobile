@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
@@ -43,6 +44,7 @@ class _TOwnerAppBarState extends State<TOwnerAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return ClipRRect(
       borderRadius: const BorderRadius.only(
         bottomLeft: Radius.circular(20.0),

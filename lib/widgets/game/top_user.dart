@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/widgets/game/coin_div.dart';
 
@@ -20,6 +21,7 @@ class TopUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     final List<Color> topUserColor = [
       const Color.fromARGB(255, 251, 189, 5),
       const Color.fromARGB(255, 149, 149, 149),

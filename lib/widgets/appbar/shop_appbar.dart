@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/screens/account/account_mainscreen.dart';
 import 'package:thinktank_mobile/screens/home.dart';
@@ -25,6 +26,7 @@ class TShopAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _TShopAppBarState extends State<TShopAppBar> {
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return ClipRRect(
       borderRadius: const BorderRadius.only(
         bottomLeft: Radius.circular(20.0),

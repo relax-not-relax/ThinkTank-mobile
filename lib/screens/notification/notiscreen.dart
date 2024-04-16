@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:thinktank_mobile/api/notification_api.dart';
@@ -169,6 +170,7 @@ class _NotiScreenState extends State<NotiScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     Future displayBottomSheet(BuildContext context) {
       return showModalBottomSheet(
         context: context,

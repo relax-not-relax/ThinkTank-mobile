@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/data/data.dart';
 
@@ -7,6 +8,7 @@ class RoomInstructionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: AppBar(

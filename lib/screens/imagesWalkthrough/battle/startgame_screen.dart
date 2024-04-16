@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:thinktank_mobile/models/imageswalkthrough.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
@@ -27,6 +28,7 @@ class _StartBattleGameScreenState extends State<StartBattleGameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     // return source.isNotEmpty
     //     ? Center(
     //         child: Column(

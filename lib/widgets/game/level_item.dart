@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/findanonymous.dart';
 import 'package:thinktank_mobile/models/findanounymous_assets.dart';
@@ -26,6 +27,7 @@ class LevelItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     Widget content = Column(
       children: [
         Center(

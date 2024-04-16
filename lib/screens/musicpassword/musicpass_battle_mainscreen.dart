@@ -5,6 +5,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/api/battle_api.dart';
@@ -889,6 +890,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: TBattleGameAppBar(

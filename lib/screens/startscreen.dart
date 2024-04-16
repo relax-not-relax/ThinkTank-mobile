@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/api/assets_api.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
@@ -6,6 +7,7 @@ import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/api/init_api.dart';
 import 'package:thinktank_mobile/api/notification_api.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/musicpasssource.dart';
@@ -19,6 +21,7 @@ import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
+
   @override
   State<StatefulWidget> createState() {
     return StartScreenState();
@@ -110,6 +113,8 @@ class StartScreenState extends State<StartScreen>
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: Container(

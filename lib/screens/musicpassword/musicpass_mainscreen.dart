@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
 class MusicPasswordMainScreen extends StatelessWidget {
@@ -6,6 +7,7 @@ class MusicPasswordMainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NetworkManager.currentContext = context;
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: SizedBox(
