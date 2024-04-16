@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
@@ -37,6 +39,67 @@ class LoginScreenState extends State<LoginScreen> {
   bool _isObscured = true;
   bool isRemember = false;
   bool _isIncorrect = false;
+  late StreamSubscription stream;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    stream.cancel();
+  }
+
+  void loginUsername(bool isLogin, String usn, String pass) async {
+    if (!isLogin) {
+      stream.cancel();
+      String? fcmToken = await FirebaseMessageAPI().getToken();
+      Account? acc = await ApiAuthentication.login(usn, pass, fcmToken!);
+      if (acc == null) {
+        print('sai');
+        setState(() {
+          _isIncorrect = true;
+        });
+        _closeDialog(context);
+      } else {
+        if (acc.status == false) {
+          _showReject(context);
+          return;
+        }
+        if (isRemember) {
+          await SharedPreferencesHelper.saveAccount(
+              LoginInfo(password: pass, username: usn));
+        }
+        setState(() {
+          _isIncorrect = false;
+        });
+        await SharedPreferencesHelper.saveInfo(acc);
+        await ApiAchieviements.getLevelOfUser(acc.id, acc.accessToken!);
+        await ApiNotification.getNotifications();
+        await ContestsAPI.getContets();
+        await ApiIcon.getIconsOfAccount();
+
+        int version = await SharedPreferencesHelper.getResourceVersion();
+        await AssetsAPI.addAssets(version, acc.accessToken!);
+        _closeDialog(context);
+        FirebaseRealTime.setOnline(acc.id, true);
+
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const HomeScreen(
+                    inputScreen: OptionScreen(),
+                    screenIndex: 0,
+                  )),
+          (route) => false,
+        );
+      }
+    } else {
+      setState(() {
+        _isIncorrect = false;
+      });
+      _closeDialog(context);
+    }
+  }
 
   @override
   void initState() {
@@ -349,51 +412,37 @@ class LoginScreenState extends State<LoginScreen> {
                         _showResizableDialog(context);
                         String usn = _usernameController.text;
                         String pass = _passwordController.text;
-                        String? fcmToken =
-                            await FirebaseMessageAPI().getToken();
-                        Account? acc =
-                            await ApiAuthentication.login(usn, pass, fcmToken!);
-                        if (acc == null) {
+                        bool isLogin = false;
+                        int id = await ApiAuthentication.checkLogin(
+                            usn, pass, '', null);
+
+                        if (id != 0) {
+                          await Future.delayed(Duration(seconds: 2));
+                          stream = FirebaseDatabase.instance
+                              .ref()
+                              .child('islogin')
+                              .child(id.toString())
+                              .onValue
+                              .listen((event) {
+                            if (event.snapshot.value.toString() == 'true') {
+                              isLogin = true;
+                              print('Dang dang nhap noin khac');
+                              loginUsername(isLogin, usn, pass);
+                            } else {
+                              print('oke');
+                              loginUsername(isLogin, usn, pass);
+                            }
+                          });
+                          await Future.delayed(Duration(seconds: 2));
+                          stream.cancel();
+                        } else {
                           print('sai');
                           setState(() {
                             _isIncorrect = true;
                           });
                           _closeDialog(context);
-                        } else {
-                          if (acc.status == false) {
-                            _showReject(context);
-                            return;
-                          }
-                          if (isRemember) {
-                            await SharedPreferencesHelper.saveAccount(
-                                LoginInfo(password: pass, username: usn));
-                          }
-                          setState(() {
-                            _isIncorrect = false;
-                          });
-                          await SharedPreferencesHelper.saveInfo(acc);
-                          await ApiAchieviements.getLevelOfUser(
-                              acc.id, acc.accessToken!);
-                          await ApiNotification.getNotifications();
-                          await ContestsAPI.getContets();
-                          await ApiIcon.getIconsOfAccount();
 
-                          int version = await SharedPreferencesHelper
-                              .getResourceVersion();
-                          await AssetsAPI.addAssets(version, acc.accessToken!);
-                          _closeDialog(context);
-                          FirebaseRealTime.setOnline(acc.id, true);
-
-                          // ignore: use_build_context_synchronously
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const HomeScreen(
-                                      inputScreen: OptionScreen(),
-                                      screenIndex: 0,
-                                    )),
-                            (route) => false,
-                          );
+                          return;
                         }
                       },
                       style: buttonPrimaryPinkVer2(context),

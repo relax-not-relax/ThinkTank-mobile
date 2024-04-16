@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -54,6 +55,7 @@ class FirebaseMessageAPI {
 class FirebaseRealTime {
   static final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.ref();
+  static late StreamSubscription streamLogin;
   static void setOnline(int id, bool value) {
     _databaseReference.child('online').child(id.toString()).set(value);
   }
@@ -62,8 +64,12 @@ class FirebaseRealTime {
     _databaseReference.child('islogin').child(id.toString()).set(value);
   }
 
+  static void cancleListenLogin() {
+    streamLogin.cancel();
+  }
+
   static void listenlogin(int id) {
-    _databaseReference
+    streamLogin = _databaseReference
         .child('islogin')
         .child(id.toString())
         .onValue
