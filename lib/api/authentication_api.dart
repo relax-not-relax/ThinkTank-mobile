@@ -19,6 +19,9 @@ class ApiAuthentication {
     );
     if (response.statusCode == 200) {
       await SharedPreferencesHelper.removeAllofLogout();
+      FirebaseRealTime.cancleListenLogin();
+      FirebaseRealTime.setLogin(account.id, false);
+      FirebaseRealTime.setOnline(account.id, false);
       return true;
     } else {
       print("logout loi");
@@ -79,11 +82,9 @@ class ApiAuthentication {
           return null;
         }
       } else {
-        print('loi dang nhap');
         return null;
       }
     } catch (error) {
-      print('loi :' + error.toString());
       return null;
     }
   }
@@ -126,6 +127,36 @@ class ApiAuthentication {
     } else {
       await SharedPreferencesHelper.removeInfo();
       return null;
+    }
+  }
+
+  static Future<int> checkLogin(String? username, String? password,
+      String? fcmToken, String? googleId) async {
+    if (username != null) {
+      Map<String, String> loginData = {
+        "userName": username,
+        "password": password!,
+        "fcm": fcmToken!
+      };
+      String jsonBody = jsonEncode(loginData);
+
+      final response = await http.post(
+        Uri.parse(
+            'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-cheking'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonBody,
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        FirebaseRealTime.setLogin(Account.fromJson(jsonData).id, false);
+        return Account.fromJson(jsonData).id;
+      } else {
+        print(response.body);
+        return 0;
+      }
+    } else {
+      return 0;
     }
   }
 

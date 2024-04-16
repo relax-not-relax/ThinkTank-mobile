@@ -56,6 +56,8 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
     setState(() {
       isIncorrect = false;
     });
+    final passwordRegex =
+        RegExp(r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,12}$');
     String fullname = _fullnameController.text;
     String username = _usernamewController.text;
     String password = _passwordController.text;
@@ -119,6 +121,14 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
       });
       return;
     }
+    if (!passwordRegex.hasMatch(password)) {
+      setState(() {
+        error =
+            "password must contain number, uppercase Charater, lowercaseCharater, Special characters.";
+        isIncorrect = true;
+      });
+      return;
+    }
     _showResizableDialog(context);
     Response response =
         await ApiAuthentication.register(fullname, username, email, password);
@@ -143,7 +153,12 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
       });
     } else if (response.statusCode == 400) {
       setState(() {
-        error = json.decode(response.body)['error'];
+        try {
+          error = json.decode(response.body)['error'].toString();
+        } catch (e) {
+          error = json.decode(response.body)['errors'].toString();
+        }
+
         isIncorrect = true;
       });
     } else {
