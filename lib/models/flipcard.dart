@@ -38,9 +38,9 @@ class FlipCardGame {
     }
 
     int c = (level % 10 <= 1) ? level ~/ 10 : ((level ~/ 10) + 1);
-    if (level == 1)
+    if (level == 1) {
       return (3.15 * cardCount);
-    else {
+    } else {
       return (await getTimeFlipcard(level - 1) -
           (3.15 - 0.48) / pow(2, c) / 10 * cardCount);
     }
@@ -80,7 +80,7 @@ class FlipCardGame {
           await SharedPreferencesHelper.getImageResourceByTopicId(39);
       listTmp.shuffle();
       print(listTmp.toString() + "abc");
-      time = await getTimeFlipcard(level);
+      time = (await getTimeFlipcard(level)) + (0.7 * (cardCount / 2));
 
       if (level == 1) {
         cardCount = 6;

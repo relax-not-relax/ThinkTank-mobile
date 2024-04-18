@@ -220,13 +220,13 @@ class ApiRoom {
         }
         return result;
       } else {
-        final error = json.decode(response2.body)['error'];
-        return error;
+        // final error = json.decode(response2.body)['errors'];
+        return [];
       }
     } else {
-      final error = json.decode(response.body)['error'];
-      print(error);
-      return error;
+      // final error = json.decode(response.body)['errors'];
+      // print(error);
+      return [];
     }
   }
 

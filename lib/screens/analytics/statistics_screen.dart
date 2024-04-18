@@ -5,7 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:thinktank_mobile/api/analytics_api.dart';
 import 'package:thinktank_mobile/models/analysis.dart';
+import 'package:thinktank_mobile/models/analysis_group.dart';
+import 'package:thinktank_mobile/models/analysis_group_average.dart';
 import 'package:thinktank_mobile/models/game.dart';
+import 'package:thinktank_mobile/screens/analytics/scatter_chart_memory.dart';
 import 'package:thinktank_mobile/widgets/appbar/normal_appbar.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
@@ -28,6 +31,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   List<Analysis> results = [];
   Map<DateTime, List<Analysis>> groupedAnalyses = {};
   bool showByWeek = false;
+  AnalysisGroupAverage? grouped;
 
   late Future<void> _initMemories;
 
@@ -45,9 +49,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       month,
       year,
     );
+    grouped = await ApiAnalytics.getAnalysisGroupAverage(widget.game.id);
     if (mounted) {
       setState(() {
         memoryAnalysis;
+        grouped;
         groupedAnalyses = {};
         results.clear();
         for (var analysis in memoryAnalysis) {
@@ -82,6 +88,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         isLoading = false;
 
         print(memoryAnalysis);
+        print(grouped);
       });
     });
   }
@@ -241,7 +248,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 onPressed: () {
                   displayBottomSheet(context);
                 },
-                icon: Icon(
+                icon: const Icon(
                   IconlyBold.filter,
                   color: Colors.white,
                   size: 25,
@@ -314,79 +321,122 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         ),
                       ],
                     )
-                  : Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width - 100,
-                          child: Text(
-                            "Memory chart by piece of information and completion time",
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            textAlign: TextAlign.center,
+                  : SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(
+                            height: 30,
                           ),
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Stack(
-                          children: <Widget>[
-                            AspectRatio(
-                              aspectRatio: 1.20,
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  right: 18,
-                                  left: 12,
-                                  top: 50,
-                                  bottom: 12,
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 20,
+                            ),
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              child: Text(
+                                "Memory chart by piece of information and completion time",
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
                                 ),
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Container(
-                                    margin: EdgeInsets.only(
-                                      right: showByWeek ? 30 : 20,
-                                    ),
-                                    width: showByWeek ? 900 : 1500,
-                                    child: LineChart(
-                                      showByWeek ? weekData() : mainData(),
-                                    ),
-                                  ),
-                                ),
+                                textAlign: TextAlign.start,
                               ),
                             ),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 60,
-                                  height: 34,
-                                  child: TextButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        showByWeek = !showByWeek;
-                                      });
-                                    },
-                                    child: Text(
-                                      'Week',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: showByWeek
-                                            ? Colors.white
-                                            : Colors.white.withOpacity(0.5),
+                          ),
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          Stack(
+                            children: <Widget>[
+                              AspectRatio(
+                                aspectRatio: 1.20,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 18,
+                                    left: 12,
+                                    top: 50,
+                                    bottom: 12,
+                                  ),
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Container(
+                                      margin: EdgeInsets.only(
+                                        right: showByWeek ? 30 : 20,
+                                      ),
+                                      width: showByWeek ? 900 : 1500,
+                                      child: LineChart(
+                                        showByWeek ? weekData() : mainData(),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ],
+                              ),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 60,
+                                    height: 34,
+                                    child: TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          showByWeek = !showByWeek;
+                                        });
+                                      },
+                                      child: Text(
+                                        'Week',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: showByWeek
+                                              ? Colors.white
+                                              : Colors.white.withOpacity(0.5),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
                             ),
-                          ],
-                        )
-                      ],
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              child: Text(
+                                "Memory chart by memory improvement process through each game",
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                textAlign: TextAlign.start,
+                              ),
+                            ),
+                          ),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Container(
+                              width: 900,
+                              height: 450,
+                              margin: const EdgeInsets.only(
+                                right: 30,
+                              ),
+                              child: LineChartMemory(
+                                data: grouped!,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 30,
+                          ),
+                        ],
+                      ),
                     ),
             ),
     );
