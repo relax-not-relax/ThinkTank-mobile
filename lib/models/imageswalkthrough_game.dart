@@ -27,7 +27,9 @@ class ImagesWalkthroughGame {
       if (i == 0) {
         while (imageList.length < 4) {
           var randomIndex = rng.nextInt(remainingImages.length);
-          imageList.add(remainingImages.removeAt(randomIndex));
+          if (!imageList.contains(remainingImages[randomIndex])) {
+            imageList.add(remainingImages.removeAt(randomIndex));
+          }
         }
       } else {
         imageList.add(selectedImages[i - 1]);
@@ -35,10 +37,15 @@ class ImagesWalkthroughGame {
 
         while (imageList.length < 4) {
           var randomIndex = rng.nextInt(remainingImages.length);
-          imageList.add(remainingImages.removeAt(randomIndex));
+          if (!imageList.contains(remainingImages[randomIndex])) {
+            imageList.add(remainingImages.removeAt(randomIndex));
+          }
           imageList.shuffle();
         }
       }
+
+      print('Big :' + bigImgPath);
+      print('List: ' + imageList.toList().toString());
 
       data.add(ImagesWalkthrough(bigImgPath, imageList));
     }
@@ -97,7 +104,8 @@ class ImagesWalkthroughGame {
       imgCount = 20;
       gameData = getImageData(imgCount, listTmp);
     } else {
-      List<String> listTmp = await SharedPreferencesHelper.getImageResource();
+      List<String> listTmp =
+          await SharedPreferencesHelper.getImageResourceByTopicId(40);
       listTmp.shuffle();
 
       time = await getTimeImagesWalkthrough(level);
