@@ -16,7 +16,7 @@ class BattleAPI {
     Account? account = await SharedPreferencesHelper.getInfo();
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$accountId,$gameId,$coins/opponent-of-account'),
+          'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1s/$accountId,$gameId,$coins/opponent-of-account'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${account!.accessToken}',
@@ -34,7 +34,7 @@ class BattleAPI {
       SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$accountId,$gameId,$coins/opponent-of-account'),
+            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1s/$accountId,$gameId,$coins/opponent-of-account'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2!.accessToken}',
@@ -107,7 +107,7 @@ class BattleAPI {
     Account? account = await SharedPreferencesHelper.getInfo();
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$accountId,$gameId,$coins,$roomCode,$delay/account-removed'),
+          'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1s/$accountId,$gameId,$coins,$roomCode,$delay/account-removed'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${account!.accessToken}',
@@ -116,7 +116,7 @@ class BattleAPI {
 
     print("status ne: " + response.statusCode.toString());
     print(
-        'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$accountId,$gameId,$coins,$roomCode,$delay/account-removed');
+        'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1s/$accountId,$gameId,$coins,$roomCode,$delay/account-removed');
 
     if (response.statusCode == 200) {
       return;
@@ -125,7 +125,7 @@ class BattleAPI {
       SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$accountId,$gameId,$coins,$roomCode,$delay/account-removed'),
+            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1s/$accountId,$gameId,$coins,$roomCode,$delay/account-removed'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2!.accessToken}',
@@ -149,7 +149,7 @@ class BattleAPI {
     Account? account = await SharedPreferencesHelper.getInfo();
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$roomId,$isUSer1,$time,$progressTime/started-room'),
+          'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1s/$roomId,$isUSer1,$time,$progressTime/started-room'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${account!.accessToken}',
@@ -163,7 +163,7 @@ class BattleAPI {
       SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$roomId,$isUSer1,$time,$progressTime/started-room'),
+            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1s/$roomId,$isUSer1,$time,$progressTime/started-room'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2!.accessToken}',
@@ -192,14 +192,14 @@ class BattleAPI {
       "accountId1": account1Id,
       "accountId2": account2Id,
       "gameId": gameId,
-      "roomOfAccountIn1vs1Id": roomId
+      "roomOfaccountIn1vs1sId": roomId
     };
 
     String jsonBody = jsonEncode(data);
     print(jsonBody);
     final response = await http.post(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1'),
+            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1s'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account!.accessToken}',
@@ -213,7 +213,7 @@ class BattleAPI {
       SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.post(
           Uri.parse(
-              'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1'),
+              'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1s'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ${account2!.accessToken}',
