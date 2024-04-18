@@ -76,7 +76,8 @@ class FlipCardGame {
       duplicatedCardList = List.from(cards_list)..addAll(cards_list);
       duplicatedCardList!.shuffle();
     } else {
-      List<String> listTmp = await SharedPreferencesHelper.getImageResource();
+      List<String> listTmp =
+          await SharedPreferencesHelper.getImageResourceByTopicId(39);
       listTmp.shuffle();
       print(listTmp.toString() + "abc");
       time = await getTimeFlipcard(level);
