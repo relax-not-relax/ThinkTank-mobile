@@ -26,6 +26,8 @@ class BattleAPI {
     print(response.toString());
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
+      BattleAPI.removeCache(
+          accountId, gameId, 20, AccountBattle.fromJson(jsonData).roomId, 90);
       return AccountBattle.fromJson(jsonData);
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
@@ -43,6 +45,8 @@ class BattleAPI {
       print(response2.body);
       if (response2.statusCode == 200) {
         final jsonData = json.decode(response2.body.toString());
+        BattleAPI.removeCache(
+            accountId, gameId, 20, AccountBattle.fromJson(jsonData).roomId, 90);
         return AccountBattle.fromJson(jsonData);
       } else {
         return null;
@@ -99,11 +103,53 @@ class BattleAPI {
   }
 
   static Future<void> removeCache(
-      int accountId, int gameId, int coins, String roomCode) async {
+      int accountId, int gameId, int coins, String roomCode, int delay) async {
     Account? account = await SharedPreferencesHelper.getInfo();
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$accountId,$gameId,$coins,$roomCode/account-removed'),
+          'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$accountId,$gameId,$coins,$roomCode,$delay/account-removed'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${account!.accessToken}',
+      },
+    );
+
+    print("status ne: " + response.statusCode.toString());
+    print(
+        'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$accountId,$gameId,$coins,$roomCode,$delay/account-removed');
+
+    if (response.statusCode == 200) {
+      return;
+    } else if (response.statusCode == 401 || response.statusCode == 403) {
+      Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
+      final response2 = await http.get(
+        Uri.parse(
+            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$accountId,$gameId,$coins,$roomCode,$delay/account-removed'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${account2!.accessToken}',
+        },
+      );
+      print("code2");
+      print(response2.statusCode);
+      print(response2.body);
+      if (response2.statusCode == 200) {
+        return;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  static Future<void> startBattle(
+      String roomId, bool isUSer1, int time, int progressTime) async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    final response = await http.get(
+      Uri.parse(
+          'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$roomId,$isUSer1,$time,$progressTime/started-room'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${account!.accessToken}',
@@ -117,7 +163,7 @@ class BattleAPI {
       SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$accountId,$gameId,$coins,$roomCode/account-removed'),
+            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/$roomId,$isUSer1,$time,$progressTime/started-room'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2!.accessToken}',

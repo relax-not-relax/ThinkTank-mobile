@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ffi';
 
 import 'package:firebase_database/firebase_database.dart';
@@ -41,16 +42,93 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
   bool isGetAccount1 = false;
   String _opponentName = '';
   String _opponentAvt = '';
+  Timer? timer;
   int _opponentCoins = 0;
   late Future<AccountBattle?> findOpponent;
   DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
 
   @override
   void dispose() {
+    print('dispose');
     if (roomID.isNotEmpty) {
-      BattleAPI.removeCache(widget.account.id, widget.gameId, 20, roomID);
+      BattleAPI.removeCache(widget.account.id, widget.gameId, 20, roomID, 0);
     }
     super.dispose();
+  }
+
+  void startTimer() async {
+    Duration remainingTime = Duration(seconds: 90);
+    timer = Timer.periodic(const Duration(milliseconds: 500), (_) async {
+      if (mounted) {
+        final newTime = remainingTime - const Duration(milliseconds: 500);
+        if (newTime.isNegative) {
+          timer!.cancel();
+          if (mounted) {
+            _showResizableDialog(context);
+            await Future.delayed(const Duration(seconds: 3));
+            // ignore: use_build_context_synchronously
+            _closeDialog(context);
+            // ignore: use_build_context_synchronously
+            Navigator.of(context).pop();
+          }
+        } else {
+          remainingTime = newTime;
+        }
+      }
+    });
+  }
+
+  void _closeDialog(BuildContext context) {
+    Navigator.of(context).pop();
+  }
+
+  void _showResizableDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(0),
+          content: Container(
+            width: 250,
+            height: 400,
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                color: Color.fromARGB(255, 249, 249, 249)),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                Image.asset(
+                  'assets/pics/check1.png',
+                  height: 150,
+                  width: 150,
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Waiting too long for your opponent!',
+                  style: TextStyle(
+                      color: Color.fromRGBO(234, 84, 85, 1),
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold),
+                ),
+                const Text(
+                  'There may be no one online in this mode',
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                const CustomLoadingSpinner(
+                    color: Color.fromARGB(255, 245, 149, 24)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -59,6 +137,8 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
     if (widget.competitor == null) {
       findOpponent =
           BattleAPI.findOpponent(widget.account.id, widget.gameId, 20);
+
+      startTimer();
       findOpponent.then((value) {
         if (value != null && value.accountId == 0) {
           print(value.roomId);
@@ -192,7 +272,8 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
 
       await Future.delayed(Duration(seconds: 3));
       if (widget.gameId == 4 && mounted) {
-// ignore: use_build_context_synchronously
+        BattleAPI.startBattle(roomID, isUser1, 90, -1);
+        // ignore: use_build_context_synchronously
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -215,6 +296,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
       // ignore: curly_braces_in_flow_control_structures, use_build_context_synchronously
 
       if (widget.gameId == 2 && mounted) {
+        BattleAPI.startBattle(roomID, isUser1, 120, 0);
         var data = await getMusicPassword(4);
         data.time = 120;
         // ignore: curly_braces_in_flow_control_structures, use_build_context_synchronously
