@@ -288,7 +288,7 @@ class ApiRoom {
 
     final response = await http.put(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/accountInRoom/$code'),
+          'https://thinktank-sep490.azurewebsites.net/api/accountInRooms/$code'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${account.accessToken}',
@@ -303,7 +303,7 @@ class ApiRoom {
       SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.put(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/accountInRoom/$code'),
+            'https://thinktank-sep490.azurewebsites.net/api/accountInRooms/$code'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2.accessToken}',
