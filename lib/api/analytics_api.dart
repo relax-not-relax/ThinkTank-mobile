@@ -5,6 +5,7 @@ import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/analysis.dart';
 import 'package:http/http.dart' as http;
+import 'package:thinktank_mobile/models/analysis_group_average.dart';
 import 'package:thinktank_mobile/models/analysis_type.dart';
 
 class ApiAnalytics {
@@ -102,6 +103,49 @@ class ApiAnalytics {
         percentOfAudioMemory: 0,
         percentOfSequentialMemory: 0,
       );
+    }
+  }
+
+  static Future<dynamic> getAnalysisGroupAverage(int gameId) async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    final response = await http.get(
+      Uri.parse(
+          'https://thinktank-sep490.azurewebsites.net/api/analyses/${account!.id},$gameId/average-score'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${account.accessToken}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      print(jsonData);
+      AnalysisGroupAverage result = AnalysisGroupAverage.fromJson(jsonData);
+      return result;
+    } else if (response.statusCode == 401 || response.statusCode == 403) {
+      Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
+      final response2 = await http.get(
+        Uri.parse(
+            'https://thinktank-sep490.azurewebsites.net/api/analyses/${account2.id},$gameId/average-score'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${account2.accessToken}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response2.body);
+        print(jsonData);
+        AnalysisGroupAverage result = AnalysisGroupAverage.fromJson(jsonData);
+        return result;
+      } else {
+        final error = json.decode(response2.body)['error'];
+        return error;
+      }
+    } else {
+      final error = json.decode(response.body)['error'];
+      return error;
     }
   }
 }

@@ -137,7 +137,7 @@ class InstructionScreen extends StatelessWidget {
                       width: 5,
                     ),
                     const CoinDiv(
-                      amount: "50",
+                      amount: "100",
                       color: Colors.white,
                       size: 20,
                       textSize: 15,
@@ -155,7 +155,7 @@ class InstructionScreen extends StatelessWidget {
                       width: 10,
                     ),
                     const CoinDiv(
-                      amount: "150",
+                      amount: "300",
                       color: Colors.white,
                       size: 20,
                       textSize: 15,
