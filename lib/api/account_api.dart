@@ -127,7 +127,7 @@ class ApiAccount {
       final jsonData = json.decode(response.body);
       print(jsonData);
       Account _acc = Account.fromJson(jsonData);
-      SharedPreferencesHelper.saveInfo(_acc);
+      updateCoin();
       return _acc;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
@@ -143,7 +143,7 @@ class ApiAccount {
         final jsonData = json.decode(response2.body);
         print(jsonData);
         Account _acc = Account.fromJson(jsonData);
-        SharedPreferencesHelper.saveInfo(_acc);
+        updateCoin();
         return _acc;
       } else {
         final error = json.decode(response2.body)['error'];

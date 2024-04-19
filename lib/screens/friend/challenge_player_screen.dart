@@ -56,7 +56,7 @@ class _ChallengePlayerScreenState extends State<ChallengePlayerScreen> {
               children: [
                 const SizedBox(height: 20),
                 Image.asset(
-                  'assets/pics/accOragne.png',
+                  'assets/pics/error.png',
                   height: 150,
                   width: 150,
                 ),
@@ -265,7 +265,7 @@ class _ChallengePlayerScreenState extends State<ChallengePlayerScreen> {
               ),
             ),
             const SizedBox(
-              height: 200,
+              height: 180,
             ),
             Align(
               alignment: Alignment.bottomCenter,
