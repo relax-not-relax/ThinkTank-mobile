@@ -85,20 +85,21 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
   void _showResizableDialog(BuildContext context) {
     showDialog(
       context: context,
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
           contentPadding: const EdgeInsets.all(0),
           content: Container(
             width: 250,
-            height: 400,
+            height: 300,
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 color: Color.fromARGB(255, 249, 249, 249)),
             child: Column(
               children: [
-                const SizedBox(height: 20),
+                const SizedBox(height: 30),
                 Image.asset(
-                  'assets/pics/check1.png',
+                  'assets/pics/toolong.png',
                   height: 150,
                   width: 150,
                 ),
@@ -107,22 +108,23 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
                   'Waiting too long for your opponent!',
                   style: TextStyle(
                       color: Color.fromRGBO(234, 84, 85, 1),
-                      fontSize: 30,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold),
                 ),
-                const Text(
-                  'There may be no one online in this mode',
-                  style: TextStyle(
-                      color: Color.fromRGBO(129, 140, 155, 1),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400),
-                  textAlign: TextAlign.center,
+                const Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 5,
+                  ),
+                  child: Text(
+                    "There may be no one online in this mode",
+                    style: TextStyle(
+                        color: Color.fromRGBO(129, 140, 155, 1),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                const SizedBox(
-                  height: 30,
-                ),
-                const CustomLoadingSpinner(
-                    color: Color.fromARGB(255, 245, 149, 24)),
               ],
             ),
           ),

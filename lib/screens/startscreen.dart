@@ -121,7 +121,7 @@ class StartScreenState extends State<StartScreen>
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         decoration: const BoxDecoration(
-          color: Color.fromRGBO(40, 52, 68, 1),
+          color: Colors.black,
         ),
         child: Stack(
           children: [

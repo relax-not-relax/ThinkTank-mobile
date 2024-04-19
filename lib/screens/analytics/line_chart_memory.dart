@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/models/analysis_group.dart';
 import 'package:thinktank_mobile/models/analysis_group_average.dart';
 
@@ -72,14 +73,22 @@ class _LineChart extends StatelessWidget {
       color: Colors.white,
     );
     String text;
-    switch (value.toInt()) {
+    switch (value.toDouble()) {
+      case 0:
+        text = '0';
+        break;
+      case 0.5:
+        text = '0.5';
+        break;
       case 1:
         text = '1';
+        break;
+      case 1.5:
+        text = '1.5';
         break;
       case 2:
         text = '2';
         break;
-
       default:
         return Container();
     }
@@ -90,7 +99,7 @@ class _LineChart extends StatelessWidget {
   SideTitles leftTitles() => SideTitles(
         getTitlesWidget: leftTitleWidgets,
         showTitles: true,
-        interval: 1,
+        interval: 0.5,
         reservedSize: 40,
       );
 
@@ -103,7 +112,7 @@ class _LineChart extends StatelessWidget {
     Widget text;
     switch (value.toInt()) {
       case 0:
-        text = const Text('Level 1', style: style);
+        text = const Text('1', style: style);
         break;
       case 3:
         text = const Text('2 - 5', style: style);
@@ -150,9 +159,15 @@ class _LineChart extends StatelessWidget {
           bottom: BorderSide(
               color: const Color.fromRGBO(80, 228, 255, 1).withOpacity(0.2),
               width: 4),
-          left: const BorderSide(color: Colors.transparent),
-          right: const BorderSide(color: Colors.transparent),
-          top: const BorderSide(color: Colors.transparent),
+          left: BorderSide(
+              color: const Color.fromRGBO(80, 228, 255, 1).withOpacity(0.2),
+              width: 4),
+          right: BorderSide(
+              color: const Color.fromRGBO(80, 228, 255, 1).withOpacity(0.2),
+              width: 4),
+          top: BorderSide(
+              color: const Color.fromRGBO(80, 228, 255, 1).withOpacity(0.2),
+              width: 4),
         ),
       );
 
@@ -255,6 +270,17 @@ class LineChartMemoryState extends State<LineChartMemory> {
                 ),
                 const SizedBox(
                   height: 10,
+                ),
+                Center(
+                  child: Text(
+                    "Cluster level",
+                    style: GoogleFonts.roboto(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
                 ),
               ],
             ),

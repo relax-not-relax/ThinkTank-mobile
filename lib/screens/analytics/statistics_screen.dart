@@ -8,7 +8,7 @@ import 'package:thinktank_mobile/models/analysis.dart';
 import 'package:thinktank_mobile/models/analysis_group.dart';
 import 'package:thinktank_mobile/models/analysis_group_average.dart';
 import 'package:thinktank_mobile/models/game.dart';
-import 'package:thinktank_mobile/screens/analytics/scatter_chart_memory.dart';
+import 'package:thinktank_mobile/screens/analytics/line_chart_memory.dart';
 import 'package:thinktank_mobile/widgets/appbar/normal_appbar.dart';
 import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
@@ -32,6 +32,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   Map<DateTime, List<Analysis>> groupedAnalyses = {};
   bool showByWeek = false;
   AnalysisGroupAverage? grouped;
+  int currentLevel = 0;
+  int count = 0;
+  Widget? description;
 
   late Future<void> _initMemories;
 
@@ -42,6 +45,68 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     const Color.fromRGBO(80, 228, 255, 1),
     const Color.fromRGBO(33, 150, 243, 1),
   ];
+
+  void setCount(AnalysisGroupAverage data) {
+    for (AnalysisGroup group
+        in data.analysisAverageScoreByGroupLevelResponses) {
+      if (group.averageOfPlayer > group.averageOfGroup) {
+        count += 1;
+      }
+    }
+    setState(() {
+      count;
+    });
+
+    print(count);
+
+    if (count >= 0 && count <= 2) {
+      setState(() {
+        description = SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: Text(
+            "Based on the chart, it seems like you haven't improved your short-term memory very much. Try and spend a little time practicing every day, overcoming more difficult challenges every day!",
+            style: GoogleFonts.roboto(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        );
+      });
+    } else if (count >=
+        (data.analysisAverageScoreByGroupLevelResponses.length / 2).ceil()) {
+      setState(() {
+        description = SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: Text(
+            "You have a pretty good short-term memory. You've beaten a lot of your opponents and are above the game average in our system. It seems like you've spent a lot of time practicing, keep up the good work!",
+            style: GoogleFonts.roboto(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        );
+      });
+    } else if (count > 2 &&
+        count <
+            (data.analysisAverageScoreByGroupLevelResponses.length / 2)
+                .ceil()) {
+      setState(() {
+        description = SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: Text(
+            "Based on the chart, we see your daily efforts. Practice your short-term memory more and surpass your limits!",
+            style: GoogleFonts.roboto(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        );
+      });
+    }
+  }
 
   Future<void> getMemories(int month, int year) async {
     memoryAnalysis = await ApiAnalytics.getMemoryTracking(
@@ -78,6 +143,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   @override
   void initState() {
     super.initState();
+    print(widget.game.id);
 
     selectedMonth = DateTime.now().month;
     selectedYear = DateTime.now().year;
@@ -86,7 +152,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     _initMemories.then((value) {
       setState(() {
         isLoading = false;
-
+        currentLevel = grouped!.currentLevel;
+        setCount(grouped!);
         print(memoryAnalysis);
         print(grouped);
       });
@@ -277,78 +344,100 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           : Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              child: memoryAnalysis.isEmpty
-                  ? Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Center(
-                          child: Container(
-                            width: 220,
-                            height: 220,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage("assets/pics/track.png"),
-                                  fit: BoxFit.cover),
-                            ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 20,
+                      ),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Text(
+                          "Memory chart by piece of information and completion time",
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
                           ),
+                          textAlign: TextAlign.start,
                         ),
-                        Center(
-                          child: Text(
-                            "Let's start training now",
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        20,
+                        10,
+                        20,
+                        0,
+                      ),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Text(
+                          "This chart will retrieve players' gaming data by day (Data value is calculated by dividing the information piece of that level by the player's time to complete the level).",
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
                           ),
+                          textAlign: TextAlign.start,
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Center(
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.75,
-                            child: Text(
-                              "You have no memory training data in this game this month.",
-                              style: GoogleFonts.roboto(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Color.fromARGB(255, 185, 185, 185),
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  : SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(
-                            height: 30,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 20,
-                            ),
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              child: Text(
-                                "Memory chart by piece of information and completion time",
-                                style: GoogleFonts.inter(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    memoryAnalysis.isEmpty
+                        ? Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Center(
+                                child: Container(
+                                  width: 220,
+                                  height: 220,
+                                  decoration: const BoxDecoration(
+                                    image: DecorationImage(
+                                        image:
+                                            AssetImage("assets/pics/track.png"),
+                                        fit: BoxFit.cover),
+                                  ),
                                 ),
-                                textAlign: TextAlign.start,
                               ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 30,
-                          ),
-                          Stack(
+                              Center(
+                                child: Text(
+                                  "Let's start training now",
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Center(
+                                child: SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.75,
+                                  child: Text(
+                                    "You have no memory training data in this game this month.",
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color.fromARGB(255, 185, 185, 185),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Stack(
                             children: <Widget>[
                               AspectRatio(
                                 aspectRatio: 1.20,
@@ -356,88 +445,254 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                   padding: const EdgeInsets.only(
                                     right: 18,
                                     left: 12,
-                                    top: 50,
+                                    top: 70,
                                     bottom: 12,
                                   ),
                                   child: SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
-                                    child: Container(
-                                      margin: EdgeInsets.only(
-                                        right: showByWeek ? 30 : 20,
-                                      ),
-                                      width: showByWeek ? 900 : 1500,
-                                      child: LineChart(
-                                        showByWeek ? weekData() : mainData(),
-                                      ),
+                                    child: Row(
+                                      children: [
+                                        RotatedBox(
+                                          quarterTurns: 3,
+                                          child: Text(
+                                            "Value",
+                                            style: GoogleFonts.roboto(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 15,
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                            right: showByWeek ? 30 : 20,
+                                          ),
+                                          width: showByWeek ? 900 : 1500,
+                                          child: LineChart(
+                                            showByWeek
+                                                ? weekData()
+                                                : mainData(),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
                               ),
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 60,
-                                    height: 34,
-                                    child: TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          showByWeek = !showByWeek;
-                                        });
-                                      },
-                                      child: Text(
-                                        'Week',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: showByWeek
-                                              ? Colors.white
-                                              : Colors.white.withOpacity(0.5),
-                                        ),
-                                      ),
+                              Container(
+                                margin: const EdgeInsets.only(
+                                  left: 20,
+                                ),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      showByWeek = !showByWeek;
+                                    });
+                                  },
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStatePropertyAll(
+                                      showByWeek
+                                          ? const Color.fromARGB(
+                                              255, 175, 175, 175)
+                                          : Color.fromARGB(52, 70, 70, 70),
                                     ),
                                   ),
-                                ],
+                                  child: Text(
+                                    'Weekly chart',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: showByWeek
+                                          ? Colors.white
+                                          : Colors.white.withOpacity(0.5),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                      ),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Text(
+                          "Memory chart by memory improvement process through each game",
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        20,
+                        10,
+                        20,
+                        0,
+                      ),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Text(
+                          "This chart will take the player's data after completing a cluster of levels and compare it with the average value of other players in that cluster of levels, to see if the player's short-term memory is really improved (Data value is calculated by dividing the information piece of that level by the player's time to complete the level).",
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
+                    ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
                           const SizedBox(
-                            height: 30,
+                            width: 10,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                            ),
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              child: Text(
-                                "Memory chart by memory improvement process through each game",
-                                style: GoogleFonts.inter(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                textAlign: TextAlign.start,
+                          RotatedBox(
+                            quarterTurns: 3,
+                            child: Text(
+                              "Value",
+                              style: GoogleFonts.roboto(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FontStyle.italic,
                               ),
                             ),
                           ),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Container(
-                              width: 900,
-                              height: 450,
-                              margin: const EdgeInsets.only(
-                                right: 30,
-                              ),
-                              child: LineChartMemory(
-                                data: grouped!,
-                              ),
+                          Container(
+                            width: 900,
+                            height: 450,
+                            margin: const EdgeInsets.only(
+                              right: 30,
                             ),
-                          ),
-                          const SizedBox(
-                            height: 30,
+                            child: LineChartMemory(
+                              data: grouped!,
+                            ),
                           ),
                         ],
                       ),
                     ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(
+                            left: 20,
+                          ),
+                          height: 7,
+                          width: 100,
+                          color: const Color.fromRGBO(59, 255, 73, 1),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "Average stats of all players",
+                          style: GoogleFonts.roboto(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 2,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(
+                            left: 20,
+                          ),
+                          height: 7,
+                          width: 100,
+                          color: const Color.fromRGBO(255, 58, 242, 1),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "Your average stats",
+                          style: GoogleFonts.roboto(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 30,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 15,
+                      ),
+                      decoration: const BoxDecoration(
+                        color: Color.fromARGB(255, 34, 34, 34),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Your current level",
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                currentLevel != 0 ? "$currentLevel" : "0",
+                                style: GoogleFonts.roboto(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          description!,
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
     );
   }
