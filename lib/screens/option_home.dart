@@ -11,7 +11,9 @@ import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/contest.dart';
 import 'package:thinktank_mobile/models/game.dart';
 import 'package:thinktank_mobile/models/notification_item.dart';
+import 'package:thinktank_mobile/screens/friend/friend_screen.dart';
 import 'package:thinktank_mobile/screens/game/game_menu.dart';
+import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/screens/notification/notiscreen.dart';
 import 'package:thinktank_mobile/widgets/appbar/appbar.dart';
 import 'package:thinktank_mobile/widgets/game/contest_thumbnail.dart';
@@ -255,7 +257,18 @@ class _OptionScreenState extends State<OptionScreen> {
                               Color.fromARGB(255, 234, 84, 85),
                             ),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return const HomeScreen(
+                                      inputScreen: FriendScreen(),
+                                      screenIndex: 4);
+                                },
+                              ),
+                            );
+                          },
                           child: Text(
                             "Find Friends",
                             style: GoogleFonts.roboto(
