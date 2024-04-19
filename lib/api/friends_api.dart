@@ -325,7 +325,7 @@ class ApiFriends {
     Account? account = await SharedPreferencesHelper.getInfo();
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/${account!.id},$gameId,$competitorId/countervailing-mode-with-friend'),
+          'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1s/${account!.id},$gameId,$competitorId/countervailing-mode-with-friend'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${account.accessToken}',
@@ -339,7 +339,7 @@ class ApiFriends {
       SharedPreferencesHelper.saveInfo(account2!);
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1/${account2!.id},$gameId,$competitorId/countervailing-mode-with-friend'),
+            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1s/${account2!.id},$gameId,$competitorId/countervailing-mode-with-friend'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2.accessToken}',
@@ -353,6 +353,7 @@ class ApiFriends {
         return error;
       }
     } else {
+      print(json.decode(response.body));
       final error = json.decode(response.body)['error'];
       return error;
     }

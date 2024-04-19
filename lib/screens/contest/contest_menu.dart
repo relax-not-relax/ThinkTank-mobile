@@ -73,25 +73,30 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
               children: [
                 const SizedBox(height: 20),
                 Image.asset(
-                  'assets/pics/accOragne.png',
+                  'assets/pics/error.png',
                   height: 150,
                   width: 150,
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  "Can't join context",
-                  style: TextStyle(
-                      color: Color.fromRGBO(234, 84, 85, 1),
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
+                const Center(
+                  child: Text(
+                    "Can't join contest",
+                    style: TextStyle(
+                        color: Color.fromRGBO(234, 84, 85, 1),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
-                const Text(
-                  'Your coin is not enough to join this context',
-                  style: TextStyle(
-                      color: Color.fromRGBO(129, 140, 155, 1),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400),
-                  textAlign: TextAlign.center,
+                const Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Text(
+                    'Your coin is not enough to join this contest',
+                    style: TextStyle(
+                        color: Color.fromRGBO(129, 140, 155, 1),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ],
             ),
