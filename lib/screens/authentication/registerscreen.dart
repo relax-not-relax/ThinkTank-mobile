@@ -68,7 +68,7 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
         password.isEmpty ||
         email.trim().isEmpty) {
       setState(() {
-        error = "Please fill all field!";
+        error = "Please fill in all fields!";
         isIncorrect = true;
       });
       return;
@@ -87,9 +87,10 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
       });
       return;
     }
-    if (password.length < 8) {
+    if (password.length < 8 || password.length >= 12) {
       setState(() {
-        error = "Password must greater than or equal 8 character!";
+        error =
+            "Password length must be at least 8 characters and maximum 12 characters !";
         isIncorrect = true;
       });
       return;
@@ -125,7 +126,7 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
     if (!passwordRegex.hasMatch(password)) {
       setState(() {
         error =
-            "password must contain number, uppercase Charater, lowercaseCharater, Special characters.";
+            "Password must contain uppercase letters, lowercase letters, numbers and special characters!";
         isIncorrect = true;
       });
       return;

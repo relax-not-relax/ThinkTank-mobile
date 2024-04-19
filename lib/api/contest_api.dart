@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:thinktank_mobile/api/account_api.dart';
 import 'package:thinktank_mobile/api/assets_api.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
@@ -158,6 +159,7 @@ class ContestsAPI {
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       print(jsonData);
+      // await ApiAccount.updateCoin();
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.post(
@@ -171,6 +173,7 @@ class ContestsAPI {
       );
       if (response2.statusCode == 200) {
         final jsonData = json.decode(response.body);
+        //  await ApiAccount.updateCoin();
         print(jsonData);
       } else {
         print(response2.body);

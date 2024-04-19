@@ -387,7 +387,7 @@ void _showResizableDialog(BuildContext context) {
               ),
               const SizedBox(height: 10),
               const Text(
-                'Room is cancle by owner',
+                'Room is cancelled by owner',
                 style: TextStyle(
                     color: Color.fromRGBO(234, 84, 85, 1),
                     fontSize: 20,

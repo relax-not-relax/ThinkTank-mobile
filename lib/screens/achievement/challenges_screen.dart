@@ -90,10 +90,12 @@ class ChallengesScreenState extends State<ChallengesScreen>
     _getChallenges.then((value) => {});
     _initAccount = getAccount();
     _initAccount.then((value) {
-      setState(() {
-        account = value;
-        coin = account!.coin!;
-      });
+      if (mounted) {
+        setState(() {
+          account = value;
+          coin = account!.coin!;
+        });
+      }
     });
     _tabController = TabController(length: 2, vsync: this);
   }
@@ -408,10 +410,11 @@ class ItemAchieve extends StatelessWidget {
                               lineHeight: 25.0,
                               animationDuration: 1000,
                               animateFromLastPercent: true,
-                              percent:
-                                  (progress / total < 0 || progress / total > 1)
-                                      ? 0
-                                      : progress / total,
+                              percent: (progress / total < 0)
+                                  ? 0
+                                  : ((progress / total > 1)
+                                      ? 1
+                                      : progress / total),
                               barRadius: const Radius.circular(10.0),
                               progressColor:
                                   const Color.fromRGBO(255, 199, 0, 1),
@@ -422,7 +425,7 @@ class ItemAchieve extends StatelessWidget {
                               height: 25,
                               child: Center(
                                 child: Text(
-                                  (progress / total < 0 || progress / total > 1)
+                                  (progress / total < 0)
                                       ? '0/$total'
                                       : '$progress/$total',
                                   style: const TextStyle(

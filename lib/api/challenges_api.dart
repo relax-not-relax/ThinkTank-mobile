@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:synchronized/synchronized.dart';
+import 'package:thinktank_mobile/api/account_api.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/api/lock_manager.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
@@ -72,6 +73,7 @@ class ApiChallenges {
       for (var element in jsonData) {
         result.add(Challenge.fromJson(element));
       }
+      await ApiAccount.updateCoin();
       return result;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
@@ -88,6 +90,7 @@ class ApiChallenges {
         for (var element in jsonData) {
           result.add(Challenge.fromJson(element));
         }
+        await ApiAccount.updateCoin();
         return result;
       } else {
         print(response2.body);
