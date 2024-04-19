@@ -305,14 +305,16 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
         widget.contestId!,
       );
     }
-    setState(() {
-      finishVisible = true;
-      continueVisible = true;
-      tryAgainVisible = true;
-      bgFinish = 'assets/pics/boo.png';
-      timer?.cancel();
-      isWin = false;
-    });
+    if (mounted) {
+      setState(() {
+        finishVisible = true;
+        continueVisible = true;
+        tryAgainVisible = true;
+        bgFinish = 'assets/pics/boo.png';
+        timer?.cancel();
+        isWin = false;
+      });
+    }
     Future.delayed(const Duration(seconds: 3));
     continueFinish();
   }
@@ -330,8 +332,7 @@ class FindAnonymousGameState extends State<FindAnonymousGame>
                   points: (points * 100).toInt(),
                   status: 'win',
                   gameId: games[2].id,
-                  totalCoin:
-                      account!.coin! + ((points * 100).toInt() / 10).toInt(),
+                  totalCoin: account!.coin!,
                   contestId: widget.contestId!)),
           (route) => false,
         );

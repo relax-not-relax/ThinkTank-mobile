@@ -247,8 +247,8 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
       if (int.parse(event.snapshot.value.toString()) == -1 && mounted) {
         print('Thắng rồi');
         Account? account = await SharedPreferencesHelper.getInfo();
-        account!.coin = account.coin! + 20;
-        await SharedPreferencesHelper.saveInfo(account);
+
+        await SharedPreferencesHelper.saveInfo(account!);
         isCompleted = true;
         await BattleAPI.addResultBattle(
           20,
@@ -287,8 +287,8 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
               int.parse(event.snapshot.value.toString())) {
             print('Thắng do còn nhiều time hơn');
             Account? account = await SharedPreferencesHelper.getInfo();
-            account!.coin = account.coin! + 20;
-            await SharedPreferencesHelper.saveInfo(account);
+
+            await SharedPreferencesHelper.saveInfo(account!);
             isCompleted = true;
             await BattleAPI.addResultBattle(
               20,
@@ -385,8 +385,8 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
               int.parse(event.snapshot.value.toString())) {
             print('Thắng do còn nhiều time hơn');
             Account? account = await SharedPreferencesHelper.getInfo();
-            account!.coin = account.coin! + 20;
-            await SharedPreferencesHelper.saveInfo(account);
+
+            await SharedPreferencesHelper.saveInfo(account!);
             isCompleted = true;
             await BattleAPI.addResultBattle(
               20,

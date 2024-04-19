@@ -127,6 +127,7 @@ class ApiAccount {
       final jsonData = json.decode(response.body);
       print(jsonData);
       Account _acc = Account.fromJson(jsonData);
+      SharedPreferencesHelper.saveInfo(_acc);
       return _acc;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
@@ -142,6 +143,7 @@ class ApiAccount {
         final jsonData = json.decode(response2.body);
         print(jsonData);
         Account _acc = Account.fromJson(jsonData);
+        SharedPreferencesHelper.saveInfo(_acc);
         return _acc;
       } else {
         final error = json.decode(response2.body)['error'];
@@ -150,6 +152,31 @@ class ApiAccount {
     } else {
       final error = json.decode(response.body)['error'];
       return error;
+    }
+  }
+
+  static Future<void> updateCoin() async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    final response = await http.get(
+      Uri.parse(
+          'https://thinktank-sep490.azurewebsites.net/api/accounts/${account!.id}'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${account.accessToken}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      Account _acc = Account.fromJson(jsonData);
+      account.coin = _acc.coin;
+      SharedPreferencesHelper.saveInfo(account);
+      return;
+    } else if (response.statusCode == 401 || response.statusCode == 403) {
+      await ApiAuthentication.refreshToken();
+      return;
+    } else {
+      return;
     }
   }
 }

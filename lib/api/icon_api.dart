@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:thinktank_mobile/api/account_api.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
@@ -121,6 +122,7 @@ class ApiIcon {
       final jsonData = json.decode(response.body);
       print(jsonData);
       IconApp icon = IconApp.fromJson(jsonData);
+      await ApiAccount.updateCoin();
       return icon;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
@@ -145,6 +147,7 @@ class ApiIcon {
         final jsonData = json.decode(response2.body);
         print(jsonData);
         IconApp icon = IconApp.fromJson(jsonData);
+        await ApiAccount.updateCoin();
         return icon;
       } else {
         final error = json.decode(response2.body)['error'];

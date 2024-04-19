@@ -228,8 +228,8 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
       if (int.parse(event.snapshot.value.toString()) == 0 && mounted) {
         print('Thắng rồi');
         Account? account = await SharedPreferencesHelper.getInfo();
-        account!.coin = account.coin! + 20;
-        await SharedPreferencesHelper.saveInfo(account);
+
+        await SharedPreferencesHelper.saveInfo(account!);
         isCompleted = true;
         isCompleted = true;
         await BattleAPI.addResultBattle(
@@ -269,8 +269,8 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
               int.parse(event.snapshot.value.toString())) {
             print('Thắng do còn nhiều time hơn');
             Account? account = await SharedPreferencesHelper.getInfo();
-            account!.coin = account.coin! + 20;
-            await SharedPreferencesHelper.saveInfo(account);
+
+            await SharedPreferencesHelper.saveInfo(account!);
             isCompleted = true;
             await BattleAPI.addResultBattle(
               20,
@@ -356,8 +356,8 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
         } else {
           print('Thắng do còn nhiều time hơn');
           Account? account = await SharedPreferencesHelper.getInfo();
-          account!.coin = account.coin! + 20;
-          await SharedPreferencesHelper.saveInfo(account);
+
+          await SharedPreferencesHelper.saveInfo(account!);
           isCompleted = true;
           await BattleAPI.addResultBattle(
             20,
@@ -396,8 +396,8 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
               int.parse(event.snapshot.value.toString())) {
             print('Thắng do còn nhiều time hơn');
             Account? account = await SharedPreferencesHelper.getInfo();
-            account!.coin = account.coin! + 20;
-            await SharedPreferencesHelper.saveInfo(account);
+
+            await SharedPreferencesHelper.saveInfo(account!);
             isCompleted = true;
             await BattleAPI.addResultBattle(
               20,

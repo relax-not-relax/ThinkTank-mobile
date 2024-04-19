@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/api/account_api.dart';
 import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/api/contest_api.dart';
@@ -239,6 +240,7 @@ class _FinalResultScreenState extends State<FinalResultScreen> {
                             break;
                         }
                       }
+                      await ApiAccount.updateCoin();
                     },
                     style: widget.status == 'win'
                         ? buttonWinVer2(context)

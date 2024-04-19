@@ -42,18 +42,22 @@ class LoginScreenState extends State<LoginScreen> {
   bool isRemember = false;
   bool _isIncorrect = false;
   String error = '';
-  late StreamSubscription stream;
+  StreamSubscription? stream;
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    stream.cancel();
+    if (stream != null) {
+      stream!.cancel();
+    }
   }
 
   void loginUsername(bool isLogin, String usn, String pass) async {
     if (!isLogin) {
-      stream.cancel();
+      if (stream != null) {
+        stream!.cancel();
+      }
       String? fcmToken = await FirebaseMessageAPI().getToken();
       Account? acc = await ApiAuthentication.login(usn, pass, fcmToken!);
       if (acc == null) {
@@ -415,11 +419,19 @@ class LoginScreenState extends State<LoginScreen> {
                         _showResizableDialog(context);
                         String usn = _usernameController.text;
                         String pass = _passwordController.text;
+                        if (usn.trim().isEmpty || pass.trim().isEmpty) {
+                          setState(() {
+                            _isIncorrect = true;
+                            error = 'Please fill in username and password!';
+                          });
+                          _closeDialog(context);
+                          return;
+                        }
                         bool isLogin = false;
                         int id = await ApiAuthentication.checkLogin(
                             usn, pass, '', null);
 
-                        if (id != 0) {
+                        if (id != 0 && id != -1) {
                           await Future.delayed(Duration(seconds: 2));
                           stream = FirebaseDatabase.instance
                               .ref()
@@ -442,7 +454,16 @@ class LoginScreenState extends State<LoginScreen> {
                             }
                           });
                           await Future.delayed(Duration(seconds: 2));
-                          stream.cancel();
+                          if (stream != null) {
+                            stream!.cancel();
+                          }
+                        } else if (id == -1) {
+                          setState(() {
+                            _isIncorrect = true;
+                            error = 'Your account is banned!';
+                          });
+                          _closeDialog(context);
+                          return;
                         } else {
                           print('sai');
                           setState(() {
@@ -500,7 +521,7 @@ void _showReject(BuildContext context) {
               ),
               const SizedBox(height: 10),
               const Text(
-                "Your account is baned",
+                "Your account is banned",
                 style: TextStyle(
                     color: Color.fromRGBO(234, 84, 85, 1),
                     fontSize: 20,

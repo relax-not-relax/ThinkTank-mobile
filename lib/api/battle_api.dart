@@ -3,6 +3,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:synchronized/synchronized.dart';
+import 'package:thinktank_mobile/api/account_api.dart';
 import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/api/lock_manager.dart';
@@ -208,6 +209,7 @@ class BattleAPI {
     print(response.statusCode);
     if (response.statusCode == 200) {
       print('da add');
+      //await ApiAccount.updateCoin();
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
       SharedPreferencesHelper.saveInfo(account2!);
@@ -223,6 +225,7 @@ class BattleAPI {
       print(response2.body);
       if (response2.statusCode == 200) {
         print('da add');
+        //await ApiAccount.updateCoin();
       } else {
         return;
       }

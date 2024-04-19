@@ -171,8 +171,7 @@ class _GameMainScreenState extends State<GameMainScreen> {
                   points: (points * 100).toInt(),
                   status: 'win',
                   gameId: 4,
-                  totalCoin:
-                      account!.coin! + ((points * 100).toInt() / 10).toInt(),
+                  totalCoin: account!.coin!,
                   contestId: widget.contestId!)),
           (route) => false,
         );

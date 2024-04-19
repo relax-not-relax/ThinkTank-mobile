@@ -70,7 +70,7 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
     String roomCode = _controller.text;
     print(roomCode);
     isJoin = false;
-    if (roomCode != "") {
+    if (roomCode.trim() != "") {
       dynamic result = await ApiRoom.enterToRoom(roomCode);
       Account? account = await SharedPreferencesHelper.getInfo();
       if (result is Room) {
@@ -156,6 +156,12 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
           _showResizableDialogError(context, result);
         });
       }
+    } else {
+      _closeDialog(context);
+      Future.delayed(const Duration(seconds: 0), () {
+        // ignore: use_build_context_synchronously
+        _showResizableDialogError(context, "Please enter room code!");
+      });
     }
   }
 
