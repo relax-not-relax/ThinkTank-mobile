@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:thinktank_mobile/api/room_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
@@ -245,8 +246,24 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
                           ),
                           Center(
                             child: Container(
-                              width: 100,
+                              width: MediaQuery.of(context).size.width,
                               height: 100,
+                              child: Center(
+                                child: Text(
+                                  "Waiting for other players...",
+                                  style: GoogleFonts.roboto(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Center(
+                            child: Container(
+                              width: 40,
+                              height: 40,
                               child: const Center(
                                 child: CustomLoadingSpinner(
                                   color: Colors.white,
