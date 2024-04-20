@@ -42,12 +42,9 @@ class ApiAuthentication {
     }
   }
 
-  static Future<Account?> loginWithGoogle() async {
-    GoogleSignIn googleSignIn = GoogleSignIn();
-    await googleSignIn.signOut();
+  static Future<Account?> loginWithGoogle(
+      GoogleSignInAccount? googleSignInAccount) async {
     try {
-      final GoogleSignInAccount? googleSignInAccount =
-          await googleSignIn.signIn();
       if (googleSignInAccount != null) {
         String? fcmToken = await FirebaseMessageAPI().getToken();
         print("fcm:" + (fcmToken ?? "khong co"));
@@ -142,7 +139,7 @@ class ApiAuthentication {
 
       final response = await http.post(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-cheking'),
+            'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-cheking?googleId=$googleId'),
         headers: {'Content-Type': 'application/json'},
         body: jsonBody,
       );

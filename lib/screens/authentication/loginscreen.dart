@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
@@ -50,6 +51,47 @@ class LoginScreenState extends State<LoginScreen> {
     super.dispose();
     if (stream != null) {
       stream!.cancel();
+    }
+  }
+
+  void loginGoogle(
+      bool isLogin, GoogleSignInAccount googleSignInAccount) async {
+    if (!isLogin) {
+      Account? acc =
+          await ApiAuthentication.loginWithGoogle(googleSignInAccount);
+      if (acc == null) {
+        _closeDialog(context);
+      } else {
+        if (acc.status == false) {
+          _showReject(context);
+          return;
+        }
+        setState(() {
+          _isIncorrect = false;
+        });
+        await SharedPreferencesHelper.saveInfo(acc);
+        await ApiAchieviements.getLevelOfUser(acc.id, acc.accessToken!);
+        int version = await SharedPreferencesHelper.getResourceVersion();
+        await AssetsAPI.addAssets(version, acc.accessToken!);
+        await ContestsAPI.getContets();
+        await ApiIcon.getIconsOfAccount();
+        FirebaseRealTime.setOnline(acc.id, true);
+
+        _closeDialog(context);
+
+        // ignore: use_build_context_synchronously
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const HomeScreen(
+                    inputScreen: OptionScreen(),
+                    screenIndex: 0,
+                  )),
+          (route) => false,
+        );
+      }
+    } else {
+      _closeDialog(context);
     }
   }
 
@@ -344,42 +386,56 @@ class LoginScreenState extends State<LoginScreen> {
                         style: buttonGoogleVer2(context),
                         onPressed: () async {
                           _showResizableDialog(context);
+                          bool isLogin = false;
+                          GoogleSignIn googleSignIn = GoogleSignIn();
+                          await googleSignIn.signOut();
+                          final GoogleSignInAccount? googleSignInAccount =
+                              await googleSignIn.signIn();
+                          if (googleSignInAccount != null) {
+                            int id = await ApiAuthentication.checkLogin(
+                                '', '', googleSignInAccount.id, '');
 
-                          Account? acc =
-                              await ApiAuthentication.loginWithGoogle();
-                          if (acc == null) {
-                            _closeDialog(context);
-                          } else {
-                            if (acc.status == false) {
-                              _showReject(context);
+                            if (id != 0 && id != -1) {
+                              await Future.delayed(Duration(seconds: 2));
+                              stream = FirebaseDatabase.instance
+                                  .ref()
+                                  .child('islogin')
+                                  .child(id.toString())
+                                  .onValue
+                                  .listen((event) {
+                                if (event.snapshot.value.toString() == 'true' &&
+                                    mounted) {
+                                  isLogin = true;
+                                  setState(() {
+                                    _isIncorrect = true;
+                                    error =
+                                        'The account is logged in on another device.';
+                                  });
+                                  loginGoogle(isLogin, googleSignInAccount);
+                                } else {
+                                  loginGoogle(isLogin, googleSignInAccount);
+                                }
+                              });
+                              await Future.delayed(Duration(seconds: 2));
+                              if (stream != null) {
+                                stream!.cancel();
+                              }
+                            } else if (id == -1) {
+                              setState(() {
+                                _isIncorrect = true;
+                                error = 'Your account is banned!';
+                              });
+                              _closeDialog(context);
+                              return;
+                            } else {
+                              print('sai');
+                              setState(() {
+                                _isIncorrect = true;
+                                error = 'Login googl error!';
+                              });
+                              _closeDialog(context);
                               return;
                             }
-                            setState(() {
-                              _isIncorrect = false;
-                            });
-                            await SharedPreferencesHelper.saveInfo(acc);
-                            await ApiAchieviements.getLevelOfUser(
-                                acc.id, acc.accessToken!);
-                            int version = await SharedPreferencesHelper
-                                .getResourceVersion();
-                            await AssetsAPI.addAssets(
-                                version, acc.accessToken!);
-                            await ContestsAPI.getContets();
-                            await ApiIcon.getIconsOfAccount();
-                            FirebaseRealTime.setOnline(acc.id, true);
-
-                            _closeDialog(context);
-
-                            // ignore: use_build_context_synchronously
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(
-                                        inputScreen: OptionScreen(),
-                                        screenIndex: 0,
-                                      )),
-                              (route) => false,
-                            );
                           }
                         },
                         child: Row(

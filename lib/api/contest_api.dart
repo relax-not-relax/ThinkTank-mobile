@@ -82,7 +82,7 @@ class ContestsAPI {
     if (account == null) return [];
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/accountInContests?Page=$index&PageSize=$pageSize&SortType=1&ContestId=$contestId'),
+          'https://thinktank-sep490.azurewebsites.net/api/contests/$contestId/leaderboard?Page=$index&PageSize=$pageSize&SortType=1'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${account.accessToken}',
@@ -92,11 +92,14 @@ class ContestsAPI {
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       final data = jsonData['results'];
+      print(data.toString());
       List<AccountInContest> results = [];
       int count = int.parse(jsonData['totalNumberOfRecords'].toString());
       if (count > 0) {
         for (var element in data) {
-          results.add(AccountInContest.fromJson(element));
+          AccountInContest ac = AccountInContest.fromJson(element);
+          ac.userName = element['fullName'].toString();
+          results.add(ac);
         }
         return results;
       } else {
@@ -106,7 +109,7 @@ class ContestsAPI {
       Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/accountInContests?Page=$index&PageSize=$pageSize&SortType=1&ContestId=$contestId'),
+            'https://thinktank-sep490.azurewebsites.net/api/contests/$contestId/leaderboard?Page=$index&PageSize=$pageSize&SortType=1'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2!.accessToken}',
@@ -120,7 +123,9 @@ class ContestsAPI {
         int count = int.parse(jsonData['totalNumberOfRecords'].toString());
         if (count > 0) {
           for (var element in data) {
-            results.add(AccountInContest.fromJson(element));
+            AccountInContest ac = AccountInContest.fromJson(element);
+            ac.userName = element['fullName'].toString();
+            results.add(ac);
           }
           return results;
         } else {
