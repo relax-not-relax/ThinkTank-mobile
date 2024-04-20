@@ -90,7 +90,7 @@ class _IconSelectionScreenState extends State<IconSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     NetworkManager.currentContext = context;
-    return isLoading || iconsOfShop.isEmpty
+    return isLoading
         ? Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -106,32 +106,81 @@ class _IconSelectionScreenState extends State<IconSelectionScreen> {
               ],
             ),
           )
-        : Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 20,
-            ),
-            child: GridView.count(
-              crossAxisCount: 2,
-              mainAxisSpacing: 20,
-              crossAxisSpacing: 10,
-              childAspectRatio: 0.75,
-              children: iconsOfShop.map((iconData) {
-                return IconShopItem(
-                  icon: iconData,
-                  buyIcon: () async {
-                    _showConfirmDialog(
-                      context,
-                      () {
-                        buy(iconData);
+        : iconsOfShop.isEmpty
+            ? Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: 150,
+                      width: 150,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("assets/pics/yeah.png"),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Center(
+                      child: Text(
+                        "Congratulations!",
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Center(
+                      child: SizedBox(
+                        width: 300,
+                        child: Text(
+                          "You have owned all stickers of ThinkTank",
+                          style: GoogleFonts.roboto(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 20,
+                ),
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 20,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: 0.75,
+                  children: iconsOfShop.map((iconData) {
+                    return IconShopItem(
+                      icon: iconData,
+                      buyIcon: () async {
+                        _showConfirmDialog(
+                          context,
+                          () {
+                            buy(iconData);
+                          },
+                          iconData.name,
+                        );
                       },
-                      iconData.name,
                     );
-                  },
-                );
-              }).toList(),
-            ),
-          );
+                  }).toList(),
+                ),
+              );
   }
 }
 
