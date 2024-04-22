@@ -76,6 +76,40 @@ class ContestsAPI {
     }
   }
 
+  static Future<void> minusCoin(int contestId) async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    if (account == null) return null;
+    final response = await http.put(
+      Uri.parse(
+          'https://thinktank-sep490.azurewebsites.net/api/accountInContests/${account.id},$contestId/coin-of-account'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${account.accessToken}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    } else if (response.statusCode == 401 || response.statusCode == 403) {
+      Account? account2 = await ApiAuthentication.refreshToken();
+      final response2 = await http.put(
+        Uri.parse(
+            'https://thinktank-sep490.azurewebsites.net/api/accountInContests/${account2!.id},$contestId/coin-of-account'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${account2.accessToken}',
+        },
+      );
+      if (response2.statusCode == 200) {
+        return;
+      } else {
+        return;
+      }
+    } else {
+      return;
+    }
+  }
+
   static Future<List<AccountInContest>?> getAccountInContest(
       int contestId, int index, int pageSize) async {
     Account? account = await SharedPreferencesHelper.getInfo();
