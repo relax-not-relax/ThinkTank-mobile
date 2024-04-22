@@ -1097,20 +1097,22 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
           color: Colors.white,
         ),
         actions: [
-          ElevatedButton(
-            onPressed: () {
-              onOpenInstruction(widget.game.id);
-            },
-            style: ElevatedButton.styleFrom(
-              shape: const CircleBorder(),
-              primary: const Color.fromARGB(255, 240, 122, 63),
-            ),
-            child: const Icon(
-              UniconsLine.question_circle,
-              size: 45.0,
-              color: Colors.white,
-            ),
-          ),
+          widget.game.id == 6
+              ? ElevatedButton(
+                  onPressed: () {
+                    onOpenInstruction(widget.game.id);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    primary: const Color.fromARGB(255, 240, 122, 63),
+                  ),
+                  child: const Icon(
+                    UniconsLine.question_circle,
+                    size: 45.0,
+                    color: Colors.white,
+                  ),
+                )
+              : Container(),
         ],
         toolbarHeight: 90.0,
       ),
