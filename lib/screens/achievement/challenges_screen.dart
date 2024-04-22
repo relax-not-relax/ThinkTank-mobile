@@ -66,6 +66,7 @@ class ChallengesScreenState extends State<ChallengesScreen>
   Account? account = null;
   late Future _initAccount;
   int coin = 0;
+  bool? isReceive;
 
   Future<dynamic> getAccount() async {
     dynamic result = await ApiAccount.getAccountById();
@@ -80,6 +81,18 @@ class ChallengesScreenState extends State<ChallengesScreen>
       setState(() {
         list;
       });
+      if (list.where((element) => element.status == null).toList().isNotEmpty) {
+        await SharedPreferencesHelper.saveCheckMisson(false);
+        isReceive = await SharedPreferencesHelper.getCheckMission();
+        setState(() {
+          isReceive;
+        });
+      } else {
+        isReceive = await SharedPreferencesHelper.getCheckMission();
+        setState(() {
+          isReceive;
+        });
+      }
     }
   }
 
@@ -87,7 +100,9 @@ class ChallengesScreenState extends State<ChallengesScreen>
   void initState() {
     super.initState();
     _getChallenges = getChallenges();
-    _getChallenges.then((value) => {});
+    _getChallenges.then((value) => {
+          print(isReceive.toString() + "check"),
+        });
     _initAccount = getAccount();
     _initAccount.then((value) {
       if (mounted) {
@@ -138,7 +153,25 @@ class ChallengesScreenState extends State<ChallengesScreen>
         builder: (context) {
           return MissionCompleteScreen(
             challenge: mission,
+            isCompleted: isReceive!,
           );
+        },
+      ),
+      (route) => false,
+    );
+  }
+
+  Future<void> completeMission() async {
+    setState(() {
+      isReceive = true;
+    });
+    await SharedPreferencesHelper.saveCheckMisson(isReceive!);
+    // ignore: use_build_context_synchronously
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return MissionCompleteScreen(isCompleted: isReceive!);
         },
       ),
       (route) => false,
@@ -151,7 +184,7 @@ class ChallengesScreenState extends State<ChallengesScreen>
     return Scaffold(
       extendBodyBehindAppBar: false,
       appBar: account != null
-          ? AvhievementAppBar(
+          ? AchievementAppBar(
               coins: coin,
               progress: list
                   .where((element) =>
@@ -162,8 +195,10 @@ class ChallengesScreenState extends State<ChallengesScreen>
                       1)
                   .length,
               appBarHeight: MediaQuery.of(context).size.height * 0.45,
+              isValid: isReceive != null ? isReceive! : false,
+              getBadges: completeMission,
             )
-          : AvhievementAppBar(
+          : AchievementAppBar(
               coins: 0,
               progress: list
                   .where((element) =>
@@ -174,6 +209,8 @@ class ChallengesScreenState extends State<ChallengesScreen>
                       1)
                   .length,
               appBarHeight: MediaQuery.of(context).size.height * 0.45,
+              isValid: isReceive != null ? isReceive! : false,
+              getBadges: completeMission,
             ),
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -601,16 +638,20 @@ class ItemBadge extends StatelessWidget {
   }
 }
 
-class AvhievementAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const AvhievementAppBar({
+class AchievementAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const AchievementAppBar({
     super.key,
     required this.coins,
     required this.progress,
     required this.appBarHeight,
+    required this.isValid,
+    required this.getBadges,
   });
   final int coins;
   final int progress;
   final double appBarHeight;
+  final bool isValid;
+  final void Function() getBadges;
 
   @override
   Widget build(BuildContext context) {
@@ -744,30 +785,98 @@ class AvhievementAppBar extends StatelessWidget implements PreferredSizeWidget {
                             ),
                             Expanded(
                               child: Center(
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 14.0),
-                                  child: LinearPercentIndicator(
-                                    animation: true,
-                                    lineHeight: 25.0,
-                                    animationDuration: 1000,
-                                    animateFromLastPercent: true,
-                                    percent: progress / 10,
-                                    barRadius: const Radius.circular(10.0),
-                                    progressColor:
-                                        const Color.fromRGBO(255, 212, 96, 1),
-                                    backgroundColor:
-                                        const Color.fromRGBO(0, 0, 0, 0.26),
-                                    center: Text(
-                                      '$progress/10',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color.fromRGBO(171, 171, 171, 1),
+                                child: progress != 10
+                                    ? Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 14.0),
+                                        child: LinearPercentIndicator(
+                                          animation: true,
+                                          lineHeight: 25.0,
+                                          animationDuration: 1000,
+                                          animateFromLastPercent: true,
+                                          percent: progress / 10,
+                                          barRadius:
+                                              const Radius.circular(10.0),
+                                          progressColor: const Color.fromRGBO(
+                                              255, 212, 96, 1),
+                                          backgroundColor: const Color.fromRGBO(
+                                              0, 0, 0, 0.26),
+                                          center: Text(
+                                            '$progress/10',
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : Visibility(
+                                        visible: true,
+                                        child: Align(
+                                          alignment: Alignment.topLeft,
+                                          child: !isValid
+                                              ? InkWell(
+                                                  onTap: getBadges,
+                                                  child: Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 20, top: 10),
+                                                    height: 30,
+                                                    width: 150,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                      color: Color.fromRGBO(
+                                                          255, 199, 0, 1),
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                        Radius.circular(10),
+                                                      ),
+                                                    ),
+                                                    child: const Align(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Text(
+                                                        'Receive reward',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(
+                                                  margin: const EdgeInsets.only(
+                                                      left: 20, top: 10),
+                                                  height: 30,
+                                                  width: 150,
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    color: Colors.grey,
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                      Radius.circular(10),
+                                                    ),
+                                                  ),
+                                                  child: const Align(
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      'Received reward',
+                                                      style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 41, 41, 41),
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
                               ),
                             )
                           ],

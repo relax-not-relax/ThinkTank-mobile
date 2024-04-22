@@ -101,4 +101,53 @@ class ApiChallenges {
       return result;
     }
   }
+
+  static Future<List<Challenge>> getFinalMission() async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+
+    final response = await http.get(
+      Uri.parse(
+          'https://thinktank-sep490.azurewebsites.net/api/challenges/${account!.id}'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${account.accessToken}',
+      },
+    );
+
+    List<Challenge> result = [];
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      print("Messi" + jsonData.toString());
+      for (var element in jsonData) {
+        result.add(Challenge.fromJson(element));
+      }
+      await ApiAccount.updateCoin();
+      return result;
+    } else if (response.statusCode == 401 || response.statusCode == 403) {
+      Account? account2 = await ApiAuthentication.refreshToken();
+      final response2 = await http.get(
+        Uri.parse(
+            'https://thinktank-sep490.azurewebsites.net/api/challenges/${account2!.id}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${account2!.accessToken}',
+        },
+      );
+      if (response2.statusCode == 200) {
+        final jsonData = json.decode(response2.body);
+        for (var element in jsonData) {
+          result.add(Challenge.fromJson(element));
+        }
+        await ApiAccount.updateCoin();
+        return result;
+      } else {
+        print(response2.body);
+        return result;
+      }
+    } else {
+      print(response.body);
+      return result;
+    }
+  }
 }

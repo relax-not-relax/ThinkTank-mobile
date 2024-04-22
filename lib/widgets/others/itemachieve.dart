@@ -12,7 +12,7 @@ class ItemAchieveAccount extends StatelessWidget {
     required this.description,
     required this.progress,
     required this.total,
-    required this.recived,
+    required this.received,
   });
   final String imgLink;
   final Color backgroundColor;
@@ -21,7 +21,7 @@ class ItemAchieveAccount extends StatelessWidget {
   final String description;
   final int progress;
   final int total;
-  final bool recived;
+  final bool received;
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +100,9 @@ class ItemAchieveAccount extends StatelessWidget {
                           lineHeight: 25.0,
                           animationDuration: 1000,
                           animateFromLastPercent: true,
-                          percent: progress / total,
+                          percent: (progress / total < 0)
+                              ? 0
+                              : ((progress / total > 1) ? 1 : progress / total),
                           barRadius: const Radius.circular(10.0),
                           progressColor: const Color.fromRGBO(255, 199, 0, 1),
                           backgroundColor: const Color.fromRGBO(41, 41, 41, 1),
@@ -122,7 +124,7 @@ class ItemAchieveAccount extends StatelessWidget {
                             height: 30,
                             width: 150,
                             decoration: BoxDecoration(
-                              color: (!recived)
+                              color: (!received)
                                   ? const Color.fromRGBO(255, 199, 0, 1)
                                   : Colors.grey,
                               borderRadius: const BorderRadius.all(
@@ -132,12 +134,12 @@ class ItemAchieveAccount extends StatelessWidget {
                             child: Align(
                               alignment: Alignment.center,
                               child: Text(
-                                (!recived)
+                                (!received)
                                     ? 'Receive reward'
                                     : 'Received reward',
                                 style: TextStyle(
                                   color:
-                                      (recived) ? Colors.black : Colors.white,
+                                      (received) ? Colors.black : Colors.white,
                                   fontSize: 15,
                                   fontWeight: FontWeight.w500,
                                 ),

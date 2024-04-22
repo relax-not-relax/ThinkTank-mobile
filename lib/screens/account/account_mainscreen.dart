@@ -395,13 +395,9 @@ class _AccountMainScreenState extends State<AccountMainScreen> {
                                   description: e.description,
                                   progress: (e.completedLevel == null)
                                       ? 0
-                                      : (e.completedLevel! < 0
-                                          ? 0
-                                          : (e.completedLevel! > 1
-                                              ? 1
-                                              : e.completedLevel!)),
+                                      : e.completedLevel!,
                                   total: e.completedMilestone,
-                                  recived:
+                                  received:
                                       (e.status == null) ? false : e.status!,
                                 ),
                               )
