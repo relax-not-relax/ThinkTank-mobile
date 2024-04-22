@@ -878,46 +878,49 @@ void _showResizableDialog(BuildContext context) {
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context) {
-      return AlertDialog(
-        contentPadding: const EdgeInsets.all(0),
-        content: Container(
-          width: 300,
-          height: 350,
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              color: Color.fromARGB(255, 249, 249, 249)),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Image.asset(
-                "assets/pics/swap.png",
-                height: 150,
-                width: 150,
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Game Mechanics',
-                style: TextStyle(
-                    color: Color.fromRGBO(234, 84, 85, 1),
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              const Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 5,
+      return WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          contentPadding: const EdgeInsets.all(0),
+          content: Container(
+            width: 300,
+            height: 350,
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                color: Color.fromARGB(255, 249, 249, 249)),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                Image.asset(
+                  "assets/pics/swap.png",
+                  height: 150,
+                  width: 150,
                 ),
-                child: Text(
-                  "Swipe right if you find someone who matches the description and swipe left if the person doesn't match the description.",
+                const SizedBox(height: 10),
+                const Text(
+                  'Game Mechanics',
                   style: TextStyle(
-                      color: Color.fromRGBO(129, 140, 155, 1),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400),
-                  textAlign: TextAlign.center,
+                      color: Color.fromRGBO(234, 84, 85, 1),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
                 ),
-              ),
-            ],
+                const SizedBox(height: 10),
+                const Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 5,
+                  ),
+                  child: Text(
+                    "Swipe right if you find someone who matches the description and swipe left if the person doesn't match the description.",
+                    style: TextStyle(
+                        color: Color.fromRGBO(129, 140, 155, 1),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );

@@ -104,25 +104,30 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
                   width: 150,
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'Waiting too long for your opponent!',
-                  style: TextStyle(
-                      color: Color.fromRGBO(234, 84, 85, 1),
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 5,
-                  ),
+                const Center(
                   child: Text(
-                    "There may be no one online in this mode",
+                    'Waiting too long for your opponent!',
                     style: TextStyle(
-                        color: Color.fromRGBO(129, 140, 155, 1),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400),
+                        color: Color.fromRGBO(234, 84, 85, 1),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
+                  ),
+                ),
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 5,
+                    ),
+                    child: Text(
+                      "There may be no one online in this mode",
+                      style: TextStyle(
+                          color: Color.fromRGBO(129, 140, 155, 1),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
               ],

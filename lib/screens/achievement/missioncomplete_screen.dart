@@ -9,9 +9,10 @@ import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 
 class MissionCompleteScreen extends StatefulWidget {
-  const MissionCompleteScreen({super.key, required this.challenge});
+  MissionCompleteScreen({super.key, this.challenge, required this.isCompleted});
 
-  final Challenge challenge;
+  Challenge? challenge;
+  final bool isCompleted;
 
   @override
   State<MissionCompleteScreen> createState() => _MissionCompleteScreenState();
@@ -58,14 +59,21 @@ class _MissionCompleteScreenState extends State<MissionCompleteScreen> {
                   width: 200.0,
                   height: 200.0,
                   decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(widget.challenge.missionsImg),
-                      fit: BoxFit.cover,
-                    ),
+                    image: !widget.isCompleted
+                        ? DecorationImage(
+                            image: NetworkImage(widget.challenge!.missionsImg),
+                            fit: BoxFit.cover,
+                          )
+                        : const DecorationImage(
+                            image: AssetImage("assets/pics/logoBage.png"),
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
                 Text(
-                  widget.challenge.name,
+                  !widget.isCompleted
+                      ? widget.challenge!.name
+                      : "The Master of Memory",
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontFamily: 'CustomProFont2',
@@ -77,7 +85,9 @@ class _MissionCompleteScreenState extends State<MissionCompleteScreen> {
                   height: 30,
                 ),
                 Text(
-                  "Congratulations, you've earned 20 coins!",
+                  !widget.isCompleted
+                      ? "Congratulations, you've earned 20 coins!"
+                      : "Congratulations, you've earned 1000 coins!",
                   style: GoogleFonts.roboto(
                     color: const Color.fromARGB(255, 255, 213, 96),
                     fontSize: 14,
@@ -112,8 +122,11 @@ class _MissionCompleteScreenState extends State<MissionCompleteScreen> {
                                 isPending = false;
                                 isGot = true;
                               });
-                              list = await ApiChallenges.getBadges(
-                                  widget.challenge.id);
+                              !widget.isCompleted
+                                  ? list = await ApiChallenges.getBadges(
+                                      widget.challenge!.id)
+                                  : list =
+                                      await ApiChallenges.getFinalMission();
 
                               if (list.isNotEmpty) {
                                 // ignore: use_build_context_synchronously

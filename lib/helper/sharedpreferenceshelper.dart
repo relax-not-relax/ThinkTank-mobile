@@ -29,6 +29,7 @@ class SharedPreferencesHelper {
   static const String contestsResourcenKey = 'contestsResourcenKey';
   static const String contestsInfoKey = 'contestsInfoKey';
   static const String iconsData = 'iconsData';
+  static const String isMissionCompleted = 'isMissionCompleted';
 
   static Future<void> saveAccount(LoginInfo account) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -45,6 +46,18 @@ class SharedPreferencesHelper {
   static Future<void> saveResourceVersion(int resourceVersion) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt(resourceVersionKey, resourceVersion);
+  }
+
+  static Future<void> saveCheckMisson(bool isCompleted) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool(isMissionCompleted, isCompleted);
+  }
+
+  static Future<bool> getCheckMission() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? isCompleted = prefs.getBool(isMissionCompleted);
+
+    return isCompleted!;
   }
 
   static Future<int> getResourceVersion() async {
