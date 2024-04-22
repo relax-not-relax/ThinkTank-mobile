@@ -393,7 +393,7 @@ class LoginScreenState extends State<LoginScreen> {
                               await googleSignIn.signIn();
                           if (googleSignInAccount != null) {
                             int id = await ApiAuthentication.checkLogin(
-                                '', '', googleSignInAccount.id, '');
+                                '', '', '', googleSignInAccount.id);
 
                             if (id != 0 && id != -1) {
                               await Future.delayed(Duration(seconds: 2));
@@ -431,7 +431,7 @@ class LoginScreenState extends State<LoginScreen> {
                               print('sai');
                               setState(() {
                                 _isIncorrect = true;
-                                error = 'Login googl error!';
+                                error = 'Login google error!';
                               });
                               _closeDialog(context);
                               return;

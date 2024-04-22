@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/api/contest_api.dart';
 import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
@@ -112,10 +113,11 @@ class _ContestMenuScreenState extends State<ContestMenuScreen> {
       print('choi roi');
       return;
     }
-    if (account!.coin != null && account.coin! < 20) {
+    if (account!.coin != null && account.coin! < widget.contest.coinBetting) {
       _showReject(context);
       return;
     }
+    await ContestsAPI.minusCoin(widget.contest.id);
     if (widget.contest.gameId == 4) {
       // ignore: use_build_context_synchronously
       Navigator.pushAndRemoveUntil(

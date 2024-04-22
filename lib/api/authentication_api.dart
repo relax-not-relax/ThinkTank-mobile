@@ -129,37 +129,45 @@ class ApiAuthentication {
 
   static Future<int> checkLogin(String? username, String? password,
       String? fcmToken, String? googleId) async {
-    if (username != null) {
-      Map<String, String> loginData = {
-        "userName": username,
-        "password": password!,
-        "fcm": fcmToken!
-      };
-      String jsonBody = jsonEncode(loginData);
-
-      final response = await http.post(
+    Map<String, String> loginData = {
+      "userName": username ?? "",
+      "password": password ?? "",
+      "fcm": fcmToken ?? ""
+    };
+    String jsonBody = jsonEncode(loginData);
+    final response;
+    if (googleId != null) {
+      response = await http.post(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-cheking?googleId=$googleId'),
         headers: {'Content-Type': 'application/json'},
         body: jsonBody,
       );
+    } else {
+      response = await http.post(
+        Uri.parse(
+            'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-cheking'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonBody,
+      );
+    }
 
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        FirebaseRealTime.setLogin(Account.fromJson(jsonData).id, false);
-        return Account.fromJson(jsonData).id;
-      } else {
-        final jsonData = json.decode(response.body);
-        try {
-          if (jsonData['error'].toString() == 'Your account is block') {
-            return -1;
-          }
-        } catch (e) {
-          return 0;
+    print(
+        'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-cheking?googleId=$googleId');
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      FirebaseRealTime.setLogin(Account.fromJson(jsonData).id, false);
+      return Account.fromJson(jsonData).id;
+    } else {
+      final jsonData = json.decode(response.body);
+      try {
+        if (jsonData['error'].toString() == 'Your account is block') {
+          return -1;
         }
+      } catch (e) {
         return 0;
       }
-    } else {
       return 0;
     }
   }

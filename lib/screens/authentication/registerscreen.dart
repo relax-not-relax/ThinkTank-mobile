@@ -372,67 +372,67 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                                     style: const TextStyle(color: Colors.red),
                                   )),
                             ),
-                            Container(
-                              margin: const EdgeInsets.only(top: 20),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    height: 1,
-                                    width: 100,
-                                    color:
-                                        const Color.fromRGBO(217, 217, 217, 1),
-                                  ),
-                                  const Text(
-                                    '   or   ',
-                                    style: TextStyle(
-                                      color: Color.fromRGBO(217, 217, 217, 1),
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 1,
-                                    width: 100,
-                                    color:
-                                        const Color.fromRGBO(217, 217, 217, 1),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(top: 20),
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 255, 255, 255),
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(10)),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color:
-                                        const Color.fromARGB(1, 202, 202, 202)
-                                            .withOpacity(0.2),
-                                    spreadRadius: 4,
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 3),
-                                  )
-                                ],
-                              ),
-                              child: ElevatedButton(
-                                style: buttonGoogle,
-                                onPressed: () {
-                                  _showResizableDialog(context);
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset('assets/pics/google.png',
-                                        height: 25),
-                                    const Text(
-                                      '   Continue with Google',
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                            // Container(
+                            //   margin: const EdgeInsets.only(top: 20),
+                            //   child: Row(
+                            //     mainAxisAlignment: MainAxisAlignment.center,
+                            //     children: [
+                            //       Container(
+                            //         height: 1,
+                            //         width: 100,
+                            //         color:
+                            //             const Color.fromRGBO(217, 217, 217, 1),
+                            //       ),
+                            //       const Text(
+                            //         '   or   ',
+                            //         style: TextStyle(
+                            //           color: Color.fromRGBO(217, 217, 217, 1),
+                            //         ),
+                            //       ),
+                            //       Container(
+                            //         height: 1,
+                            //         width: 100,
+                            //         color:
+                            //             const Color.fromRGBO(217, 217, 217, 1),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
+                            // Container(
+                            //   margin: const EdgeInsets.only(top: 20),
+                            //   decoration: BoxDecoration(
+                            //     color: const Color.fromARGB(255, 255, 255, 255),
+                            //     borderRadius:
+                            //         const BorderRadius.all(Radius.circular(10)),
+                            //     boxShadow: [
+                            //       BoxShadow(
+                            //         color:
+                            //             const Color.fromARGB(1, 202, 202, 202)
+                            //                 .withOpacity(0.2),
+                            //         spreadRadius: 4,
+                            //         blurRadius: 10,
+                            //         offset: const Offset(0, 3),
+                            //       )
+                            //     ],
+                            //   ),
+                            //   child: ElevatedButton(
+                            //     style: buttonGoogle,
+                            //     onPressed: () {
+                            //       _showResizableDialog(context);
+                            //     },
+                            //     child: Row(
+                            //       mainAxisAlignment: MainAxisAlignment.center,
+                            //       children: [
+                            //         Image.asset('assets/pics/google.png',
+                            //             height: 25),
+                            //         const Text(
+                            //           '   Continue with Google',
+                            //           style: TextStyle(color: Colors.black),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),
