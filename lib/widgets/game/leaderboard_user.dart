@@ -51,7 +51,7 @@ class LeaderBoardUser extends StatelessWidget {
                   //borderRadius: BorderRadius.circular(20.0),
                   image: DecorationImage(
                     image: NetworkImage(userAva),
-                    fit: BoxFit.contain,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),

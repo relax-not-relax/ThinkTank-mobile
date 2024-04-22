@@ -56,7 +56,7 @@ class RoomInstructionScreen extends StatelessWidget {
             SizedBox(
               width: MediaQuery.of(context).size.width - 28,
               child: Text(
-                "The Room Party will include 3 games: Flip Card, Music Password, and Images Walkthrough. Players can find rooms using the room ID provided by friends, family, etc., to join the shared playroom and compete together in one of the 3 games with questions provided by ThinkTank. Players can also create their own playroom and send the entry code to other players. Let's compete and see who is the \"memory genius\" in this gathering.",
+                "The Room Party will include 2 games: Flip Card and Images Walkthrough. Players can find rooms using the room ID provided by friends, family, etc., to join the shared playroom and compete together in one of the 2 games with questions provided by ThinkTank. Players can also create their own playroom and send the entry code to other players. Let's compete and see who is the \"memory genius\" in this gathering.",
                 style: GoogleFonts.roboto(
                   fontSize: 14,
                   color: Colors.white,
@@ -76,8 +76,8 @@ class RoomInstructionScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: games.sublist(0, 3).map((game) {
-                    return Row(
+                  children: [
+                    Row(
                       children: [
                         Container(
                           width: 100,
@@ -85,7 +85,7 @@ class RoomInstructionScreen extends StatelessWidget {
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: AssetImage(
-                                game.imageUrl,
+                                games[1].imageUrl,
                               ),
                               fit: BoxFit.cover,
                             ),
@@ -100,8 +100,32 @@ class RoomInstructionScreen extends StatelessWidget {
                           width: 8,
                         ),
                       ],
-                    );
-                  }).toList(),
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(
+                                games[2].imageUrl,
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(
+                                10,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                      ],
+                    )
+                  ],
                 ),
               ),
             ),

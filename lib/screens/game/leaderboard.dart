@@ -80,7 +80,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
         accounts[2] = tmps[2];
         break;
     }
-    if (tmps.length > 3) {
+    if (tmps.length > 3 && tmps[3].mark > 0) {
       accounts = tmps;
     }
     setState(() {
