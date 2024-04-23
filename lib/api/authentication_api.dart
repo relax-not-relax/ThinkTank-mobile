@@ -139,21 +139,22 @@ class ApiAuthentication {
     if (googleId != null) {
       response = await http.post(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-cheking?googleId=$googleId'),
+            'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-checking?googleId=$googleId'),
         headers: {'Content-Type': 'application/json'},
         body: jsonBody,
       );
     } else {
       response = await http.post(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-cheking'),
+            'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-checking'),
         headers: {'Content-Type': 'application/json'},
         body: jsonBody,
       );
+      print(jsonBody);
     }
 
     print(
-        'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-cheking?googleId=$googleId');
+        'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-checking');
     print(response.statusCode);
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);

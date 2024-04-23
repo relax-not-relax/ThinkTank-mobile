@@ -32,12 +32,14 @@ class _NotificationElementState extends State<NotificationElement> {
   @override
   void initState() {
     super.initState();
+
     formatDate = DateTime.parse(widget.notiEl.dateNotification!);
     parsedDate = DateFormat('MMM dd, yyyy').format(formatDate);
     _isRead = widget.notiEl.status!;
+    print(_isRead);
   }
 
-  void readNotification() async {
+  Future<void> readNotification() async {
     bool status =
         await ApiNotification.updateStatusNotification(widget.notiEl.id!);
 
@@ -69,25 +71,78 @@ class _NotificationElementState extends State<NotificationElement> {
               children: [
                 const SizedBox(height: 20),
                 Image.asset(
-                  'assets/pics/accOragne.png',
+                  'assets/pics/brainCry.png',
                   height: 150,
                   width: 150,
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  "Can't play",
-                  style: TextStyle(
-                      color: Color.fromRGBO(234, 84, 85, 1),
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
+                const Center(
+                  child: Text(
+                    "Can't play",
+                    style: TextStyle(
+                        color: Color.fromRGBO(234, 84, 85, 1),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
-                const Text(
-                  'Your coin is not enough to play',
-                  style: TextStyle(
-                      color: Color.fromRGBO(129, 140, 155, 1),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400),
-                  textAlign: TextAlign.center,
+                const Center(
+                  child: Text(
+                    'Your coin is not enough to play',
+                    style: TextStyle(
+                        color: Color.fromRGBO(129, 140, 155, 1),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showWaiting(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(0),
+          content: Container(
+            width: 250,
+            height: 300,
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                color: Color.fromARGB(255, 249, 249, 249)),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                Image.asset(
+                  'assets/animPics/start.gif',
+                  height: 150,
+                  width: 150,
+                ),
+                const SizedBox(height: 10),
+                const Center(
+                  child: Text(
+                    "Let's play",
+                    style: TextStyle(
+                        color: Color.fromRGBO(234, 84, 85, 1),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const Center(
+                  child: Text(
+                    'We are preparing for you!',
+                    style: TextStyle(
+                        color: Color.fromRGBO(129, 140, 155, 1),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ],
             ),
@@ -98,7 +153,9 @@ class _NotificationElementState extends State<NotificationElement> {
   }
 
   Future<void> acceptChallenge(String roomId, int gameId) async {
+    _showWaiting(context);
     Account? account = await SharedPreferencesHelper.getInfo();
+    await readNotification();
     if (account!.coin! < 20) {
       _showReject(context);
       return;
@@ -142,9 +199,14 @@ class _NotificationElementState extends State<NotificationElement> {
               print(gameId);
 
               print("true");
-              _showConfirmDialog(context, () {
-                acceptChallenge(roomId, gameId);
-              });
+              if (_isRead != true) {
+                _showConfirmDialog(context, () {
+                  acceptChallenge(roomId, gameId);
+                });
+              } else {
+                readNotification();
+                widget.handleReadNotification();
+              }
             } else {
               print("false");
               print(widget.notiEl.title);
