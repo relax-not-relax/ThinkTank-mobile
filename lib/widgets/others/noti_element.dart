@@ -221,12 +221,14 @@ class _NotificationElementState extends State<NotificationElement> {
       _showReject(context, 'Room is canceled');
       return;
     }
+
     int id1 = int.parse((await FirebaseDatabase.instance
             .ref()
             .child('battle')
             .child(roomId)
             .child('id1')
             .get())
+        .value
         .toString());
     if (!await ApiAuthentication.checkOnline(id1)) {
       _showReject(context, 'Your friend is offline');
