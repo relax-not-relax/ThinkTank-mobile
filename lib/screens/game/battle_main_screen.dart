@@ -43,6 +43,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
   String _opponentName = '';
   String _opponentAvt = '';
   Timer? timer;
+  bool isExit = true;
   int _opponentCoins = 0;
   late Future<AccountBattle?> findOpponent;
   DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
@@ -53,7 +54,10 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
     if (roomID.isNotEmpty) {
       BattleAPI.removeCache(widget.account.id, widget.gameId, 20, roomID, 0);
     }
-    if (widget.isWithFriend != null && widget.isWithFriend == true) {
+    if (widget.isWithFriend != null &&
+        widget.isWithFriend == true &&
+        isUser1 &&
+        isExit) {
       _databaseReference.child('battle').child(roomID).remove();
     }
     super.dispose();
@@ -264,6 +268,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
 
   void joinGame(String opponentName, String opponentAvt, int coin, bool isUser1,
       int opponentId) async {
+    isExit = false;
     if (mounted) {
       setState(() {
         _opponentName = opponentName;
