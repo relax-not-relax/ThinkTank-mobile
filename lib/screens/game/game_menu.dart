@@ -86,8 +86,15 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
               int.parse(event.snapshot.child('topicId').value.toString());
           SharedPreferencesHelper.checkTopic(topicId).then((value) {
             if (value) {
+              int index = 0;
+              for (int j = 1; j <= result.amountPlayer; j++) {
+                if (!event.snapshot.child('us$j').exists) {
+                  index = j;
+                  break;
+                }
+              }
               if (event.snapshot.exists && !isJoin && mounted) {
-                _databaseReference
+                listEvent.add(_databaseReference
                     .child('room')
                     .child(result.code)
                     .child('amountPlayer')
@@ -103,19 +110,19 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                       _databaseReference
                           .child('room')
                           .child(result.code)
-                          .child('us${i + 1}')
+                          .child('us${index}')
                           .child('name')
                           .set(account!.userName);
                       _databaseReference
                           .child('room')
                           .child(result.code)
-                          .child('us${i + 1}')
+                          .child('us${index}')
                           .child('done')
                           .set(false);
                       _databaseReference
                           .child('room')
                           .child(result.code)
-                          .child('us${i + 1}')
+                          .child('us${index}')
                           .child('avt')
                           .set(account.avatar);
                       _databaseReference
@@ -138,7 +145,7 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                       );
                     }
                   }
-                });
+                }));
               } else {
                 print('Phòng đã giải tán');
               }

@@ -107,7 +107,8 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
       }
       await ApiAchieviements.addAchieviements(
           (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
-              1000,
+                  1000 -
+              (0.7 * _game.cardCount),
           (points * 100).toInt(),
           levelNow,
           1,
@@ -167,6 +168,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
 
   void _continue() async {
     double points = (remainingTime.inMilliseconds / 1000);
+    print('vo continue');
     if (isLosed == false) {
       if (widget.contestId != null) {
         await ContestsAPI.addAccountInContest(
@@ -188,6 +190,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
           (route) => false,
         );
       } else if (widget.roomCode != null) {
+        print('vo room code');
         _showResizableDialog(context);
         await ApiRoom.addAccountInRoom(
             widget.roomCode!, (points * 100).toInt());
@@ -260,7 +263,9 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
           (route) => false,
         );
       } else if (widget.roomCode != null) {
+        print('vo room code');
         _showResizableDialog(context);
+
         //await ApiRoom.addAccountInRoom(widget.roomCode!, 0);
         DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
         _databaseReference

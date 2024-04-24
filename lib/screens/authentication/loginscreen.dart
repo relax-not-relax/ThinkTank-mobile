@@ -57,6 +57,9 @@ class LoginScreenState extends State<LoginScreen> {
   void loginGoogle(
       bool isLogin, GoogleSignInAccount googleSignInAccount) async {
     if (!isLogin) {
+      if (stream != null) {
+        stream!.cancel();
+      }
       Account? acc =
           await ApiAuthentication.loginWithGoogle(googleSignInAccount);
       if (acc == null) {

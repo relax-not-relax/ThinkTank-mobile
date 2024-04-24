@@ -83,9 +83,11 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
     if (tmps.length > 3 && tmps[3].mark > 0) {
       accounts = tmps;
     }
-    setState(() {
-      accounts;
-    });
+    if (mounted) {
+      setState(() {
+        accounts;
+      });
+    }
   }
 
   String sortName(String name) {
@@ -103,9 +105,10 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
     super.initState();
     _getLeaderboard = getLeaderboard();
     _getLeaderboard.then((value) => {
-          setState(() {
-            visibleAll = true;
-          })
+          if (mounted)
+            setState(() {
+              visibleAll = true;
+            })
         });
   }
 

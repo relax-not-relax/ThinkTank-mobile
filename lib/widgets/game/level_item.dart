@@ -103,8 +103,6 @@ class LevelItem extends StatelessWidget {
                     case 'Find The Anonymous':
                       var data = await geFindAnonymous(levelNumber);
                       int m = levelNumber ~/ 10 + 2;
-                      print('longlong');
-
                       // ignore: use_build_context_synchronously
                       Navigator.pushAndRemoveUntil(
                         context,
@@ -186,9 +184,6 @@ class LevelItem extends StatelessWidget {
 Future<MusicPassword> getMusicPassword(int level) async {
   List<MusicPasswordSource> listSource =
       await SharedPreferencesHelper.getMusicPasswordSources();
-  print(listSource.first.answer.length.toString() +
-      ' - ' +
-      (((level / 10) + 4) * 2).toInt().toString());
   List<MusicPasswordSource> listSource2 = listSource
       .where((element) =>
           element.answer.length == (((level / 10) + 4) * 2).toInt())
@@ -218,7 +213,6 @@ Future<double> getTimeAnonymous(int level) async {
 Future<FindAnonymous> geFindAnonymous(int level) async {
   int total = 15 + (level ~/ 10) * 5;
   int time = (await getTimeAnonymous(level)).toInt() + 3 * total;
-//20s để cộng vào thời gian xem hình;
   List<FindAnonymousAsset> listSource =
       await SharedPreferencesHelper.getAnonymousAssets();
   listSource.shuffle();

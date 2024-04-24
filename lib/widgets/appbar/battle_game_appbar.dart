@@ -16,21 +16,31 @@ class MessageChat extends StatelessWidget {
       required this.isOwner,
       required this.content,
       required this.name,
-      required this.idOpponent});
+      required this.idOpponent,
+      required this.isReported,
+      this.reported,
+      required this.index});
   final bool isOwner;
   final String content;
   final String name;
   final int? idOpponent;
+  final bool isReported;
+  final int index;
+  final void Function(int index)? reported;
 
   Future<void> report(
       BuildContext context, int idOpponent, String message) async {
     _showResizableDialog(context);
     bool result = await BattleAPI.report(idOpponent, 'Toxic Message', message);
-    if (result == true) {
+    if (result == true && reported != null) {
+      reported!(index);
       // ignore: use_build_context_synchronously
       _closeDialog(context);
       // ignore: use_build_context_synchronously
       _showDialogReport(context);
+      await Future.delayed(Duration(seconds: 1));
+      _closeDialog(context);
+      _closeDialog(context);
     } else {
       // ignore: use_build_context_synchronously
       _closeDialog(context);
@@ -42,7 +52,7 @@ class MessageChat extends StatelessWidget {
     NetworkManager.currentContext = context;
     return InkWell(
       onLongPress: () async {
-        if (idOpponent != null) {
+        if (idOpponent != null && !isReported) {
           _showReportConfirm(context, () {
             report(context, idOpponent!, content);
           });
