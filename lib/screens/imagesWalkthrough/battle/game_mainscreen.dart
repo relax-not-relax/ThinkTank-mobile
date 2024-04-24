@@ -219,11 +219,13 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
         .child(progressOpponentId)
         .onValue
         .listen((event) {
-      setState(() {
-        if (int.parse(event.snapshot.value.toString()) >= 0 && mounted) {
-          correctOpponent = int.parse(event.snapshot.value.toString());
-        }
-      });
+      if (mounted) {
+        setState(() {
+          if (int.parse(event.snapshot.value.toString()) >= 0 && mounted) {
+            correctOpponent = int.parse(event.snapshot.value.toString());
+          }
+        });
+      }
     }));
     _initResource.then(
       (value) => {

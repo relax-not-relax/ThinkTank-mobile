@@ -112,6 +112,7 @@ class ApiAuthentication {
         result = false;
       }
     });
+    await Future.delayed(Duration(seconds: 2));
     stream.cancel();
     return result;
   }
