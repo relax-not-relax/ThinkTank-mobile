@@ -61,7 +61,7 @@ class _NotificationElementState extends State<NotificationElement> {
     }
   }
 
-  void _showReject(BuildContext context, String content) {
+  void _showReject(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -92,10 +92,10 @@ class _NotificationElementState extends State<NotificationElement> {
                         fontWeight: FontWeight.bold),
                   ),
                 ),
-                Center(
+                const Center(
                   child: Text(
-                    content,
-                    style: const TextStyle(
+                    'Your coin is not enough to play',
+                    style: TextStyle(
                         color: Color.fromRGBO(129, 140, 155, 1),
                         fontSize: 14,
                         fontWeight: FontWeight.w400),
@@ -110,7 +110,7 @@ class _NotificationElementState extends State<NotificationElement> {
     );
   }
 
-  void _showChallengeIsCancel(BuildContext context) {
+  void _showChallengeIsCancel(BuildContext context, String content) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -141,14 +141,20 @@ class _NotificationElementState extends State<NotificationElement> {
                         fontWeight: FontWeight.bold),
                   ),
                 ),
-                const Center(
-                  child: Text(
-                    'Your friend cancelled challenge request!',
-                    style: TextStyle(
-                        color: Color.fromRGBO(129, 140, 155, 1),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400),
-                    textAlign: TextAlign.center,
+                const SizedBox(
+                  height: 7,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(),
+                  child: Center(
+                    child: Text(
+                      content,
+                      style: const TextStyle(
+                          color: Color.fromRGBO(129, 140, 155, 1),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
               ],
@@ -162,45 +168,49 @@ class _NotificationElementState extends State<NotificationElement> {
   void _showWaiting(BuildContext context) {
     showDialog(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.all(0),
-          content: Container(
-            width: 250,
-            height: 300,
-            decoration: const BoxDecoration(
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            contentPadding: const EdgeInsets.all(0),
+            content: Container(
+              width: 250,
+              height: 300,
+              decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(10)),
-                color: Color.fromARGB(255, 249, 249, 249)),
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                Image.asset(
-                  'assets/animPics/start.gif',
-                  height: 150,
-                  width: 150,
-                ),
-                const SizedBox(height: 10),
-                const Center(
-                  child: Text(
-                    "Let's play",
-                    style: TextStyle(
-                        color: Color.fromRGBO(234, 84, 85, 1),
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
+                color: Colors.white,
+              ),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  Image.asset(
+                    'assets/animPics/start.gif',
+                    height: 150,
+                    width: 150,
                   ),
-                ),
-                const Center(
-                  child: Text(
-                    'We are preparing for you!',
-                    style: TextStyle(
-                        color: Color.fromRGBO(129, 140, 155, 1),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400),
-                    textAlign: TextAlign.center,
+                  const SizedBox(height: 10),
+                  const Center(
+                    child: Text(
+                      "Let's play",
+                      style: TextStyle(
+                          color: Color.fromRGBO(234, 84, 85, 1),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-              ],
+                  const Center(
+                    child: Text(
+                      'We are preparing for you!',
+                      style: TextStyle(
+                          color: Color.fromRGBO(129, 140, 155, 1),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -218,7 +228,11 @@ class _NotificationElementState extends State<NotificationElement> {
             .child(roomId)
             .get())
         .exists) {
-      _showReject(context, 'Room is canceled');
+      // ignore: use_build_context_synchronously
+      _closeDialog(context);
+      // ignore: use_build_context_synchronously
+      _showChallengeIsCancel(
+          context, 'Your friend cancelled challenge request!');
       return;
     }
 
@@ -231,11 +245,17 @@ class _NotificationElementState extends State<NotificationElement> {
         .value
         .toString());
     if (!await ApiAuthentication.checkOnline(id1)) {
-      _showReject(context, 'Your friend is offline');
+      // ignore: use_build_context_synchronously
+      _closeDialog(context);
+      // ignore: use_build_context_synchronously
+      _showChallengeIsCancel(context, 'Yout friend is offline!');
       return;
     }
     if (account!.coin! < 20) {
-      _showReject(context, 'Your coin is not enough to play');
+      // ignore: use_build_context_synchronously
+      _closeDialog(context);
+      // ignore: use_build_context_synchronously
+      _showReject(context);
       return;
     }
     AccountBattle competitor = AccountBattle(accountId: 1, roomId: roomId);

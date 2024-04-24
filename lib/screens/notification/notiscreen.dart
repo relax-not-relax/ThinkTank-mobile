@@ -83,6 +83,7 @@ class _NotiScreenState extends State<NotiScreen> {
   Future<void> refreshNotifications() async {
     setState(() {
       _isLoaded = false;
+      pageIndex = 1;
     });
 
     List<NotificationItem> updatedList =
@@ -100,7 +101,6 @@ class _NotiScreenState extends State<NotiScreen> {
     setState(() {
       _isLoaded = false;
     });
-    inputNotifications = await SharedPreferencesHelper.getNotifications();
 
     if (inputNotifications.isNotEmpty) {
       for (NotificationItem item in inputNotifications) {
@@ -108,11 +108,13 @@ class _NotiScreenState extends State<NotiScreen> {
           await ApiNotification.updateStatusNotification(item.id!);
         }
       }
-
-      List<NotificationItem> updatedList =
+      pushNewNotifications =
           await ApiNotification.getNotifications(pageIndex, 6);
-      await SharedPreferencesHelper.saveNotifications(updatedList);
+      await SharedPreferencesHelper.saveNotifications(pushNewNotifications);
       notifications = await SharedPreferencesHelper.getNotifications();
+      setState(() {
+        notifications;
+      });
     }
 
     setState(() {
@@ -127,7 +129,6 @@ class _NotiScreenState extends State<NotiScreen> {
     setState(() {
       _isLoaded = false;
     });
-    inputNotifications = await SharedPreferencesHelper.getNotifications();
 
     if (inputNotifications.isNotEmpty) {
       List<int> notiIds = [];
@@ -143,7 +144,7 @@ class _NotiScreenState extends State<NotiScreen> {
 
       if (status == true) {
         await SharedPreferencesHelper.saveNotifications([]);
-        notifications = [];
+        notifications = await SharedPreferencesHelper.getNotifications();
       } else {
         print("Something went wrong!");
       }
@@ -181,6 +182,7 @@ class _NotiScreenState extends State<NotiScreen> {
             : RefreshIndicator(
                 onRefresh: refreshNotifications,
                 child: ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   controller: _scrollController,
                   itemCount: notifications.length,
                   itemBuilder: (context, index) => NotificationElement(
@@ -211,7 +213,7 @@ class _NotiScreenState extends State<NotiScreen> {
             children: [
               InkWell(
                 onTap: () {
-                  markAllAsRead(pushNewNotifications);
+                  markAllAsRead(notifications);
                 },
                 child: Row(
                   children: [
@@ -249,7 +251,7 @@ class _NotiScreenState extends State<NotiScreen> {
               ),
               InkWell(
                 onTap: () {
-                  deleteAllNotifications(pushNewNotifications);
+                  deleteAllNotifications(notifications);
                 },
                 child: Row(
                   children: [

@@ -44,6 +44,8 @@ class MessageChat extends StatelessWidget {
     } else {
       // ignore: use_build_context_synchronously
       _closeDialog(context);
+      // ignore: use_build_context_synchronously
+      _showDialogErrorReport(context);
     }
   }
 
@@ -245,6 +247,57 @@ void _showDialogReport(BuildContext context) {
                 ),
               ],
             ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _showDialogErrorReport(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 300,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Color.fromARGB(255, 249, 249, 249)),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/pics/angry.png',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Hang on!',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                child: Text(
+                  'You have reported 3 times in 5 minutes, please wait!',
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
           ),
         ),
       );

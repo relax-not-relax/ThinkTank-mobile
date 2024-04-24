@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
@@ -570,24 +571,28 @@ class FriendScreenState extends State<FriendScreen> {
               height: 15.0,
             ),
             InkWell(
-              onTap: () {
+              onTap: () async {
+                _showWaiting(context);
                 print(compeID);
-                //Trong truong hop nguoi choi thach dau dang offline
-                //_closeDialog(context);
-                //_showResizableDialogOffline(context);
 
-                //Trong truong hop nguoi choi thach dau dang online
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      //Sua theo id cua friend
-                      return ChallengePlayerScreen(
-                        competitorId: compeID,
-                      );
-                    },
-                  ),
-                );
+                //Trong truong hop nguoi choi thach dau dang offline
+                if (!await ApiAuthentication.checkOnline(compeID)) {
+                  _closeDialog(context);
+                  _showResizableDialogOffline(context);
+                } else {
+                  // ignore: use_build_context_synchronously
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        //Sua theo id cua friend
+                        return ChallengePlayerScreen(
+                          competitorId: compeID,
+                        );
+                      },
+                    ),
+                  );
+                }
               },
               child: Row(
                 children: [
@@ -784,6 +789,59 @@ void _showResizableDialogOffline(BuildContext context) {
   );
 }
 
-void _closeDialog(BuildContext context) {
+void _showWaiting(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          contentPadding: const EdgeInsets.all(0),
+          content: Container(
+            width: 250,
+            height: 300,
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Colors.white,
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                Image.asset(
+                  'assets/animPics/fight.gif',
+                  height: 150,
+                  width: 150,
+                ),
+                const SizedBox(height: 10),
+                const Center(
+                  child: Text(
+                    "Challenge now",
+                    style: TextStyle(
+                        color: Color.fromRGBO(234, 84, 85, 1),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const Center(
+                  child: Text(
+                    'Send your friend a challenge invitation!',
+                    style: TextStyle(
+                        color: Color.fromRGBO(129, 140, 155, 1),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Future<void> _closeDialog(BuildContext context) async {
   Navigator.of(context).pop();
 }
