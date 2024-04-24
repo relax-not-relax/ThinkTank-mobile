@@ -127,6 +127,23 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
     });
   }
 
+  void reported(int index) {
+    MessageChat msTmp = listMessage[index];
+    MessageChat ms = MessageChat(
+      isOwner: msTmp.isOwner,
+      content: msTmp.content,
+      name: msTmp.name,
+      idOpponent: msTmp.idOpponent,
+      isReported: true,
+      index: index,
+    );
+    print('reported');
+    print(ms.isReported);
+    setState(() {
+      listMessage[index] = ms;
+    });
+  }
+
   List<String> shuffleList(List<String> list) {
     final random = Random();
     for (int i = list.length - 1; i > 0; i--) {
@@ -738,6 +755,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
                   .substring(0, widget.opponentName.length) ==
               widget.opponentName &&
           mounted) {
+        int index = listMessage.length;
         listMessage.add(MessageChat(
           isOwner: false,
           content: event.snapshot.value
@@ -745,6 +763,9 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
               .substring(widget.opponentName.length + 3),
           name: widget.opponentName,
           idOpponent: widget.opponentId,
+          isReported: false,
+          reported: reported,
+          index: index,
         ));
         setState(() {
           chatVisible = true;
@@ -758,6 +779,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
           chatVisible = false;
         });
       } else {
+        int index = listMessage.length;
         listMessage.add(MessageChat(
           isOwner: true,
           content: event.snapshot.value
@@ -765,6 +787,9 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
               .substring(widget.account.userName.length + 3),
           name: widget.account.userName,
           idOpponent: null,
+          isReported: false,
+          reported: reported,
+          index: index,
         ));
         setState(() {
           listMessage;

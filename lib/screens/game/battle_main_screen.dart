@@ -268,7 +268,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
         _opponentCoins = coin;
         isLoading = false;
       });
-      await Future.delayed(const Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 2));
       Account? account = await SharedPreferencesHelper.getInfo();
       if (account == null) return;
       if (mounted) {
@@ -277,9 +277,18 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
         });
       }
 
-      await Future.delayed(Duration(seconds: 3));
+      await Future.delayed(Duration(seconds: 2));
+      await BattleAPI.addAccountBattle(
+        20,
+        0,
+        isUser1 ? account.id : opponentId,
+        isUser1 ? opponentId : account.id,
+        4,
+        roomID,
+        DateTime.now(),
+      );
       if (widget.gameId == 4 && mounted) {
-        BattleAPI.startBattle(roomID, isUser1, 90, -1);
+        BattleAPI.startBattle(roomID, isUser1, 100, -1);
         // ignore: use_build_context_synchronously
         Navigator.pushAndRemoveUntil(
           context,
@@ -289,7 +298,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
               opponentAvt: _opponentAvt,
               opponentName: opponentName,
               account: account,
-              gameName: 'Image walkthroug',
+              gameName: 'Image walkthrough',
               levelNumber: 2,
               roomId: roomID,
               opponentId: opponentId,
@@ -315,7 +324,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
               opponentAvt: _opponentAvt,
               opponentName: opponentName,
               account: account,
-              gameName: 'Image walkthroug',
+              gameName: 'Music password',
               levelNumber: 2,
               roomId: roomID,
               opponentId: opponentId,

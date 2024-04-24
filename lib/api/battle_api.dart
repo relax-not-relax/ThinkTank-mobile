@@ -193,7 +193,58 @@ class BattleAPI {
       "accountId1": account1Id,
       "accountId2": account2Id,
       "gameId": gameId,
-      "roomOfaccountIn1vs1sId": roomId
+      "roomOfAccountIn1vs1Id": roomId
+    };
+
+    String jsonBody = jsonEncode(data);
+    print(jsonBody);
+    final response = await http.put(
+        Uri.parse(
+            'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1s'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${account!.accessToken}',
+        },
+        body: jsonBody);
+    print('ta tut tut:' + response.statusCode.toString());
+    if (response.statusCode == 200) {
+      print('da add');
+      //await ApiAccount.updateCoin();
+    } else if (response.statusCode == 401 || response.statusCode == 403) {
+      Account? account2 = await ApiAuthentication.refreshToken();
+      SharedPreferencesHelper.saveInfo(account2!);
+      final response2 = await http.put(
+          Uri.parse(
+              'https://thinktank-sep490.azurewebsites.net/api/accountIn1vs1s'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${account2!.accessToken}',
+          },
+          body: jsonBody);
+      print(response2.statusCode);
+      print(response2.body);
+      if (response2.statusCode == 200) {
+        print('da add');
+        //await ApiAccount.updateCoin();
+      } else {
+        return;
+      }
+    } else {
+      return;
+    }
+  }
+
+  static Future<void> addAccountBattle(int coins, int winerId, int account1Id,
+      int account2Id, int gameId, String roomId, DateTime startTime) async {
+    Account? account = await SharedPreferencesHelper.getInfo();
+    Map<String, dynamic> data = {
+      "startTime": DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(startTime),
+      "coin": coins,
+      "winnerId": winerId,
+      "accountId1": account1Id,
+      "accountId2": account2Id,
+      "gameId": gameId,
+      "roomOfAccountIn1vs1Id": roomId
     };
 
     String jsonBody = jsonEncode(data);
@@ -206,7 +257,7 @@ class BattleAPI {
           'Authorization': 'Bearer ${account!.accessToken}',
         },
         body: jsonBody);
-    print(response.statusCode);
+    print('ta tut: ' + response.statusCode.toString());
     if (response.statusCode == 200) {
       print('da add');
       //await ApiAccount.updateCoin();

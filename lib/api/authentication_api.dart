@@ -129,32 +129,20 @@ class ApiAuthentication {
 
   static Future<int> checkLogin(String? username, String? password,
       String? fcmToken, String? googleId) async {
-    Map<String, String> loginData = {
-      "userName": username ?? "",
-      "password": password ?? "",
-      "fcm": fcmToken ?? ""
-    };
-    String jsonBody = jsonEncode(loginData);
     final response;
     if (googleId != null) {
-      response = await http.post(
+      response = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-checking?googleId=$googleId'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonBody,
       );
     } else {
-      response = await http.post(
+      response = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-checking'),
+            'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-checking?userName=$username&password=$password'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonBody,
       );
-      print(jsonBody);
     }
-
-    print(
-        'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-checking');
     print(response.statusCode);
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);

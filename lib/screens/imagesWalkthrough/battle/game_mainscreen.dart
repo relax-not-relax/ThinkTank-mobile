@@ -105,6 +105,21 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
     await _game.initGame(widget.levelNumber, widget.contestId, null);
   }
 
+  void reported(int index) {
+    MessageChat msTmp = listMessage[index];
+    MessageChat ms = MessageChat(
+      isOwner: msTmp.isOwner,
+      content: msTmp.content,
+      name: msTmp.name,
+      idOpponent: msTmp.idOpponent,
+      isReported: true,
+      index: index,
+    );
+    setState(() {
+      listMessage[index] = ms;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -122,6 +137,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
                   .substring(0, widget.opponentName.length) ==
               widget.opponentName &&
           mounted) {
+        int index = listMessage.length;
         listMessage.add(MessageChat(
           isOwner: false,
           content: event.snapshot.value
@@ -129,6 +145,9 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
               .substring(widget.opponentName.length + 3),
           name: widget.opponentName,
           idOpponent: widget.opponentId,
+          isReported: false,
+          reported: reported,
+          index: index,
         ));
         setState(() {
           chatVisible = true;
@@ -142,6 +161,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
           chatVisible = false;
         });
       } else {
+        int index = listMessage.length;
         listMessage.add(MessageChat(
           isOwner: true,
           content: event.snapshot.value
@@ -149,6 +169,9 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
               .substring(widget.account.userName.length + 3),
           name: widget.account.userName,
           idOpponent: null,
+          isReported: false,
+          reported: reported,
+          index: index,
         ));
         setState(() {
           listMessage;
