@@ -1,4 +1,10 @@
+import 'dart:async';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:thinktank_mobile/api/authentication_api.dart';
+import 'package:thinktank_mobile/api/firebase_message_api.dart';
 import 'package:thinktank_mobile/controller/network_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -26,6 +32,7 @@ class NotificationElement extends StatefulWidget {
 class _NotificationElementState extends State<NotificationElement> {
   late String parsedDate;
   late DateTime formatDate;
+  late StreamSubscription stream;
 
   late bool _isRead;
 
@@ -54,7 +61,7 @@ class _NotificationElementState extends State<NotificationElement> {
     }
   }
 
-  void _showReject(BuildContext context) {
+  void _showReject(BuildContext context, String content) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -85,10 +92,10 @@ class _NotificationElementState extends State<NotificationElement> {
                         fontWeight: FontWeight.bold),
                   ),
                 ),
-                const Center(
+                Center(
                   child: Text(
-                    'Your coin is not enough to play',
-                    style: TextStyle(
+                    content,
+                    style: const TextStyle(
                         color: Color.fromRGBO(129, 140, 155, 1),
                         fontSize: 14,
                         fontWeight: FontWeight.w400),
@@ -205,8 +212,28 @@ class _NotificationElementState extends State<NotificationElement> {
     _showWaiting(context);
     Account? account = await SharedPreferencesHelper.getInfo();
     await readNotification();
+    if (!(await FirebaseDatabase.instance
+            .ref()
+            .child('battle')
+            .child(roomId)
+            .get())
+        .exists) {
+      _showReject(context, 'Room is canceled');
+      return;
+    }
+    int id1 = int.parse((await FirebaseDatabase.instance
+            .ref()
+            .child('battle')
+            .child(roomId)
+            .child('id1')
+            .get())
+        .toString());
+    if (!await ApiAuthentication.checkOnline(id1)) {
+      _showReject(context, 'Your friend is offline');
+      return;
+    }
     if (account!.coin! < 20) {
-      _showReject(context);
+      _showReject(context, 'Your coin is not enough to play');
       return;
     }
     AccountBattle competitor = AccountBattle(accountId: 1, roomId: roomId);

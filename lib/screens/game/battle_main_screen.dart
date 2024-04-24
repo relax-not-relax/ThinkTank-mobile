@@ -53,6 +53,9 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
     if (roomID.isNotEmpty) {
       BattleAPI.removeCache(widget.account.id, widget.gameId, 20, roomID, 0);
     }
+    if (widget.isWithFriend != null && widget.isWithFriend == true) {
+      _databaseReference.child('battle').child(roomID).remove();
+    }
     super.dispose();
   }
 

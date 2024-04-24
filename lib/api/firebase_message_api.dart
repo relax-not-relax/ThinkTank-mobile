@@ -56,6 +56,7 @@ class FirebaseRealTime {
   static final DatabaseReference _databaseReference =
       FirebaseDatabase.instance.ref();
   static late StreamSubscription streamLogin;
+  static late StreamSubscription streamOnline;
   static void setOnline(int id, bool value) {
     _databaseReference.child('online').child(id.toString()).set(value);
   }
@@ -68,6 +69,10 @@ class FirebaseRealTime {
     streamLogin.cancel();
   }
 
+  static void cancleListenOnline() {
+    streamOnline.cancel();
+  }
+
   static void listenlogin(int id) {
     streamLogin = _databaseReference
         .child('islogin')
@@ -76,6 +81,18 @@ class FirebaseRealTime {
         .listen((event) {
       if (event.snapshot.value.toString() == 'false') {
         _databaseReference.child('islogin').child(id.toString()).set(true);
+      }
+    });
+  }
+
+  static void listenOnline(int id) {
+    streamOnline = _databaseReference
+        .child('online')
+        .child(id.toString())
+        .onValue
+        .listen((event) {
+      if (event.snapshot.value.toString() == 'false') {
+        _databaseReference.child('online').child(id.toString()).set(true);
       }
     });
   }

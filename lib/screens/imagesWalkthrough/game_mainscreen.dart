@@ -296,7 +296,10 @@ class _GameMainScreenState extends State<GameMainScreen> {
                 .child('AmountPlayerDone')
                 .set(int.parse(event.snapshot.value.toString()) + 1);
           }
-          _showResizableDialog(context);
+          if (mounted) {
+            _showResizableDialog(context);
+          }
+
           if (int.parse(event.snapshot.value.toString()) >= numberPlayer &&
               mounted) {
             Future.delayed(Duration(seconds: 5));
