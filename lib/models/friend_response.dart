@@ -4,5 +4,8 @@ class FriendResponse {
   final List<Friendship> friends;
   final int totalNumberOfRecords;
 
-  FriendResponse({required this.friends, required this.totalNumberOfRecords});
+  const FriendResponse({
+    required this.friends,
+    required this.totalNumberOfRecords,
+  });
 }

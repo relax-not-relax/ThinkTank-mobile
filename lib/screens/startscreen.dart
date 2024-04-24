@@ -86,7 +86,7 @@ class StartScreenState extends State<StartScreen>
       }
       FirebaseRealTime.setOnline(acc.id, true);
       await ApiAchieviements.getLevelOfUser(acc.id, acc.accessToken!);
-      await ApiNotification.getNotifications();
+      await ApiNotification.getNotifications(1, 1000);
       int version = await SharedPreferencesHelper.getResourceVersion();
       await AssetsAPI.addAssets(version, acc.accessToken!);
       await ContestsAPI.getContets();

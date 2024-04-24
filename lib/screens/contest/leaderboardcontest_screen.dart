@@ -123,9 +123,12 @@ class _LeaderBoardContestScreenState extends State<LeaderBoardContestScreen> {
   }
 
   late Future _getLeaderboard;
+  int pageIndex = 1;
+  late ScrollController _scrollController;
+
   Future getLeaderboard() async {
     List<AccountInContest>? tmps =
-        await ContestsAPI.getAccountInContest(widget.contestId, 1, 20);
+        await ContestsAPI.getAccountInContest(widget.contestId, pageIndex, 10);
     if (tmps == null || tmps.isEmpty) return;
     switch (tmps.length) {
       case 1:
@@ -149,9 +152,33 @@ class _LeaderBoardContestScreenState extends State<LeaderBoardContestScreen> {
     });
   }
 
+  void _scrollListener() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      loadMore();
+    }
+  }
+
+  Future<void> loadMore() async {
+    setState(() {
+      pageIndex = pageIndex + 1;
+    });
+    print("Loading more data...$pageIndex");
+    List<AccountInContest>? tmps =
+        await ContestsAPI.getAccountInContest(widget.contestId, pageIndex, 10);
+    list.addAll(tmps!);
+    if (mounted) {
+      setState(() {
+        list;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
     _getLeaderboard = getLeaderboard();
     _getLeaderboard.then((value) => {
           setState(() {
@@ -292,6 +319,7 @@ class _LeaderBoardContestScreenState extends State<LeaderBoardContestScreen> {
                         children: [
                           Expanded(
                             child: ListView.builder(
+                              controller: _scrollController,
                               padding: EdgeInsets.zero,
                               itemCount:
                                   list.length - 3 < 0 ? 0 : list.length - 3,

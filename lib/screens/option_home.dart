@@ -138,7 +138,7 @@ class _OptionScreenState extends State<OptionScreen> {
 
   Future<void> updateNotifications() async {
     List<NotificationItem> notifications =
-        await ApiNotification.getNotifications();
+        await ApiNotification.getNotifications(1, 1000);
     int notiAmountNotRead = notifications
         .where((notification) => notification.status == false)
         .length;
@@ -158,7 +158,7 @@ class _OptionScreenState extends State<OptionScreen> {
     ).then(
       (value) async {
         List<NotificationItem> notifications =
-            await ApiNotification.getNotifications();
+            await ApiNotification.getNotifications(1, 1000);
         int notiAmountNotRead = notifications
             .where((notification) => notification.status == false)
             .length;

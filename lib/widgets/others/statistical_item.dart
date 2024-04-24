@@ -45,7 +45,11 @@ class StatisticalItem extends StatelessWidget {
               height: 30,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage(imgPath), fit: BoxFit.contain),
+                  image: AssetImage(
+                    imgPath,
+                  ),
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),

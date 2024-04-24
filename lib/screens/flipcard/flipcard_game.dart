@@ -213,7 +213,8 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
                 .child('AmountPlayerDone')
                 .set(int.parse(event.snapshot.value.toString()) + 1);
           }
-          if (int.parse(event.snapshot.value.toString()) >= numberPlayer &&
+          if (event.snapshot.exists &&
+              int.parse(event.snapshot.value.toString()) >= numberPlayer &&
               mounted) {
             Future.delayed(Duration(seconds: 5));
             Navigator.pushAndRemoveUntil(
@@ -660,13 +661,14 @@ void _showResizableDialog(BuildContext context) {
           width: 250,
           height: 400,
           decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              color: Color.fromARGB(255, 249, 249, 249)),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.white,
+          ),
           child: Column(
             children: [
               const SizedBox(height: 20),
               Image.asset(
-                'assets/pics/accOragne.png',
+                'assets/animPics/wait.gif',
                 height: 150,
                 width: 150,
               ),
