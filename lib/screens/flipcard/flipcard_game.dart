@@ -70,6 +70,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
   bool _isLoading = true;
   bool _isFree = true;
   AudioPlayer au = AudioPlayer();
+  List<StreamSubscription<DatabaseEvent>> listEvent = [];
 
   bool _areAllCardsFlipped() {
     print(_game.matchedCards.every((isFlipped) => false));
@@ -147,7 +148,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
     au.dispose();
     DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
     if (widget.roomCode != null) {
-      _databaseReference
+      listEvent.add(_databaseReference
           .child('room')
           .child(widget.roomCode!)
           .child('AmountPlayerDone')
@@ -160,8 +161,11 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
               .child(widget.roomCode!)
               .child('AmountPlayerDone')
               .set(int.parse(event.snapshot.value.toString()) + 1);
+          for (var element in listEvent) {
+            element.cancel();
+          }
         }
-      });
+      }));
     }
     super.dispose();
   }
@@ -195,7 +199,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
         await ApiRoom.addAccountInRoom(
             widget.roomCode!, (points * 100).toInt());
         DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
-        _databaseReference
+        listEvent.add(_databaseReference
             .child('room')
             .child(widget.roomCode!)
             .child('AmountPlayerDone')
@@ -221,7 +225,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
               (route) => false,
             );
           }
-        });
+        }));
       } else {
         // ignore: use_build_context_synchronously
         Navigator.pushAndRemoveUntil(
@@ -268,7 +272,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
 
         //await ApiRoom.addAccountInRoom(widget.roomCode!, 0);
         DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
-        _databaseReference
+        listEvent.add(_databaseReference
             .child('room')
             .child(widget.roomCode!)
             .child('AmountPlayerDone')
@@ -294,7 +298,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
               (route) => false,
             );
           }
-        });
+        }));
       } else {
         // ignore: use_build_context_synchronously
         Navigator.pushAndRemoveUntil(

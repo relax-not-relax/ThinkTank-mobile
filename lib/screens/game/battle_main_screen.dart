@@ -289,6 +289,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
       );
       if (widget.gameId == 4 && mounted) {
         BattleAPI.startBattle(roomID, isUser1, 100, -1);
+        BattleAPI.remove1v1RoomDelay(roomID, 120);
         // ignore: use_build_context_synchronously
         Navigator.pushAndRemoveUntil(
           context,
@@ -313,9 +314,10 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
 
       if (widget.gameId == 2 && mounted) {
         BattleAPI.startBattle(roomID, isUser1, 120, 0);
+        BattleAPI.remove1v1RoomDelay(roomID, 140);
         var data = await getMusicPassword(4);
         data.time = 120;
-        // ignore: curly_braces_in_flow_control_structures, use_build_context_synchronously
+        // ignore: curly_braces_in_flow_control_structures, use_build_c ontext_synchronously
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
