@@ -309,7 +309,7 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
                                 print("Chua du nguoi");
                               } else {
                                 ApiRoom.startGame(widget.room.code, 165);
-                                ApiRoom.removeRoomDelay(widget.room.code, 250);
+                                ApiRoom.removeRoomDelay(widget.room.code, 180);
                                 await _databaseReference
                                     .child('room')
                                     .child(widget.room.code)
