@@ -308,7 +308,8 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
                               if (listMembers.isEmpty) {
                                 print("Chua du nguoi");
                               } else {
-                                ApiRoom.startGame(widget.room.code, 150);
+                                ApiRoom.startGame(widget.room.code, 165);
+                                ApiRoom.removeRoomDelay(widget.room.code, 250);
                                 await _databaseReference
                                     .child('room')
                                     .child(widget.room.code)
