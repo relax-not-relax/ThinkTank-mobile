@@ -98,7 +98,7 @@ class ApiAuthentication {
         .child('online')
         .child(accountId.toString())
         .set(false);
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     StreamSubscription stream;
     stream = FirebaseDatabase.instance
         .ref()
