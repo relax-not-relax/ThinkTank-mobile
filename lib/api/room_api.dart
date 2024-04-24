@@ -285,6 +285,7 @@ class ApiRoom {
         'Authorization': 'Bearer ${account!.accessToken}',
       },
     );
+    print('remove room: ' + response.statusCode.toString());
     if (response.statusCode == 200) {
       return;
     } else if (response.statusCode == 401 || response.statusCode == 403) {

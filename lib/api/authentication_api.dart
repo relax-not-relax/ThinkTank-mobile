@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:synchronized/synchronized.dart';
@@ -20,6 +22,7 @@ class ApiAuthentication {
     if (response.statusCode == 200) {
       await SharedPreferencesHelper.removeAllofLogout();
       FirebaseRealTime.cancleListenLogin();
+      FirebaseRealTime.cancleListenOnline();
       FirebaseRealTime.setLogin(account.id, false);
       FirebaseRealTime.setOnline(account.id, false);
       return true;
@@ -72,6 +75,8 @@ class ApiAuthentication {
 
         if (response.statusCode == 200) {
           final jsonData = json.decode(response.body);
+          FirebaseRealTime.setOnline(Account.fromJson(jsonData).id, true);
+          FirebaseRealTime.listenOnline(Account.fromJson(jsonData).id);
           FirebaseRealTime.setLogin(Account.fromJson(jsonData).id, true);
           FirebaseRealTime.listenlogin(Account.fromJson(jsonData).id);
           return Account.fromJson(jsonData);
@@ -84,6 +89,31 @@ class ApiAuthentication {
     } catch (error) {
       return null;
     }
+  }
+
+  static Future<bool> checkOnline(int accountId) async {
+    bool result = false;
+    FirebaseDatabase.instance
+        .ref()
+        .child('online')
+        .child(accountId.toString())
+        .set(false);
+    await Future.delayed(Duration(seconds: 2));
+    StreamSubscription stream;
+    stream = FirebaseDatabase.instance
+        .ref()
+        .child('online')
+        .child(accountId.toString())
+        .onValue
+        .listen((event) {
+      if (event.snapshot.value.toString() == 'true') {
+        result = true;
+      } else {
+        result = false;
+      }
+    });
+    stream.cancel();
+    return result;
   }
 
   static Future<Account?> reLogin() async {
@@ -107,6 +137,8 @@ class ApiAuthentication {
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       await SharedPreferencesHelper.saveInfo(Account.fromJson(jsonData));
+      FirebaseRealTime.setOnline(Account.fromJson(jsonData).id, true);
+      FirebaseRealTime.listenOnline(Account.fromJson(jsonData).id);
       FirebaseRealTime.setLogin(Account.fromJson(jsonData).id, true);
       FirebaseRealTime.listenlogin(account.id);
       return Account.fromJson(jsonData);
@@ -114,6 +146,8 @@ class ApiAuthentication {
       final jsonData2 = json.decode(response.body);
       if (jsonData2['error'].toString() == "Access Token is not expried") {
         await SharedPreferencesHelper.saveInfo(account);
+        FirebaseRealTime.setOnline(account.id, true);
+        FirebaseRealTime.listenOnline(account.id);
         FirebaseRealTime.setLogin(account.id, true);
         FirebaseRealTime.listenlogin(account.id);
         return account;
@@ -180,7 +214,7 @@ class ApiAuthentication {
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       FirebaseRealTime.setOnline(Account.fromJson(jsonData).id, true);
-      print("refresh" + Account.fromJson(jsonData).refreshToken.toString());
+      FirebaseRealTime.listenOnline(Account.fromJson(jsonData).id);
       FirebaseRealTime.setLogin(Account.fromJson(jsonData).id, true);
       FirebaseRealTime.listenlogin(Account.fromJson(jsonData).id);
       return Account.fromJson(jsonData);

@@ -138,7 +138,7 @@ class _FinalResultScreenState extends State<FinalResultScreen> {
                     child: CoinDiv(
                       amount: widget.contestId != null
                           ? "+ ${widget.points ~/ 10}"
-                          : "+ 20",
+                          : "+ 40",
                       color: Colors.white,
                       size: 25,
                       textSize: 18,
