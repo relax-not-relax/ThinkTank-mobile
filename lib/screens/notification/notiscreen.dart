@@ -20,14 +20,18 @@ class _NotiScreenState extends State<NotiScreen> {
   List<NotificationItem> notifications = [];
   List<NotificationItem> pushNewNotifications = [];
   bool _isLoaded = true;
+  int pageIndex = 1;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
     loadingNotifications();
   }
 
-  void loadingNotifications() async {
+  Future<void> loadingNotifications() async {
     setState(() {
       _isLoaded = false;
     });
@@ -39,7 +43,7 @@ class _NotiScreenState extends State<NotiScreen> {
     // }
     Account? loginInfo;
     loginInfo = await SharedPreferencesHelper.getInfo();
-    notifications = await ApiNotification.getNotifications();
+    notifications = await ApiNotification.getNotifications(pageIndex, 6);
 
     await SharedPreferencesHelper.saveNotifications(notifications);
     setState(() {
@@ -49,9 +53,30 @@ class _NotiScreenState extends State<NotiScreen> {
     });
   }
 
+  void _scrollListener() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      loadMore();
+    }
+  }
+
+  Future<void> loadMore() async {
+    setState(() {
+      pageIndex = pageIndex + 1;
+    });
+    print("Loading more data...$pageIndex");
+    List<NotificationItem> response =
+        await ApiNotification.getNotifications(pageIndex, 6);
+    notifications.addAll(response);
+    await SharedPreferencesHelper.saveNotifications(notifications);
+    setState(() {
+      notifications;
+    });
+  }
+
   void handleReadNotification() async {
     List<NotificationItem> updatedList =
-        await ApiNotification.getNotifications();
+        await ApiNotification.getNotifications(pageIndex, 6);
     await SharedPreferencesHelper.saveNotifications(updatedList);
   }
 
@@ -61,7 +86,7 @@ class _NotiScreenState extends State<NotiScreen> {
     });
 
     List<NotificationItem> updatedList =
-        await ApiNotification.getNotifications();
+        await ApiNotification.getNotifications(pageIndex, 6);
     await SharedPreferencesHelper.saveNotifications(updatedList);
     notifications = await SharedPreferencesHelper.getNotifications();
     setState(() {
@@ -85,7 +110,7 @@ class _NotiScreenState extends State<NotiScreen> {
       }
 
       List<NotificationItem> updatedList =
-          await ApiNotification.getNotifications();
+          await ApiNotification.getNotifications(pageIndex, 6);
       await SharedPreferencesHelper.saveNotifications(updatedList);
       notifications = await SharedPreferencesHelper.getNotifications();
     }
@@ -156,6 +181,7 @@ class _NotiScreenState extends State<NotiScreen> {
             : RefreshIndicator(
                 onRefresh: refreshNotifications,
                 child: ListView.builder(
+                  controller: _scrollController,
                   itemCount: notifications.length,
                   itemBuilder: (context, index) => NotificationElement(
                     notiEl: notifications.reversed.toList()[index],

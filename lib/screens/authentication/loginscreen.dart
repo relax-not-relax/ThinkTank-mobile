@@ -126,7 +126,7 @@ class LoginScreenState extends State<LoginScreen> {
         });
         await SharedPreferencesHelper.saveInfo(acc);
         await ApiAchieviements.getLevelOfUser(acc.id, acc.accessToken!);
-        await ApiNotification.getNotifications();
+        await ApiNotification.getNotifications(1, 1000);
         await ContestsAPI.getContets();
         await ApiIcon.getIconsOfAccount();
 

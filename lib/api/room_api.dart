@@ -301,13 +301,10 @@ class ApiRoom {
       if (response2.statusCode == 200) {
         return;
       } else {
-        final error = json.decode(response2.body)['error'];
-        return error;
+        return;
       }
     } else {
-      final error = json.decode(response.body)['error'];
-      print(error);
-      return error;
+      return;
     }
   }
 

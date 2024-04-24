@@ -8,6 +8,7 @@ import 'package:thinktank_mobile/api/room_api.dart';
 import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/accountinrank.dart';
+import 'package:thinktank_mobile/models/game_leaderboard.dart';
 import 'package:thinktank_mobile/screens/game/game_menu.dart';
 import 'package:thinktank_mobile/screens/home.dart';
 import 'package:thinktank_mobile/screens/option_home.dart';
@@ -24,6 +25,9 @@ class LeaderBoardScreen extends StatefulWidget {
 }
 
 class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
+  int pageIndex = 1;
+  late ScrollController _scrollController;
+
   List<AccountInRank> accounts = [
     AccountInRank(
       accountId: 1,
@@ -60,7 +64,9 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
         tmps[i].rank = i + 1;
       }
     } else {
-      tmps = await ApiAchieviements.getLeaderBoard(widget.gameId, 1, 20);
+      GameLeaderboardResponse response =
+          await ApiAchieviements.getLeaderBoard(widget.gameId, pageIndex, 10);
+      tmps = response.accounts;
       for (int i = 0; i < tmps.length; i++) {
         tmps[i].rank = i + 1;
       }
@@ -100,9 +106,35 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
     return name;
   }
 
+  void _scrollListener() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      loadMore();
+    }
+  }
+
+  Future<void> loadMore() async {
+    setState(() {
+      pageIndex = pageIndex + 1;
+    });
+    print("Loading more data...$pageIndex");
+    if (widget.roomCode == null) {
+      GameLeaderboardResponse response =
+          await ApiAchieviements.getLeaderBoard(widget.gameId, pageIndex, 10);
+      accounts.addAll(response.accounts);
+      if (mounted) {
+        setState(() {
+          accounts;
+        });
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
     _getLeaderboard = getLeaderboard();
     _getLeaderboard.then((value) => {
           if (mounted)
@@ -239,6 +271,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                           children: [
                             Expanded(
                               child: ListView.builder(
+                                controller: _scrollController,
                                 padding: EdgeInsets.zero,
                                 itemCount: accounts.length - 3 < 0
                                     ? 0

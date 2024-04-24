@@ -4,6 +4,7 @@ import 'package:thinktank_mobile/api/authentication_api.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/accountinrank.dart';
+import 'package:thinktank_mobile/models/game_leaderboard.dart';
 
 class ApiAchieviements {
   static Future<void> addAchieviements(double duration, int mark, int level,
@@ -54,10 +55,14 @@ class ApiAchieviements {
     }
   }
 
-  static Future<List<AccountInRank>> getLeaderBoard(
+  static Future<GameLeaderboardResponse> getLeaderBoard(
       int gameId, int pageIndex, int pageSize) async {
     Account? account = await SharedPreferencesHelper.getInfo();
-    if (account == null) return [];
+    if (account == null)
+      return const GameLeaderboardResponse(
+        accounts: [],
+        totalNumberOfRecords: 0,
+      );
     List<AccountInRank> result = [];
     final response = await http.get(
       Uri.parse(
@@ -70,11 +75,13 @@ class ApiAchieviements {
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
+      final total = jsonData['totalNumberOfRecords'] as int;
       for (var element in jsonData['results']) {
         result.add(AccountInRank.fromJson(element));
       }
-      print("length" + result.length.toString());
-      return result;
+      GameLeaderboardResponse leaderboardResponse = GameLeaderboardResponse(
+          accounts: result, totalNumberOfRecords: total);
+      return leaderboardResponse;
     } else if (response.statusCode == 401 || response.statusCode == 403) {
       Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
@@ -87,16 +94,24 @@ class ApiAchieviements {
       );
       if (response2.statusCode == 200) {
         final jsonData = json.decode(response2.body);
+        final total = jsonData['totalNumberOfRecords'] as int;
         for (var element in jsonData['results']) {
           result.add(AccountInRank.fromJson(element));
         }
-        print("length" + result.length.toString());
-        return result;
+        GameLeaderboardResponse leaderboardResponse = GameLeaderboardResponse(
+            accounts: result, totalNumberOfRecords: total);
+        return leaderboardResponse;
       } else {
-        return [];
+        return const GameLeaderboardResponse(
+          accounts: [],
+          totalNumberOfRecords: 0,
+        );
       }
     } else {
-      return [];
+      return const GameLeaderboardResponse(
+        accounts: [],
+        totalNumberOfRecords: 0,
+      );
     }
   }
 

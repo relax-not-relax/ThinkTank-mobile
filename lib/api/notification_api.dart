@@ -7,12 +7,13 @@ import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/notification_item.dart';
 
 class ApiNotification {
-  static Future<List<NotificationItem>> getNotifications() async {
+  static Future<List<NotificationItem>> getNotifications(
+      int page, int pageSize) async {
     Account? account = await SharedPreferencesHelper.getInfo();
     List<NotificationItem> notifications = [];
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/notifications?AccountId=${account!.id}'),
+          'https://thinktank-sep490.azurewebsites.net/api/notifications?Page=$page&PageSize=$pageSize&AccountId=${account!.id}'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${account.accessToken}',
@@ -33,7 +34,7 @@ class ApiNotification {
       Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/notifications?AccountId=${account2!.id}'),
+            'https://thinktank-sep490.azurewebsites.net/api/notifications?Page=$page&PageSize=$pageSize&AccountId=${account2!.id}'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2.accessToken}',
