@@ -68,7 +68,6 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
 
   Future<void> enterToRoom(Room result, Account account) async {
     bool isJoin = false;
-    _closeDialog(context);
     listEvent.add(_databaseReference
         .child('room')
         .child(result.code)
@@ -123,29 +122,32 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                       .child('amountPlayer')
                       .set(i + 1);
 
-                  _databaseReference
-                      .child('room')
-                      .child(result.code)
-                      .child('us${index}')
-                      .child('name')
-                      .get()
-                      .then((value) {
-                    if (value.value.toString() == account.userName) {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return WaitingLobbyScreen(
-                              room: result,
-                              gameId: gameId,
-                            );
-                          },
-                        ),
-                        (route) => false,
-                      );
-                    } else {
-                      enterToRoom(result, account);
-                    }
+                  Future.delayed(const Duration(seconds: 3)).then((value) {
+                    _databaseReference
+                        .child('room')
+                        .child(result.code)
+                        .child('us${index}')
+                        .child('name')
+                        .get()
+                        .then((value) {
+                      if (mounted &&
+                          value.value.toString() == account.userName) {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return WaitingLobbyScreen(
+                                room: result,
+                                gameId: gameId,
+                              );
+                            },
+                          ),
+                          (route) => false,
+                        );
+                      } else {
+                        return enterToRoom(result, account);
+                      }
+                    });
                   });
 
                   // ignore: use_build_context_synchronously
