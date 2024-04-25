@@ -12,6 +12,7 @@ import 'package:thinktank_mobile/screens/imagesWalkthrough/battle/imageswalkthro
 import 'package:thinktank_mobile/screens/imagesWalkthrough/endgame_screen.dart';
 import 'package:thinktank_mobile/screens/imagesWalkthrough/startgame_screen.dart';
 import 'package:thinktank_mobile/widgets/appbar/battle_game_appbar.dart';
+import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 
 class GameBattleMainScreen extends StatefulWidget {
   const GameBattleMainScreen({
@@ -249,6 +250,7 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
   }
 
   void win() async {
+    _showResizableDialog(context);
     double points = (remainingTime.inMilliseconds / 1000);
     if (widget.isUSer1) {
       _databaseReference
@@ -777,4 +779,61 @@ class _GameBattleMainScreenState extends State<GameBattleMainScreen> {
       ),
     );
   }
+}
+
+void _showResizableDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 400,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.white,
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/animPics/wait.gif',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Wait for your opponents',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 5,
+                ),
+                child: Text(
+                  'Wait for your opponent to complete the game!',
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const CustomLoadingSpinner(
+                  color: Color.fromARGB(255, 245, 149, 24)),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
