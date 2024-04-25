@@ -296,8 +296,8 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
         DateTime.now(),
       );
       if (widget.gameId == 4 && mounted) {
-        BattleAPI.startBattle(roomID, isUser1, 100, -1);
-        BattleAPI.remove1v1RoomDelay(roomID, 120);
+        BattleAPI.startBattle(roomID, isUser1, 65, -1);
+        BattleAPI.remove1v1RoomDelay(roomID, 80);
         // ignore: use_build_context_synchronously
         Navigator.pushAndRemoveUntil(
           context,
@@ -308,7 +308,7 @@ class _BattleMainScreenState extends State<BattleMainScreen> {
               opponentName: opponentName,
               account: account,
               gameName: 'Image walkthrough',
-              levelNumber: 2,
+              levelNumber: 11,
               roomId: roomID,
               opponentId: opponentId,
               isWithFriend: widget.isWithFriend,
