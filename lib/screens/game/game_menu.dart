@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thinktank_mobile/api/achieviements_api.dart';
 import 'package:thinktank_mobile/api/room_api.dart';
+import 'package:thinktank_mobile/data/data.dart';
 import 'package:thinktank_mobile/helper/sharedpreferenceshelper.dart';
 import 'package:thinktank_mobile/models/account.dart';
 import 'package:thinktank_mobile/models/game.dart';
@@ -39,7 +40,7 @@ class GameMenuScreen extends StatefulWidget {
 class _GameMenuScreeState extends State<GameMenuScreen> {
   final TextEditingController _controller = TextEditingController();
   DatabaseReference _databaseReference = FirebaseDatabase.instance.ref();
-  bool isJoin = false;
+
   List<StreamSubscription<DatabaseEvent>> listEvent = [];
   int gameId = 0;
 
@@ -65,72 +66,71 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
     );
   }
 
-  Future<void> onJoinRoom() async {
-    _showResizableDialog(context);
-    String roomCode = _controller.text;
-    print(roomCode);
-    isJoin = false;
-    if (roomCode.trim() != "") {
-      dynamic result = await ApiRoom.enterToRoom(roomCode);
-      Account? account = await SharedPreferencesHelper.getInfo();
-      if (result is Room) {
-        // ignore: use_build_context_synchronously
-        _closeDialog(context);
-        listEvent.add(_databaseReference
-            .child('room')
-            .child(result.code)
-            .onValue
-            .listen((event) {
-          gameId = int.parse(event.snapshot.child('gameId').value.toString());
-          int topicId =
-              int.parse(event.snapshot.child('topicId').value.toString());
-          SharedPreferencesHelper.checkTopic(topicId).then((value) {
-            if (value) {
-              int index = 0;
-              for (int j = 1; j <= result.amountPlayer; j++) {
-                if (!event.snapshot.child('us$j').exists) {
-                  index = j;
-                  break;
-                }
-              }
+  Future<void> enterToRoom(Room result, Account account) async {
+    bool isJoin = false;
+    _closeDialog(context);
+    listEvent.add(_databaseReference
+        .child('room')
+        .child(result.code)
+        .onValue
+        .listen((event) {
+      gameId = int.parse(event.snapshot.child('gameId').value.toString());
+      int topicId = int.parse(event.snapshot.child('topicId').value.toString());
+      SharedPreferencesHelper.checkTopic(topicId).then((value) {
+        if (value) {
+          int index = 0;
+          for (int j = 1; j <= result.amountPlayer; j++) {
+            if (!event.snapshot.child('us$j').exists) {
+              index = j;
+              break;
+            }
+          }
+          if (event.snapshot.exists && !isJoin && mounted) {
+            listEvent.add(_databaseReference
+                .child('room')
+                .child(result.code)
+                .child('amountPlayer')
+                .onValue
+                .listen((event) {
               if (event.snapshot.exists && !isJoin && mounted) {
-                listEvent.add(_databaseReference
-                    .child('room')
-                    .child(result.code)
-                    .child('amountPlayer')
-                    .onValue
-                    .listen((event) {
-                  if (event.snapshot.exists && !isJoin && mounted) {
-                    isJoin = true;
-                    int i = int.parse(event.snapshot.value.toString());
+                isJoin = true;
+                int i = int.parse(event.snapshot.value.toString());
 
-                    if (i >= result.amountPlayer || i == -1) {
-                      print("Phòng đầy!!!");
-                    } else {
-                      _databaseReference
-                          .child('room')
-                          .child(result.code)
-                          .child('us${index}')
-                          .child('name')
-                          .set(account!.userName);
-                      _databaseReference
-                          .child('room')
-                          .child(result.code)
-                          .child('us${index}')
-                          .child('done')
-                          .set(false);
-                      _databaseReference
-                          .child('room')
-                          .child(result.code)
-                          .child('us${index}')
-                          .child('avt')
-                          .set(account.avatar);
-                      _databaseReference
-                          .child('room')
-                          .child(result.code)
-                          .child('amountPlayer')
-                          .set(i + 1);
-                      // ignore: use_build_context_synchronously
+                if (i >= result.amountPlayer || i == -1) {
+                  print("Phòng đầy!!!");
+                } else {
+                  _databaseReference
+                      .child('room')
+                      .child(result.code)
+                      .child('us${index}')
+                      .child('name')
+                      .set(account!.userName);
+                  _databaseReference
+                      .child('room')
+                      .child(result.code)
+                      .child('us${index}')
+                      .child('done')
+                      .set(false);
+                  _databaseReference
+                      .child('room')
+                      .child(result.code)
+                      .child('us${index}')
+                      .child('avt')
+                      .set(account.avatar);
+                  _databaseReference
+                      .child('room')
+                      .child(result.code)
+                      .child('amountPlayer')
+                      .set(i + 1);
+
+                  _databaseReference
+                      .child('room')
+                      .child(result.code)
+                      .child('us${index}')
+                      .child('name')
+                      .get()
+                      .then((value) {
+                    if (value.value.toString() == account.userName) {
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
@@ -143,18 +143,36 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                         ),
                         (route) => false,
                       );
+                    } else {
+                      enterToRoom(result, account);
                     }
-                  }
-                }));
-              } else {
-                print('Phòng đã giải tán');
+                  });
+
+                  // ignore: use_build_context_synchronously
+                }
               }
-            } else {
-              _showResizableDialogError(context,
-                  "you don't have topic of this room to join, please reset app!");
-            }
-          });
-        }));
+            }));
+          } else {
+            print('Phòng đã giải tán');
+          }
+        } else {
+          _showResizableDialogError(context,
+              "you don't have topic of this room to join, please reset app!");
+        }
+      });
+    }));
+  }
+
+  Future<void> onJoinRoom() async {
+    _showResizableDialog(context);
+    String roomCode = _controller.text;
+    print(roomCode);
+    if (roomCode.trim() != "") {
+      dynamic result = await ApiRoom.enterToRoom(roomCode);
+      Account? account = await SharedPreferencesHelper.getInfo();
+      if (result is Room) {
+        // ignore: use_build_context_synchronously
+        await enterToRoom(result, account!);
       } else {
         // ignore: use_build_context_synchronously
         _closeDialog(context);

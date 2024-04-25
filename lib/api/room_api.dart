@@ -330,6 +330,7 @@ class ApiRoom {
       },
       body: jsonBody,
     );
+    print("Add account in room:" + response.statusCode.toString());
 
     if (response.statusCode == 200) {
       return;
