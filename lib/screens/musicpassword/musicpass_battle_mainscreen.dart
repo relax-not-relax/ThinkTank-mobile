@@ -18,6 +18,7 @@ import 'package:thinktank_mobile/models/musicpassword.dart';
 import 'package:thinktank_mobile/screens/contest/finalresult_screen.dart';
 import 'package:thinktank_mobile/widgets/appbar/battle_game_appbar.dart';
 import 'package:thinktank_mobile/widgets/appbar/game_appbar.dart';
+import 'package:thinktank_mobile/widgets/others/spinrer.dart';
 import 'package:thinktank_mobile/widgets/others/style_button.dart';
 import 'package:thinktank_mobile/widgets/others/textstroke.dart';
 import 'package:thinktank_mobile/widgets/others/winscreen.dart';
@@ -210,6 +211,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
   }
 
   void win() async {
+    _showResizableDialog(context);
     double points = (remainingTime.inMilliseconds / 1000);
 
     setState(() {
@@ -504,6 +506,7 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
   }
 
   void lose() async {
+    _showResizableDialog(context);
     setState(() {
       isWin = false;
       bg = 'assets/pics/losemusic.png';
@@ -1696,4 +1699,61 @@ class MusicPasswordGameBatleState extends State<MusicPasswordGameBattle>
       ),
     );
   }
+}
+
+void _showResizableDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: Container(
+          width: 250,
+          height: 400,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.white,
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/animPics/wait.gif',
+                height: 150,
+                width: 150,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Wait for your opponents',
+                style: TextStyle(
+                    color: Color.fromRGBO(234, 84, 85, 1),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 5,
+                ),
+                child: Text(
+                  'Wait for your opponent to complete the game!',
+                  style: TextStyle(
+                      color: Color.fromRGBO(129, 140, 155, 1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              const CustomLoadingSpinner(
+                  color: Color.fromARGB(255, 245, 149, 24)),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
