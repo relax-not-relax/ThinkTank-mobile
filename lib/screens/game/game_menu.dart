@@ -95,8 +95,12 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                 isJoin = true;
                 int i = int.parse(event.snapshot.value.toString());
 
-                if (i >= result.amountPlayer || i == -1) {
-                  print("Phòng đầy!!!");
+                if (i >= result.amountPlayer) {
+                  _closeDialog(context);
+                  _showResizableDialogError(context, "Phòng đầy");
+                } else if (i == -1) {
+                  _closeDialog(context);
+                  _showResizableDialogError(context, "Phòng đã chơi");
                 } else {
                   _databaseReference
                       .child('room')
@@ -149,14 +153,10 @@ class _GameMenuScreeState extends State<GameMenuScreen> {
                       }
                     });
                   });
-
-                  // ignore: use_build_context_synchronously
                 }
               }
             }));
-          } else {
-            print('Phòng đã giải tán');
-          }
+          } else {}
         } else {
           _showResizableDialogError(context,
               "you don't have topic of this room to join, please reset app!");

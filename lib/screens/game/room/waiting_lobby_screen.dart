@@ -63,6 +63,28 @@ class _WaitingLobbyScreenState extends State<WaitingLobbyScreen> {
           .child(widget.room.code)
           .onValue
           .listen((event) {
+        if (!event.snapshot.exists &&
+            mounted &&
+            event.snapshot.value.toString() == '-1') {
+          _showResizableDialog(context);
+          Future.delayed(const Duration(seconds: 4)).then((value) {
+            if (mounted) {
+              _closeDialog(context);
+            }
+            if (mounted) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HomeScreen(
+                    inputScreen: OptionScreen(),
+                    screenIndex: 0,
+                  ),
+                ),
+                (route) => false,
+              );
+            }
+          });
+        }
         if (!event.snapshot.exists && mounted) {
           _showResizableDialog(context);
           Future.delayed(const Duration(seconds: 4)).then((value) {
