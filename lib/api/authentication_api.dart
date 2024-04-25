@@ -166,6 +166,7 @@ class ApiAuthentication {
       String? fcmToken, String? googleId) async {
     final response;
     if (googleId != null) {
+      print('id: ' + googleId);
       response = await http.get(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/accounts/authentication-checking?googleId=$googleId'),

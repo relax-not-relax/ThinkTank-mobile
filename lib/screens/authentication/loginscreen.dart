@@ -398,7 +398,7 @@ class LoginScreenState extends State<LoginScreen> {
                             int id = await ApiAuthentication.checkLogin(
                                 '', '', '', googleSignInAccount.id);
 
-                            if (id != 0 && id != -1) {
+                            if (id != -1) {
                               await Future.delayed(Duration(seconds: 2));
                               stream = FirebaseDatabase.instance
                                   .ref()
@@ -427,14 +427,6 @@ class LoginScreenState extends State<LoginScreen> {
                               setState(() {
                                 _isIncorrect = true;
                                 error = 'Your account is banned!';
-                              });
-                              _closeDialog(context);
-                              return;
-                            } else {
-                              print('sai');
-                              setState(() {
-                                _isIncorrect = true;
-                                error = 'Login google error!';
                               });
                               _closeDialog(context);
                               return;

@@ -85,6 +85,7 @@ class ContestsAPI {
       "contestId": contestId
     };
     String jsonBody = jsonEncode(data);
+    print('contest: ' + jsonBody);
     final response = await http.post(
         Uri.parse(
             'https://thinktank-sep490.azurewebsites.net/api/accountInContests'),
@@ -93,6 +94,7 @@ class ContestsAPI {
           'Authorization': 'Bearer ${account.accessToken}',
         },
         body: jsonBody);
+    print('status contest: ' + response.statusCode.toString());
 
     if (response.statusCode == 200) {
       return;
