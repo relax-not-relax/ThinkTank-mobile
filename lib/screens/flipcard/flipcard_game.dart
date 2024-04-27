@@ -108,8 +108,7 @@ class _FlipCardGamePlayState extends State<FlipCardGamePlay> {
       }
       await ApiAchieviements.addAchieviements(
           (maxTime.inMilliseconds - remainingTime.inMilliseconds).toDouble() /
-                  1000 -
-              (0.7 * _game.cardCount),
+              1000,
           (points * 100).toInt(),
           levelNow,
           1,

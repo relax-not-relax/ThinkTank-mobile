@@ -80,7 +80,7 @@ class FlipCardGame {
           await SharedPreferencesHelper.getImageResourceByTopicId(39);
       listTmp.shuffle();
       print(listTmp.toString() + "abc");
-      time = (await getTimeFlipcard(level)) + (0.7 * (cardCount / 2));
+      time = (await getTimeFlipcard(level));
 
       if (level == 1) {
         cardCount = 6;
