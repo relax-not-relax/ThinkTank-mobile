@@ -9,11 +9,11 @@ import 'package:http/http.dart' as http;
 import 'package:thinktank_mobile/models/icon_of_server.dart';
 
 class ApiIcon {
-  static Future<void> getIconsOfAccount() async {
+  static Future<void> getIconsOfAccount(int page, int pageSize) async {
     Account? account = await SharedPreferencesHelper.getInfo();
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/iconOfAccounts?PageSize=60&AccountId=${account!.id}'),
+          'https://thinktank-sep490.azurewebsites.net/api/iconOfAccounts?Page=$page&PageSize=$pageSize&AccountId=${account!.id}'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${account.accessToken}',
@@ -34,7 +34,7 @@ class ApiIcon {
       Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/iconOfAccounts?AccountId=${account2!.id}'),
+            'https://thinktank-sep490.azurewebsites.net/api/iconOfAccounts?Page=$page&PageSize=$pageSize&AccountId=${account2!.id}'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2.accessToken}',
@@ -55,11 +55,11 @@ class ApiIcon {
     }
   }
 
-  static Future<dynamic> getAllIcons() async {
+  static Future<dynamic> getAllIcons(int page, int pageSize) async {
     Account? account = await SharedPreferencesHelper.getInfo();
     final response = await http.get(
       Uri.parse(
-          'https://thinktank-sep490.azurewebsites.net/api/icons?PageSize=50&StatusIcon=3&AccountId=${account!.id}'),
+          'https://thinktank-sep490.azurewebsites.net/api/icons?Page=$page&PageSize=$pageSize&StatusIcon=3&AccountId=${account!.id}'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${account.accessToken}',
@@ -79,7 +79,7 @@ class ApiIcon {
       Account? account2 = await ApiAuthentication.refreshToken();
       final response2 = await http.get(
         Uri.parse(
-            'https://thinktank-sep490.azurewebsites.net/api/icons?PageSize=50&StatusIcon=3&AccountId=${account2!.id}'),
+            'https://thinktank-sep490.azurewebsites.net/api/icons?Page=$page&PageSize=$pageSize&StatusIcon=3&AccountId=${account2!.id}'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${account2.accessToken}',
