@@ -30,7 +30,7 @@ class _LineChart extends StatelessWidget {
       lineBarsData: lineBarsData1,
       minX: 0,
       maxX: maxXValue,
-      maxY: 2,
+      maxY: 3,
       minY: 0,
     );
   }
@@ -88,6 +88,12 @@ class _LineChart extends StatelessWidget {
         break;
       case 2:
         text = '2';
+        break;
+      case 2.5:
+        text = '2.5';
+        break;
+      case 3:
+        text = '3';
         break;
       default:
         return Container();

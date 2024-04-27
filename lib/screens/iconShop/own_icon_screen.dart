@@ -16,11 +16,13 @@ class OwnIconScreen extends StatefulWidget {
 class _OwnIconScreenState extends State<OwnIconScreen> {
   bool isLoading = true;
   List<IconApp> iconsOfAccount = [];
+  int pageIndex = 1;
+  late ScrollController _scrollController;
 
   late Future _initIcons;
 
   Future<List<IconApp>> getIcons() async {
-    await ApiIcon.getIconsOfAccount();
+    await ApiIcon.getIconsOfAccount(pageIndex, 9);
     List<IconApp> icons = await SharedPreferencesHelper.getIconSources();
     return icons;
   }
@@ -28,6 +30,8 @@ class _OwnIconScreenState extends State<OwnIconScreen> {
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
     _initIcons = getIcons();
     _initIcons.then((value) {
       setState(() {
@@ -36,6 +40,31 @@ class _OwnIconScreenState extends State<OwnIconScreen> {
         print(iconsOfAccount.length);
       });
     });
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      loadMore();
+    }
+  }
+
+  Future<void> loadMore() async {
+    setState(() {
+      pageIndex = pageIndex + 1;
+    });
+    print("Loading more data...$pageIndex");
+    await ApiIcon.getIconsOfAccount(pageIndex, 9);
+    List<IconApp> icons = await SharedPreferencesHelper.getIconSources();
+    iconsOfAccount.addAll(icons);
+    setState(() {
+      iconsOfAccount;
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -67,6 +96,8 @@ class _OwnIconScreenState extends State<OwnIconScreen> {
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
               childAspectRatio: 0.6,
+              scrollDirection: Axis.vertical,
+              controller: _scrollController,
               children: iconsOfAccount.map((iconData) {
                 return Container(
                   padding: const EdgeInsets.symmetric(

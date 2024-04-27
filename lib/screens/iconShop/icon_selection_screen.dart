@@ -22,11 +22,13 @@ class IconSelectionScreen extends StatefulWidget {
 class _IconSelectionScreenState extends State<IconSelectionScreen> {
   bool isLoading = true;
   List<IconServer> iconsOfShop = [];
+  int pageIndex = 1;
+  late ScrollController _scrollController;
 
   late Future<dynamic> _initIcons;
 
   Future<dynamic> getIconsOfShop() async {
-    dynamic result = await ApiIcon.getAllIcons();
+    dynamic result = await ApiIcon.getAllIcons(pageIndex, 6);
     if (result is List<IconServer>) {
       return result;
     } else {
@@ -38,6 +40,8 @@ class _IconSelectionScreenState extends State<IconSelectionScreen> {
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
     _initIcons = getIconsOfShop();
     _initIcons.then((value) {
       setState(() {
@@ -46,6 +50,31 @@ class _IconSelectionScreenState extends State<IconSelectionScreen> {
         print(iconsOfShop);
       });
     });
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      loadMore();
+    }
+  }
+
+  Future<void> loadMore() async {
+    setState(() {
+      pageIndex = pageIndex + 1;
+    });
+    print("Loading more data...$pageIndex");
+    dynamic result = await ApiIcon.getAllIcons(pageIndex, 6);
+    if (result is List<IconServer>) {
+      setState(() {
+        iconsOfShop.addAll(result);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   Future<void> buy(IconServer icon) async {
@@ -64,6 +93,7 @@ class _IconSelectionScreenState extends State<IconSelectionScreen> {
         _closeDialog(context);
         setState(() {
           isLoading = true;
+          pageIndex = 1;
         });
         _initIcons = getIconsOfShop();
         _initIcons.then((value) {
@@ -90,7 +120,7 @@ class _IconSelectionScreenState extends State<IconSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     NetworkManager.currentContext = context;
-    return isLoading
+    return isLoading && iconsOfShop.isEmpty
         ? Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -106,7 +136,7 @@ class _IconSelectionScreenState extends State<IconSelectionScreen> {
               ],
             ),
           )
-        : iconsOfShop.isEmpty
+        : !isLoading && iconsOfShop.isEmpty
             ? Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
@@ -165,6 +195,8 @@ class _IconSelectionScreenState extends State<IconSelectionScreen> {
                   mainAxisSpacing: 20,
                   crossAxisSpacing: 10,
                   childAspectRatio: 0.75,
+                  controller: _scrollController,
+                  scrollDirection: Axis.vertical,
                   children: iconsOfShop.map((iconData) {
                     return IconShopItem(
                       icon: iconData,

@@ -77,7 +77,7 @@ class LoginScreenState extends State<LoginScreen> {
         int version = await SharedPreferencesHelper.getResourceVersion();
         await AssetsAPI.addAssets(version, acc.accessToken!);
         await ContestsAPI.getContets();
-        await ApiIcon.getIconsOfAccount();
+        await ApiIcon.getIconsOfAccount(1, 9);
         FirebaseRealTime.setOnline(acc.id, true);
 
         _closeDialog(context);
@@ -128,7 +128,7 @@ class LoginScreenState extends State<LoginScreen> {
         await ApiAchieviements.getLevelOfUser(acc.id, acc.accessToken!);
         await ApiNotification.getNotifications(1, 1000);
         await ContestsAPI.getContets();
-        await ApiIcon.getIconsOfAccount();
+        await ApiIcon.getIconsOfAccount(1, 9);
 
         int version = await SharedPreferencesHelper.getResourceVersion();
         await AssetsAPI.addAssets(version, acc.accessToken!);
