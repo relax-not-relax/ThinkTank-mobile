@@ -87,7 +87,7 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
       });
       return;
     }
-    if (password.length < 8 || password.length >= 12) {
+    if (password.length < 8 || password.length > 12) {
       setState(() {
         error =
             "Password length must be at least 8 characters and maximum 12 characters !";
