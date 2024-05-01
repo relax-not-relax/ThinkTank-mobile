@@ -19,30 +19,13 @@ class FlipCardGame {
   int c = 0;
   double time = 0.0;
 
-  Future<double> getTimeFlipcard(int level) async {
-    if (level == 1) {
-      cardCount = 6;
-    }
-    if (level >= 2 && level <= 5) {
-      cardCount = 8;
-    } else if (level >= 6 && level <= 10) {
-      cardCount = 12;
-    } else if (level >= 11 && level <= 20) {
-      cardCount = 16;
-    } else if (level >= 21 && level <= 30) {
-      cardCount = 20;
-    } else if (level >= 31 && level <= 40) {
-      cardCount = 24;
-    } else {
-      cardCount = 28;
-    }
-
+  Future<double> getDifficultyFlipcard(int level) async {
     int c = (level % 10 <= 1) ? level ~/ 10 : ((level ~/ 10) + 1);
     if (level == 1) {
-      return (3.15 * cardCount);
+      return (3.15);
     } else {
-      return (await getTimeFlipcard(level - 1) -
-          (3.15 - 0.48) / pow(2, c) / 10 * cardCount);
+      return (await getDifficultyFlipcard(level - 1) -
+          ((3.15 - 0.48) / pow(2, c) / 10));
     }
   }
 
@@ -80,7 +63,6 @@ class FlipCardGame {
           await SharedPreferencesHelper.getImageResourceByTopicId(39);
       listTmp.shuffle();
       print(listTmp.toString() + "abc");
-      time = (await getTimeFlipcard(level));
 
       if (level == 1) {
         cardCount = 6;
@@ -111,6 +93,7 @@ class FlipCardGame {
         }
         matchedCards = List.filled(cardCount, false);
       }
+      time = ((await getDifficultyFlipcard(level)) + 0.7) * cardCount;
 
       //gameImg = List.generate(cardCount, (index) => hiddenCardpath);
       duplicatedCardList = List.from(cards_list)..addAll(cards_list);

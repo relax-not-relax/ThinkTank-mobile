@@ -186,7 +186,7 @@ Future<MusicPassword> getMusicPassword(int level) async {
       await SharedPreferencesHelper.getMusicPasswordSources();
   List<MusicPasswordSource> listSource2 = listSource
       .where((element) =>
-          element.answer.length == (((level / 10) + 4) * 2).toInt())
+          element.answer.length == (((level ~/ 10) + 4) * 2).toInt())
       .toList();
   listSource2.shuffle();
   MusicPasswordSource source = listSource2.first;
@@ -199,20 +199,20 @@ Future<MusicPassword> getMusicPassword(int level) async {
   );
 }
 
-Future<double> getTimeAnonymous(int level) async {
-  int m = level ~/ 10 + 2;
+Future<double> getDifficultyAnonymous(int level) async {
   int c = (level % 10 <= 1) ? level ~/ 10 : ((level ~/ 10) + 1);
   if (level == 1)
-    return (3.15 * m);
+    return (3.15);
   else {
-    return (await getTimeAnonymous(level - 1) -
-        (3.15 - 0.48) / pow(2, c) / 10 * m);
+    return (await getDifficultyAnonymous(level - 1) -
+        (3.15 - 0.48) / pow(2, c) / 10);
   }
 }
 
 Future<FindAnonymous> geFindAnonymous(int level) async {
   int total = 15 + (level ~/ 10) * 5;
-  int time = (await getTimeAnonymous(level)).toInt() + 3 * total;
+
+  int time = (await getDifficultyAnonymous(level)).toInt() * total;
   List<FindAnonymousAsset> listSource =
       await SharedPreferencesHelper.getAnonymousAssets();
   listSource.shuffle();
